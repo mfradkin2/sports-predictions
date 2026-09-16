@@ -22,9 +22,15 @@
  "new_games_this_run": 0,
  "props": {
   "graded_this_run": 0,
+  "lines": {
+   "games": 0,
+   "mode": "model",
+   "status": "off"
+  },
   "record": {
    "by_conf": {},
    "by_key": {},
+   "by_source": {},
    "hit": 0,
    "pct": null,
    "total": 0
@@ -127,7 +133,15 @@
    "model_version": 3,
    "notes": "0 completed games",
    "reason": "challenger produced no validation score"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-16T01:22:14Z",
+   "metrics": {},
+   "model_version": 3,
+   "notes": "0 completed games",
+   "reason": "challenger produced no validation score"
   }
  ],
- "updated": "2026-09-16T00:44:26Z"
+ "updated": "2026-09-16T01:22:14Z"
 }

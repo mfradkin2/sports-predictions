@@ -119,9 +119,15 @@
  "new_games_this_run": 0,
  "props": {
   "graded_this_run": 0,
+  "lines": {
+   "games": 0,
+   "mode": "model",
+   "status": "disabled"
+  },
   "record": {
    "by_conf": {},
    "by_key": {},
+   "by_source": {},
    "hit": 0,
    "pct": null,
    "total": 0
@@ -284,7 +290,20 @@
    "model_version": 3,
    "notes": "16 completed games",
    "reason": "kept incumbent (challenger 0.6681 vs 0.6681)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-16T01:20:50Z",
+   "metrics": {
+    "acc": 0.625,
+    "brier": 0.2376,
+    "logloss": 0.6681,
+    "n": 16
+   },
+   "model_version": 3,
+   "notes": "16 completed games",
+   "reason": "kept incumbent (challenger 0.6681 vs 0.6681)"
   }
  ],
- "updated": "2026-09-16T00:43:05Z"
+ "updated": "2026-09-16T01:20:54Z"
 }
