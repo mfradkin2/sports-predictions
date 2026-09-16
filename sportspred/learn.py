@@ -541,10 +541,25 @@ class PropsLedger:
                    assumed. Both are clamped so a strange month cannot swing
                    a market by more than a third.
         """
+        from .props import PER_GAME_MAX      # local import: props does not import learn
+        # A projection no player could post came from a bad feed row, not
+        # from the model. Every prop of that player on that day is suspect
+        # (his other rates came from the same row), so the whole player is
+        # left out of the lesson rather than just the impossible number.
+        suspect = set()
+        rows = self.graded()
+        for r in rows:
+            proj = num(r.get('proj'))
+            stat = r.get('stat') or ''
+            cap = PER_GAME_MAX.get(stat[:-3] if stat.endswith('_pg') else stat)
+            if proj is not None and cap is not None and proj > cap:
+                suspect.add((r.get('game_date'), r.get('athlete_id')))
         buckets = {}
-        for r in self.graded():
+        for r in rows:
             proj, actual = num(r.get('proj')), num(r.get('actual'))
             if proj is None or actual is None or proj <= 0:
+                continue
+            if (r.get('game_date'), r.get('athlete_id')) in suspect:
                 continue
             buckets.setdefault(r['key'], []).append((proj, actual, r.get('dist', '')))
         tuned = {}

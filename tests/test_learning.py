@@ -300,3 +300,25 @@ class TestPipeline(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestTuningIgnoresImpossibleProjections(unittest.TestCase):
+    def test_a_corrupt_days_rows_do_not_move_the_market(self):
+        import tempfile
+        from sportspred.learn import PropsLedger
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = PropsLedger('mlb', history_dir=tmp)
+            game = {'game_id': 'g', 'date': '2026-09-15'}
+            for i in range(80):
+                # Forty sane rows that hit their projection on average...
+                sane = {'key': 'hits', 'label': 'Hits', 'stat': 'hits_pg', 'dist': 'poisson',
+                        'line': 0.5, 'proj': 1.0, 'season': 1.0, 'over': 0.6, 'pick': 'over', 'conf': 'med'}
+                # ...and forty from a broken feed row projecting twelve hits a game.
+                broken = dict(sane, proj=12.0, season=12.0)
+                ledger.record(game, 'home', {'id': f'p{i}'}, sane if i % 2 else broken)
+            for r in ledger.rows.values():
+                r.update(graded='1', played='1', actual='1', push='0', hit='1')
+            tuned = ledger.tune()
+            self.assertIn('hits', tuned)
+            self.assertEqual(tuned['hits']['n'], 40)
+            self.assertAlmostEqual(tuned['hits']['raw_bias'], 1.0, places=3)

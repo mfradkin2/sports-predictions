@@ -241,7 +241,7 @@ class TestSmallSampleShrinkage(unittest.TestCase):
 
     def test_priors_exist_for_the_batter_markets(self):
         self.assertIn('hits_pg', self.priors['batter'])
-        self.assertIn('p_so_pg', self.priors['pitcher'])
+        self.assertIn('p_so_pg', self.priors['pitcher:starter'])
 
     def test_a_four_game_hot_streak_is_pulled_toward_the_group(self):
         hot = {'id': 'x', 'name': 'Hot Callup', 'pos': 'LF',
@@ -300,3 +300,25 @@ class TestTwoWayPlayers(unittest.TestCase):
         self.assertEqual(gp, 120)
         hits = next(p for p in priced if p['key'] == 'hits')
         self.assertAlmostEqual(hits['season'], 0.85, places=2)
+
+
+class TestBinomialHits(unittest.TestCase):
+    def test_a_regular_goes_hitless_less_often_than_poisson_says(self):
+        from sportspred.util import binom_sf, poisson_sf
+        # One hit a game over four at-bats.
+        self.assertGreater(binom_sf(0, 4.0, 0.25), poisson_sf(0, 1.0))
+        self.assertAlmostEqual(binom_sf(0, 4.0, 0.25), 1 - 0.75 ** 4, places=6)
+        # Fractional trials interpolate.
+        mid = binom_sf(0, 3.5, 0.25)
+        self.assertTrue(binom_sf(0, 3.0, 0.25) < mid < binom_sf(0, 4.0, 0.25))
+        self.assertEqual(binom_sf(3, 3.0, 0.5), 0.0)
+
+    def test_hits_are_priced_binomially_from_at_bats(self):
+        spec = next(s for s in config.props_for('baseball', 'batter') if s['key'] == 'hits')
+        self.assertEqual(spec['dist'], 'binomial')
+        player = {'stats': {'gp': 100, 'ab': 400, 'hits': 100, 'hr': 10, 'rbi': 50,
+                            'runs': 50, 'doubles': 20, 'triples': 2, 'sb': 5}}
+        priced, _ = props.project_player(player, 'baseball', 'batter', 1.0, max_props=None)
+        hits = next(p for p in priced if p['key'] == 'hits')
+        # 1.0 hits over 4.0 at-bats: P(1+) = 1 - 0.75^4 = 0.684
+        self.assertAlmostEqual(hits['over'], 1 - 0.75 ** 4, places=3)

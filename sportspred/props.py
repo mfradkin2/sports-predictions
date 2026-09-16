@@ -20,14 +20,14 @@ from collections import defaultdict
 from .config import props_for, quota_for
 from .espn import find_team, norm_team
 from .odds import line_for
-from .util import clamp, negbin_sf, norm_sf, num, poisson_sf
+from .util import binom_sf, clamp, negbin_sf, norm_sf, num, poisson_sf
 
 # Ceiling on any per-game rate we will believe out of the raw feed; anything
 # above it means we were handed a season total rather than an average.
 PER_GAME_MAX = {
     'pts': 45, 'reb': 25, 'ast': 18, 'fg3': 9, 'stl': 6, 'blk': 7, 'tov': 9,
     'min': 48, 'fga': 35, 'fta': 30,
-    'hits': 5, 'hr': 3, 'rbi': 7, 'runs': 5, 'doubles': 3, 'triples': 2,
+    'hits': 5, 'hr': 3, 'rbi': 7, 'runs': 5, 'doubles': 3, 'triples': 2, 'tb': 12,
     'bb': 5, 'so': 5, 'sb': 4, 'ab': 7,
     'ip': 9.5, 'p_so': 18, 'p_er': 10, 'p_h': 14, 'p_bb': 8,
     'pass_yds': 520, 'pass_td': 7, 'pass_att': 62, 'pass_cmp': 45, 'pass_int': 5,
@@ -120,6 +120,7 @@ def derive(sport, rates):
     if sport == 'baseball':
         singles = max(g('hits') - g('doubles') - g('triples') - g('hr'), 0.0)
         r['hits_pg'] = g('hits')
+        r['ab_pg'] = g('ab')                  # trials for the hits distribution
         r['hr_pg'] = g('hr')
         r['rbi_pg'] = g('rbi')
         r['runs_pg'] = g('runs')
@@ -296,11 +297,25 @@ def standard_line(baseline):
     return max(line, 0.5)
 
 
+BINOMIAL_DEFAULT_TRIALS = 4.0        # at-bats a game when the feed has none
+
+
+def _trials(spec, projection):
+    """Trials for a binomial prop: the player's at-bats a game, never fewer
+    than would make the projection impossible."""
+    n = num(spec.get('trials')) or BINOMIAL_DEFAULT_TRIALS
+    return max(n, projection + 0.5, 2.0)
+
+
 def _spread(spec, projection):
     """Standard deviation implied by this prop's distribution."""
     dist = spec.get('dist', 'poisson')
     if dist == 'normal':
         return spec['sigma'](projection)
+    if dist == 'binomial':
+        n = _trials(spec, projection)
+        p = projection / n
+        return math.sqrt(max(n * p * (1 - p), 1e-6))
     if dist == 'negbin':
         return math.sqrt(max(projection * float(spec.get('disp', 1.3)), 1e-6))
     return math.sqrt(max(projection, 1e-6))
@@ -315,6 +330,11 @@ def over_probability(spec, projection, baseline=None):
     line = float(line)
     if dist == 'normal':
         p_over = norm_sf(line, projection, spec['sigma'](projection))
+    elif dist == 'binomial':
+        # Hits are one chance per at-bat, so they scatter less than a Poisson
+        # count of the same mean: a regular goes hitless far less often.
+        n = _trials(spec, projection)
+        p_over = binom_sf(math.floor(line), n, projection / n)
     elif dist == 'negbin':
         var = projection * float(spec.get('disp', 1.3))
         p_over = negbin_sf(math.floor(line), projection, var)
@@ -350,9 +370,21 @@ PRIOR_MIN_GP = {'baseball': 15, 'basketball': 10, 'hockey': 15, 'football': 2}
 _PRIOR_CACHE = {}
 
 
+def prior_role(sport, group, rates):
+    """The population a player's thin sample is shrunk toward. Starting
+    pitchers and relievers are different animals (six innings against one),
+    so they are separate; every other group is one population."""
+    if sport == 'baseball' and group == 'pitcher':
+        games = rates.get('p_gp') or rates.get('gp') or 0
+        starts = rates.get('starts') or 0
+        return 'pitcher:starter' if games and starts / games >= 0.5 else 'pitcher:reliever'
+    return group
+
+
 def group_priors(pool, sport):
-    """Mean per-game rate of each prop stat across the pool, per position
-    group, from players with enough games to be believable."""
+    """Typical per-game rate of each prop stat across the pool, per prior
+    role, weighted by games played so regulars define the norm rather than
+    the long tail of bench players."""
     key = (id(pool), sport)
     if key in _PRIOR_CACHE:
         return _PRIOR_CACHE[key]
@@ -364,19 +396,22 @@ def group_priors(pool, sport):
             if not group:
                 continue
             rates = derive(sport, per_game(player.get('stats') or {}))
-            if (rates.get('gp') or 0) < min_gp:
+            role = prior_role(sport, group, rates)
+            gp = (rates.get('p_gp') or rates.get('gp') or 0) if role.startswith('pitcher') else (rates.get('gp') or 0)
+            if gp < min_gp:
                 continue
             for spec in props_for(sport, group):
                 v = num(rates.get(spec['stat']))
                 if v is None:
                     continue
-                acc = sums.setdefault((group, spec['stat']), [0.0, 0])
-                acc[0] += v
-                acc[1] += 1
+                acc = sums.setdefault((role, spec['stat']), [0.0, 0.0, 0])
+                acc[0] += v * gp
+                acc[1] += gp
+                acc[2] += 1
     out = {}
-    for (group, stat), (total, n) in sums.items():
-        if n >= 5:
-            out.setdefault(group, {})[stat] = total / n
+    for (role, stat), (total, weight, n) in sums.items():
+        if n >= 5 and weight > 0:
+            out.setdefault(role, {})[stat] = total / weight
     _PRIOR_CACHE.clear()
     _PRIOR_CACHE[key] = out
     return out
@@ -400,10 +435,12 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
     gp = rates.get('gp') or 0
     if group == 'pitcher' and rates.get('p_gp'):
         gp = rates['p_gp']
-    group_prior = (priors or {}).get(group) or {}
+    group_prior = (priors or {}).get(prior_role(sport, group, rates)) or {}
     out = []
     for raw_spec in props_for(sport, group):
         spec, bias = apply_tuning(raw_spec, tuning)
+        if spec.get('dist') == 'binomial':
+            spec = dict(spec, trials=rates.get('ab_pg'))
         season = num(rates.get(spec['stat']))
         if season is None or season <= 0:
             continue
@@ -457,6 +494,16 @@ def select_props(priced, book_mode, max_props):
         return priced[:max_props]
     booked = sorted([p for p in priced if not p.get('pending')],
                     key=lambda p: (p['rank'] - (3 if p.get('conf') == 'high' else 0)))
+    # Two of our markets can share one book market (hits and 2+ hits both
+    # come from batter_hits); at the same line they are the same prop.
+    seen, unique = set(), []
+    for p in booked:
+        k = (p.get('stat'), p.get('line'))
+        if k in seen:
+            continue
+        seen.add(k)
+        unique.append(p)
+    booked = unique
     pending = sorted([p for p in priced if p.get('pending') and p['rank'] <= PENDING_RANK],
                      key=lambda p: p['rank'])
     booked = booked[:BOOK_MAX_PROPS]
@@ -539,7 +586,28 @@ def _price(spec, baseline, projection, book=None, season=None):
             out['book_over'] = int(book['over'])
         if book.get('under') is not None:
             out['book_under'] = int(book['under'])
+        implied = implied_over(book.get('over'), book.get('under'))
+        if implied is not None:
+            # The edge that matters against a market: our probability for the
+            # side we lean to, minus what the book's own price says, with the
+            # vig taken out. In percentage points.
+            out['book_p'] = round(implied, 4)
+            ours = p_over if out['pick'] == 'over' else 1 - p_over
+            theirs = implied if out['pick'] == 'over' else 1 - implied
+            out['edge_pts'] = round((ours - theirs) * 100, 1)
     return out
+
+
+def implied_over(over_price, under_price):
+    """Vig-free probability of the over from a book's two American prices."""
+    if over_price is None or under_price is None:
+        return None
+
+    def raw(price):
+        return 100.0 / (price + 100.0) if price > 0 else -price / (-price + 100.0)
+
+    po, pu = raw(float(over_price)), raw(float(under_price))
+    return po / (po + pu) if po + pu > 0 else None
 
 
 def player_group(sport, pos):
@@ -623,6 +691,8 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                 if spec is None:
                     continue
                 spec, bias = apply_tuning(spec, tuning)
+                if spec.get('dist') == 'binomial':
+                    spec = dict(spec, trials=rates.get('ab_pg'))
                 f = matchup_factor(p['key'], sport, group, exp, env, home, away, is_home)
                 if report and report.get('level') == 'limited':
                     f *= LIMITED_FACTOR

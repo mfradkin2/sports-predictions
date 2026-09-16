@@ -338,3 +338,93 @@ class TestRefreshPolicy(unittest.TestCase):
         lines, _ = odds.load_lines('mlb', games, FakeHttp({'/events?': events, '/odds': {'bookmakers': []}}),
                                    cache_dir=self.tmp.name)
         self.assertEqual(set(k[0] for k in lines['1']), {'aaronjudge', 'juansoto'})
+
+
+class TestMainLineAndNames(unittest.TestCase):
+    def test_alternate_long_shot_lines_do_not_replace_the_main_line(self):
+        payload = {'bookmakers': [{'title': 'DraftKings', 'markets': [{'key': 'batter_home_runs', 'outcomes': [
+            {'name': 'Over', 'description': 'Randal Grichuk', 'point': 0.5, 'price': 260},
+            {'name': 'Under', 'description': 'Randal Grichuk', 'point': 0.5, 'price': -340},
+            {'name': 'Over', 'description': 'Randal Grichuk', 'point': 1.5, 'price': 8000},
+        ]}]}]}
+        lines = odds.consensus_lines(payload, 'mlb')
+        self.assertEqual(lines[('randalgrichuk', 'hr')]['line'], 0.5)
+        self.assertEqual(lines[('randalgrichuk', 'hr')]['over'], 260)
+
+    def test_most_balanced_two_sided_point_wins(self):
+        points = {0.5: {'over': -300, 'under': 230}, 1.5: {'over': 105, 'under': -125}, 2.5: {'over': 400, 'under': -600}}
+        self.assertEqual(odds.main_line(points)[0], 1.5)
+        self.assertEqual(odds.main_line({1.5: {'over': 5500}})[0], 1.5)   # only option
+        self.assertEqual(odds.main_line({})[0], None)
+
+    def test_accented_names_match(self):
+        self.assertEqual(odds._name_key('Agustín Ramírez'), odds._name_key('Agustin Ramirez'))
+        self.assertEqual(odds._name_key('José Ramírez Jr.'), 'joseramirez')
+
+
+class TestBudgetPacing(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.old = {k: os.environ.get(k) for k in ('ODDS_API_KEY', 'ODDS_MONTHLY_CREDITS')}
+        os.environ['ODDS_API_KEY'] = 'k'
+
+    def tearDown(self):
+        self.tmp.cleanup()
+        for k, v in self.old.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+
+    def test_daily_allowance_spreads_the_month(self):
+        os.environ['ODDS_MONTHLY_CREDITS'] = '3100'
+        now = datetime(2026, 9, 1, tzinfo=timezone.utc)
+        b = odds.Budget(self.tmp.name, now)
+        self.assertAlmostEqual(b.daily_allowance(), (3100 - odds.MIN_REMAINING) / 30, places=3)
+        b.spend(60, remaining=2000)
+        b.save()
+        again = odds.Budget(self.tmp.name, now)
+        self.assertEqual(again.remaining, 2000)          # the API's figure wins
+        self.assertEqual(again.state['spent_today'], 60)
+        # A new month resets the spend.
+        fresh = odds.Budget(self.tmp.name, datetime(2026, 10, 1, tzinfo=timezone.utc))
+        self.assertEqual(fresh.state['spent_month'], 0)
+
+    def test_fetching_stops_at_the_daily_allowance_and_prices_soonest_first(self):
+        os.environ['ODDS_MONTHLY_CREDITS'] = str(odds.MIN_REMAINING + 31 * 15)   # 15 credits a day
+        now = datetime.now(timezone.utc)
+        stamp = lambda h: (now + timedelta(hours=h)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        events = [{'id': 'e1', 'home_team': 'New York Yankees', 'away_team': 'Boston Red Sox', 'commence_time': stamp(20)},
+                  {'id': 'e2', 'home_team': 'Chicago Cubs', 'away_team': 'Miami Marlins', 'commence_time': stamp(5)}]
+        games = [_game('1', 'New York Yankees', 'Boston Red Sox', hours_ahead=20),
+                 _game('2', 'Chicago Cubs', 'Miami Marlins', hours_ahead=5)]
+        # The API's own header says 52 credits remain after the first call,
+        # which the pacing trusts over the configured plan.
+        http = FakeHttp({'/events?': events,
+                         '/events/e1/odds': {'bookmakers': [_book('DK', 'batter_hits', [('A Judge', 0.5, -200, 160)])]},
+                         '/events/e2/odds': {'bookmakers': [_book('DK', 'batter_hits', [('P Crow-Armstrong', 0.5, -150, 120)])]}},
+                        remaining=odds.MIN_REMAINING + 12)
+        lines, status = odds.load_lines('mlb', games, http, cache_dir=self.tmp.name)
+        # One game's worth of markets (10 credits) fits the day; the second does not.
+        self.assertEqual(status, 'budgeted')
+        self.assertEqual(set(lines), {'2'})              # the game starting sooner
+        self.assertEqual(sum('/odds' in u for u in http.urls), 1)
+        with open(os.path.join(self.tmp.name, 'odds_budget.json')) as f:
+            state = json.load(f)
+        self.assertEqual(state['spent_today'], len(set(odds.MARKETS['mlb'].values())))
+
+
+class TestEdgeAgainstTheBook(unittest.TestCase):
+    def test_edge_is_our_probability_minus_the_devigged_book_price(self):
+        self.assertAlmostEqual(props.implied_over(-110, -110), 0.5, places=6)
+        self.assertAlmostEqual(props.implied_over(100, -120), 0.4783, places=3)
+        spec = dict(props_for('baseball', 'batter')[0], line=None)
+        book = {'line': 0.5, 'books': 2, 'book': '2 books', 'over': -200, 'under': 160}
+        p = props._price(spec, 1.0, 1.0, book)
+        self.assertAlmostEqual(p['book_p'], props.implied_over(-200, 160), places=4)
+        ours = p['over'] if p['pick'] == 'over' else 1 - p['over']
+        theirs = p['book_p'] if p['pick'] == 'over' else 1 - p['book_p']
+        self.assertAlmostEqual(p['edge_pts'], round((ours - theirs) * 100, 1), places=1)
+        # No prices, no book edge.
+        q = props._price(spec, 1.0, 1.0, {'line': 0.5, 'books': 1, 'book': 'X'})
+        self.assertNotIn('edge_pts', q)

@@ -204,7 +204,7 @@ PROPS = {
     'baseball': {
         'batter': [
             {'key': 'hits',   'label': 'Hits',        'stat': 'hits_pg', 'line': 0.5,
-             'dist': 'poisson', 'rank': 1, 'min_proj': 0.35, 'unit': 'H'},
+             'dist': 'binomial', 'rank': 1, 'min_proj': 0.35, 'unit': 'H'},
             {'key': 'tb',     'label': 'Total Bases', 'stat': 'tb_pg',   'line': 1.5,
              'dist': 'negbin', 'disp': 1.45, 'rank': 2, 'min_proj': 0.6, 'unit': 'TB'},
             {'key': 'hr',     'label': 'Home Run',    'stat': 'hr_pg',   'line': 0.5,
@@ -214,7 +214,7 @@ PROPS = {
             {'key': 'runs',   'label': 'Runs Scored', 'stat': 'runs_pg', 'line': 0.5,
              'dist': 'poisson', 'rank': 5, 'min_proj': 0.2, 'unit': 'R'},
             {'key': 'hits2',  'label': 'Hits (2+)',   'stat': 'hits_pg', 'line': 1.5,
-             'dist': 'poisson', 'rank': 6, 'min_proj': 0.7, 'unit': 'H'},
+             'dist': 'binomial', 'rank': 6, 'min_proj': 0.7, 'unit': 'H'},
             {'key': 'sb',     'label': 'Stolen Base', 'stat': 'sb_pg',   'line': 0.5,
              'dist': 'poisson', 'rank': 7, 'min_proj': 0.08, 'unit': 'SB'},
         ],

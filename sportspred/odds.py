@@ -11,8 +11,10 @@ board falls back to model-derived lines and says so.
 """
 from __future__ import annotations
 
+import calendar
 import os
 import re
+import unicodedata
 from datetime import datetime, timedelta, timezone
 
 from . import config
@@ -29,6 +31,10 @@ MIN_REMAINING = 40          # keep this much monthly quota in reserve
 # books had not posted yet fills in once they do. Each fetch costs one credit
 # per market, so this is a quota dial (ODDS_REFRESH_HOURS overrides it).
 REFRESH_HOURS = 4
+# Monthly credit allowance to pace against (ODDS_MONTHLY_CREDITS overrides).
+# Spend is spread evenly over the days left in the month, so a busy slate
+# early on cannot leave the last week with nothing.
+MONTHLY_CREDITS = 20000
 
 # Our prop key -> the book's market key. Every market listed here costs one
 # unit of quota per game, so the list is the popular markets only.
@@ -58,8 +64,11 @@ def api_key():
 
 
 def _name_key(name):
-    """'Jr.'-and-accent tolerant player-name key."""
-    n = re.sub(r'\b(jr|sr|ii|iii|iv)\b\.?', '', (name or '').lower())
+    """'Jr.'-and-accent tolerant player-name key: Agustín Ramírez and
+    Agustin Ramirez are the same man."""
+    n = unicodedata.normalize('NFKD', name or '')
+    n = ''.join(ch for ch in n if not unicodedata.combining(ch)).lower()
+    n = re.sub(r'\b(jr|sr|ii|iii|iv)\b\.?', '', n)
     return re.sub(r'[^a-z0-9]', '', n)
 
 
@@ -151,16 +160,17 @@ def consensus_lines(payload, league_key):
                 if not player:
                     continue
                 side = (oc.get('name') or '').lower()
-                slot = by_player.setdefault(player, {})
+                point = num(oc.get('point'), 0.5)
+                slot = by_player.setdefault(player, {}).setdefault(point, {})
                 if side in ('over', 'yes'):
-                    slot['line'] = num(oc.get('point'), 0.5)
                     slot['over'] = num(oc.get('price'))
                 elif side in ('under', 'no'):
                     slot['under'] = num(oc.get('price'))
-                    slot.setdefault('line', num(oc.get('point'), 0.5))
-            for player, slot in by_player.items():
-                if slot.get('line') is None:
+            for player, points in by_player.items():
+                line, slot = main_line(points)
+                if line is None:
                     continue
+                slot = dict(slot, line=line)
                 for prop_key in props:
                     entry = seen.setdefault((player, prop_key), {'lines': [], 'books': [], 'over': [], 'under': []})
                     entry['lines'].append(slot['line'])
@@ -179,11 +189,88 @@ def consensus_lines(payload, league_key):
     return out
 
 
+def main_line(points):
+    """Pick a book's main line among the points it posts for one player.
+
+    A market can carry alternates ("1.5 home runs at +5500") next to the main
+    number. The main line is the one with both sides priced and the prices
+    closest to even; a one-sided point is a long-shot alternate and is used
+    only when nothing better exists.
+    """
+    best, best_key = None, None
+    for point, slot in points.items():
+        over, under = slot.get('over'), slot.get('under')
+        two_sided = over is not None and under is not None
+        if two_sided:
+            balance = abs(_implied(over) - _implied(under))
+        else:
+            price = over if over is not None else under
+            balance = 10.0 + (abs(price) / 1000.0 if price is not None else 5.0)
+        key = (0 if two_sided else 1, balance)
+        if best_key is None or key < best_key:
+            best, best_key = point, key
+    return best, (points.get(best) or {})
+
+
+def _implied(price):
+    """American odds to implied probability (with the vig still in)."""
+    if price is None:
+        return 0.5
+    return 100.0 / (price + 100.0) if price > 0 else -price / (-price + 100.0)
+
+
 def _median(xs):
     if not xs:
         return None
     s = sorted(xs)
     return s[len(s) // 2]
+
+
+class Budget:
+    """Credit pacing shared by every league, persisted next to the caches.
+
+    ``remaining`` is what the API's own header last reported; until the first
+    call of a month it is assumed to be the plan's allowance. Today's spend is
+    kept so several runs in one day share one daily allowance.
+    """
+
+    def __init__(self, cache_dir, now=None):
+        self.path = os.path.join(cache_dir, 'odds_budget.json')
+        self.now = now or datetime.now(timezone.utc)
+        self.monthly = num(os.environ.get('ODDS_MONTHLY_CREDITS'), MONTHLY_CREDITS) or MONTHLY_CREDITS
+        state = read_json(self.path, {}) or {}
+        month, day = self.now.strftime('%Y-%m'), self.now.strftime('%Y-%m-%d')
+        if state.get('month') != month:
+            state = {'month': month, 'spent_month': 0, 'remaining': None}
+        if state.get('day') != day:
+            state['day'], state['spent_today'] = day, 0
+        self.state = state
+
+    @property
+    def remaining(self):
+        r = self.state.get('remaining')
+        return self.monthly - self.state.get('spent_month', 0) if r is None else r
+
+    def daily_allowance(self):
+        days_in_month = calendar.monthrange(self.now.year, self.now.month)[1]
+        days_left = days_in_month - self.now.day + 1
+        return max(0.0, (self.remaining - MIN_REMAINING) / days_left)
+
+    def can_spend(self, cost, first_of_day_ok=True):
+        spent = self.state.get('spent_today', 0)
+        if spent == 0 and first_of_day_ok and self.remaining - cost > MIN_REMAINING:
+            return True                  # never let a day go entirely blank
+        return spent + cost <= self.daily_allowance()
+
+    def spend(self, cost, remaining=None):
+        self.state['spent_today'] = self.state.get('spent_today', 0) + cost
+        self.state['spent_month'] = self.state.get('spent_month', 0) + cost
+        if remaining is not None:
+            self.state['remaining'] = remaining
+
+    def save(self):
+        self.state['updated'] = now_iso()
+        write_json(self.path, self.state, indent=None)
 
 
 def load_lines(league_key, games, http=None, cache_dir=None):
@@ -202,7 +289,8 @@ def load_lines(league_key, games, http=None, cache_dir=None):
 
     now = datetime.now(timezone.utc)
     refresh = timedelta(hours=num(os.environ.get('ODDS_REFRESH_HOURS'), REFRESH_HOURS))
-    soon = []
+    budget = Budget(cache_dir, now)
+    fresh, stale = [], []
     for g in games:
         if g['final']:
             continue
@@ -212,22 +300,31 @@ def load_lines(league_key, games, http=None, cache_dir=None):
         if start < now or start - now > timedelta(hours=AHEAD_HOURS):
             continue
         fetched = parse_iso((cache.get(g['game_id']) or {}).get('fetched'))
-        if fetched is not None and now - fetched < refresh:
-            continue
-        soon.append(g)
+        if fetched is None:
+            fresh.append((start, g))
+        elif now - fetched >= refresh:
+            stale.append((fetched, g))
+    # A game never priced comes before refreshing one that is; soonest first.
+    soon = [g for _, g in sorted(fresh, key=lambda x: x[0])] + \
+           [g for _, g in sorted(stale, key=lambda x: x[0])]
     status = 'cached'
     if soon:
         events = client.events(league_key)
         matched = match_events(events, soon)
         markets = list(set(MARKETS.get(league_key, {}).values()))
+        cost = len(markets)
         for g in soon:
             ev_id = matched.get(g['game_id'])
             if not ev_id:
                 continue
+            if not budget.can_spend(cost):
+                status = 'budgeted'          # the rest waits for tomorrow's allowance
+                break
             payload = client.event_props(league_key, ev_id, markets)
             if payload is None:
                 status = 'exhausted' if client.remaining is not None and client.remaining <= MIN_REMAINING else status
                 continue
+            budget.spend(cost, client.remaining)
             lines = consensus_lines(payload, league_key)
             if not lines and (cache.get(g['game_id']) or {}).get('lines'):
                 continue                     # a blank answer never erases lines we have
@@ -238,6 +335,7 @@ def load_lines(league_key, games, http=None, cache_dir=None):
         cutoff = str((now - timedelta(days=5)).date())
         cache = {gid: v for gid, v in cache.items() if (v.get('date') or '') >= cutoff}
         write_json(path, cache, indent=None)
+        budget.save()
     out = {}
     for gid, v in cache.items():
         lines = {}

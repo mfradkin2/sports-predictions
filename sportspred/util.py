@@ -98,6 +98,29 @@ def poisson_sf(k, lam):
     return clamp(1.0 - poisson_cdf(k, lam), 0.0, 1.0)
 
 
+def binom_sf(k, n, p):
+    """P(X > k) for a binomial with (possibly fractional) n trials.
+
+    Fractional trials are interpolated between the two whole-number cases so
+    a 3.8-at-bat hitter sits between 3 and 4, not at one of them.
+    """
+    p = clamp(p, 0.0, 1.0)
+    lo = int(math.floor(n))
+    frac = n - lo
+
+    def sf_int(m):
+        if m <= 0:
+            return 0.0
+        total = 0.0
+        for i in range(0, min(k, m) + 1):
+            total += math.comb(m, i) * (p ** i) * ((1 - p) ** (m - i))
+        return clamp(1.0 - total, 0.0, 1.0)
+
+    if frac < 1e-9:
+        return sf_int(lo)
+    return (1 - frac) * sf_int(lo) + frac * sf_int(lo + 1)
+
+
 def negbin_sf(k, mu, var):
     """P(X > k) for a negative binomial with the given mean and variance.
 

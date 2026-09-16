@@ -2,8 +2,10 @@ name: Refresh Sports Predictions
 
 on:
   schedule:
-    # Every hour on the hour.
-    - cron: '0 * * * *'
+    # Hourly, off the top of the hour: GitHub sheds scheduled runs queued at
+    # :00 when its runners are busy, and this repo lost most of a night's
+    # refreshes that way.
+    - cron: '17 * * * *'
   workflow_dispatch:
     inputs:
       lookback_days:

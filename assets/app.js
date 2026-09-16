@@ -326,8 +326,8 @@
     if (!list.length) return null;
     var popular = list.filter(function (p) { return (p.rank || 99) <= 3; });
     var pool = popular.length ? popular : list;
-    var moved = pool.filter(function (p) { return Math.abs(p.edge || 0) >= 0.15; });
-    if (moved.length) return moved.slice().sort(function (a, b) { return Math.abs(b.edge || 0) - Math.abs(a.edge || 0); })[0];
+    var moved = pool.filter(function (p) { return edgeScore(p) >= 1.5; });
+    if (moved.length) return moved.slice().sort(function (a, b) { return edgeScore(b) - edgeScore(a); })[0];
     return pool.slice().sort(function (a, b) { return b.pick_prob - a.pick_prob; })[0];
   }
 
@@ -359,6 +359,24 @@
           '<span class="chev" aria-hidden="true">▾</span></button>' +
         '<div class="prop-list" hidden>' + (p.props || []).map(propRow).join('') + '</div></div>';
     }).join('') + '</div>';
+  }
+
+  // How strong a lean is. Against a book price it is our probability minus
+  // the book's implied probability, in points; without one, the distance the
+  // matchup moved the player off his baseline, scaled to compare.
+  function edgeScore(p) {
+    if (p.edge_pts != null) return Math.abs(p.edge_pts);
+    if (p.line_source === 'book') return 0;   // a one-sided alternate line: nothing to disagree with
+    return Math.abs(p.edge || 0) * 10;
+  }
+  function edgeText(p) {
+    if (p.edge_pts != null) return (p.edge_pts > 0 ? '+' : '') + p.edge_pts.toFixed(1) + ' pts';
+    if (p.edge == null) return '—';
+    return (p.edge > 0 ? '+' : '') + p.edge.toFixed(2) + 'σ';
+  }
+  function edgeClass(p) {
+    var v = p.edge_pts != null ? p.edge_pts : (p.edge || 0) * 10;
+    return v > 2 ? 'better' : (v < -2 ? 'worse' : '');
   }
 
   function lineSource(p) {
@@ -615,7 +633,7 @@
       return true;
     }).sort(function (a, b) {
       if (f.sort === 'conf') return b.prop.pick_prob - a.prop.pick_prob;
-      return Math.abs(b.prop.edge || 0) - Math.abs(a.prop.edge || 0);
+      return edgeScore(b.prop) - edgeScore(a.prop);
     }).slice(0, 250);
 
     var bar = filterShell(
@@ -630,7 +648,7 @@
             (f.pick === v) + '">' + (v === 'all' ? 'All' : v.toUpperCase()) + '</button>';
         }).join('') + '</div>' +
       '<div class="fgroup"><span class="flabel">Sort</span>' +
-        [['edge', 'Model edge'], ['conf', 'Confidence']].map(function (v) {
+        [['edge', 'Edge vs book'], ['conf', 'Confidence']].map(function (v) {
           return '<button class="chip" data-filter="sort" data-value="' + v[0] + '" aria-pressed="' +
             (f.sort === v[0]) + '">' + v[1] + '</button>';
         }).join('') + '</div>' +
@@ -652,8 +670,8 @@
           '<td>' + (isAll() ? '<span class="lg-chip">' + EMOJI[r.league] + '</span> ' : '') + esc(p.label) + '</td>' +
           '<td class="num">' + p.line + '<br>' + lineSource(p) + '</td>' +
           '<td class="num">' + p.proj + '</td>' +
-          '<td class="num ' + (p.edge > 0.05 ? 'better' : (p.edge < -0.05 ? 'worse' : '')) + '">' +
-            (p.edge == null ? '—' : (p.edge > 0 ? '+' : '') + p.edge.toFixed(2) + 'σ') + '</td>' +
+          '<td class="num ' + edgeClass(p) + '"' + (p.book_p != null ? ' title="Book implies ' + pct(p.pick === 'over' ? p.book_p : 1 - p.book_p) + ' for this side"' : '') + '>' +
+            edgeText(p) + '</td>' +
           '<td><span class="pickdir ' + p.pick + '">' + p.pick.toUpperCase() + '</span></td>' +
           '<td class="num"><span class="tag ' + p.conf + '">' + pct(p.pick_prob) + '</span></td>' +
           (graded ? '<td>' + res + '</td>' : '') +
@@ -666,8 +684,9 @@
       ? '<div class="note"><b>Line</b> is the sportsbook consensus (the median where several books post the market). ' +
         '<b>Proj</b> is this site\'s own projection: the player\'s season rate adjusted for the opponent, expected game ' +
         'script, home/away and injuries, corrected by what the graded ledger has learned. The lean and probability are ' +
-        'where that projection lands against the book\'s line, and <b>Edge</b> is that gap in standard deviations. ' +
-        'A market with no line yet stays blank and fills in once a book posts one.</div>'
+        'where that projection lands against the book\'s line. <b>Edge</b> is our probability for that side minus ' +
+        'what the book\'s own price implies (vig removed), in points: +6 pts means we think the lean is six points ' +
+        'likelier than the market does. A market with no line yet stays blank and fills in once a book posts one.</div>'
       : '<div class="note">No sportsbook feed is connected, so <b>Line</b> is derived from each player\'s season baseline ' +
         'and marked <i>model line</i>. <b>Proj</b> is the site\'s matchup-adjusted projection; <b>Edge</b> is how far ' +
         'the matchup moves a player off their baseline, in standard deviations. Add an ODDS_API_KEY secret to price ' +
