@@ -213,7 +213,27 @@ table.grid th {
 }
 table.grid td { padding: 6px 8px; border-bottom: 1px solid var(--line-soft); font-variant-numeric: tabular-nums; }
 table.grid tr:last-child td { border-bottom: none; }
-.num { text-align: right; }
+.num, table.grid th.num { text-align: right; }
+table.grid th.mid { text-align: center; }
+
+/* ── Team / player lookup ─────────────────────────────────────────────── */
+.lookup { position: relative; margin-bottom: 12px; }
+.lookup .search { width: 100%; min-height: 40px; font-size: 14px; }
+.lookup-results {
+  position: absolute; left: 0; right: 0; top: 100%; z-index: 20;
+  background: var(--bg1); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow);
+  max-height: 320px; overflow-y: auto;
+}
+.lookup-item { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; text-align: left; font-size: 13px; }
+.lookup-item:hover, .lookup-item:focus { background: var(--bg3); }
+.lookup-item .kind { margin-left: auto; font-size: 10.5px; color: var(--faint); text-transform: uppercase; letter-spacing: .05em; }
+.lookup-panel { background: var(--bg1); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; margin-bottom: 14px; }
+.lookup-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.lookup-head h2 { margin: 0; font-size: 17px; }
+.lookup-head .close { margin-left: auto; color: var(--muted); font-size: 18px; padding: 4px 8px; }
+.lookup-sub { color: var(--faint); font-size: 12.5px; }
+.linkish { color: var(--accent); font-weight: 600; padding: 0; text-align: left; }
+.linkish:hover { text-decoration: underline; }
 .mid { text-align: center; }
 .better { color: var(--good); font-weight: 600; }
 .worse { color: var(--faint); }

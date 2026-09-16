@@ -731,3 +731,25 @@ class TestBadPriorCacheIsRefetched(unittest.TestCase):
                 self.assertTrue(calls)
             finally:
                 config.DATA_DIR = old
+
+
+class TestPitcherListedAsNonBatter(unittest.TestCase):
+    def test_a_pitcher_marked_dnp_in_the_batting_table_still_counts(self):
+        from sportspred.espn import boxscore_player_stats
+        summary = {'boxscore': {'players': [{'team': {'displayName': 'Cleveland Guardians'}, 'statistics': [
+            {'name': 'batting', 'labels': ['AB', 'R', 'H', 'RBI', 'HR'],
+             'athletes': [
+                 {'athlete': {'id': 'p1', 'displayName': 'Parker Messick'}, 'didNotPlay': True, 'stats': []},
+                 {'athlete': {'id': 'b1', 'displayName': 'Bench Bat'}, 'didNotPlay': True, 'stats': []},
+                 {'athlete': {'id': 'h1', 'displayName': 'Hitter'}, 'stats': ['4', '1', '2', '1', '0']}]},
+            {'name': 'pitching', 'labels': ['IP', 'H', 'R', 'ER', 'BB', 'K', 'HR', 'PC-ST', 'ERA'],
+             'athletes': [
+                 {'athlete': {'id': 'p1', 'displayName': 'Parker Messick'}, 'stats': ['6.0', '5', '2', '2', '1', '7', '0', '95-60', '3.10']}]},
+        ]}]}}
+        box = boxscore_player_stats(summary, 'baseball')
+        self.assertTrue(box['p1']['played'])
+        self.assertEqual(box['p1']['stats']['p_so'], 7)
+        self.assertEqual(box['p1']['stats']['outs'], 18)
+        self.assertFalse(box['b1']['played'])
+        self.assertTrue(box['h1']['played'])
+        self.assertEqual(box['h1']['stats']['hits'], 2)

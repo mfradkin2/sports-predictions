@@ -617,11 +617,21 @@ def boxscore_player_stats(summary, sport):
                 if not aid:
                     continue
                 values = entry.get('stats') or []
+                # A player is listed in every table his sport has (a pitcher
+                # sits in the batting table too, marked as not batting), so
+                # one table's "did not play" only counts if no table shows him
+                # active. Any real stat line settles it.
+                here = not (entry.get('didNotPlay') or entry.get('active') is False)
+                if not here and any(_box_value(v) not in (None, 0) for v in values):
+                    here = True
+                new = aid not in out
                 rec = out.setdefault(aid, {
                     'id': aid, 'name': ath.get('displayName') or ath.get('shortName') or '',
-                    'team': team, 'played': True, 'stats': {}})
-                if entry.get('didNotPlay') or entry.get('active') is False:
-                    rec['played'] = False
+                    'team': team, 'played': here, 'stats': {}})
+                if not new:
+                    rec['played'] = rec['played'] or here
+                if not here:
+                    continue                      # no numbers to read from a DNP line
                 for i, raw in enumerate(values):
                     key = None
                     if i < len(names):

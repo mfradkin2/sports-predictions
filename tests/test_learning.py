@@ -341,3 +341,70 @@ class TestPropsCurve(unittest.TestCase):
             card = ledger.scorecard()
             self.assertEqual([c['date'] for c in card['curve']], ['2026-09-14', '2026-09-15'])
             self.assertEqual(card['curve'][-1]['cum_acc'], round(2 / 4, 4))
+
+
+class TestRecordsBlock(unittest.TestCase):
+    def test_team_and_player_lookups(self):
+        import tempfile
+        from datetime import date
+        from sportspred.learn import PropsLedger
+        from sportspred.pipeline import records_block
+
+        class Mem:
+            ledger = {'g1': {'game_id': 'g1', 'away_team': 'Boston Red Sox', 'home_team': 'New York Yankees'}}
+
+        g = {'game_id': 'g1', 'date': date(2026, 9, 15), 'final': True, 'winner': 'New York Yankees',
+             'home': 'New York Yankees', 'away': 'Boston Red Sox', 'home_score': 5, 'away_score': 2}
+        trained = {'records': [{'game': g, 'prediction': {'prob': 0.6}, 'favored': 'New York Yankees', 'pregame': True},
+                               {'game': dict(g, game_id='late'), 'prediction': {'prob': 0.6}, 'favored': 'Boston Red Sox', 'pregame': False}]}
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = PropsLedger('mlb', history_dir=tmp)
+            base = {'key': 'hits', 'label': 'Hits', 'stat': 'hits_pg', 'dist': 'binomial', 'line': 0.5,
+                    'proj': 1.0, 'season': 1.0, 'over': 0.6, 'pick': 'over', 'conf': 'med'}
+            judge = {'id': '33192', 'name': 'Aaron Judge'}
+            ledger.record({'game_id': 'g1', 'date': '2026-09-15'}, 'home', judge, base)
+            ledger.record({'game_id': 'g1', 'date': '2026-09-15'}, 'home', judge, dict(base, key='rbi', label='RBIs'))
+            for r in ledger.rows.values():
+                r.update(graded='1', played='1', actual='1' if r['key'] == 'hits' else '0', push='0',
+                         hit='1' if r['key'] == 'hits' else '0')
+            out = records_block(trained, ledger, Mem())
+        yank = out['teams']['New York Yankees']
+        self.assertEqual((yank['n'], yank['ok'], yank['picked'], yank['picked_ok']), (1, 1, 1, 1))
+        sox = out['teams']['Boston Red Sox']
+        self.assertEqual((sox['n'], sox['faded'], sox['faded_ok']), (1, 1, 1))   # late pick not counted
+        self.assertEqual(yank['props_n'], 2)
+        self.assertEqual(yank['props_by_key']['hits']['hit'], 1)
+        j = out['players']['33192']
+        self.assertEqual(j['name'], 'Aaron Judge')
+        self.assertEqual(j['team'], 'New York Yankees')
+        self.assertEqual((j['n'], j['hit']), (2, 1))
+        self.assertEqual(j['by_key']['rbi']['hit'], 0)
+        self.assertEqual(j['recent'][0]['opp'], 'Boston Red Sox')
+
+
+class TestDidNotPlayIsRetried(unittest.TestCase):
+    def test_a_recent_dnp_verdict_is_regraded_but_a_real_result_is_not(self):
+        import tempfile
+        from datetime import date
+        from sportspred.learn import PropsLedger
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = PropsLedger('mlb', history_dir=tmp)
+            base = {'key': 'k', 'label': 'Strikeouts', 'stat': 'p_so_pg', 'dist': 'poisson', 'line': 5.5,
+                    'proj': 6.0, 'season': 6.0, 'over': 0.55, 'pick': 'over', 'conf': 'low'}
+            ledger.record({'game_id': 'g', 'date': '2026-09-16'}, 'home', {'id': 'p1'}, base)
+            ledger.record({'game_id': 'g', 'date': '2026-09-16'}, 'home', {'id': 'h1'}, dict(base, key='hits', label='Hits', line=0.5, stat='hits_pg'))
+            ledger.record({'game_id': 'old', 'date': '2026-09-01'}, 'home', {'id': 'p2'}, base)
+            # First pass: the pitcher is missing from the box, the hitter has 2 hits.
+            ledger.grade_game('g', {'h1': {'played': True, 'stats': {'hits': 2}}})
+            ledger.grade_game('old', {})
+            rows = {(r['game_id'], r['athlete_id']): r for r in ledger.rows.values()}
+            self.assertEqual(rows[('g', 'p1')]['played'], '0')
+            self.assertEqual(rows[('g', 'h1')]['hit'], '1')
+            today = date(2026, 9, 17)
+            self.assertEqual(ledger.ungraded_games({'g', 'old'}, today=today), ['g'])   # old DNP is final
+            # Second pass: the pitcher now shows up with 7 strikeouts; the hitter's row is untouched.
+            ledger.grade_game('g', {'p1': {'played': True, 'stats': {'p_so': 7}},
+                                    'h1': {'played': True, 'stats': {'hits': 0}}})
+            rows = {(r['game_id'], r['athlete_id']): r for r in ledger.rows.values()}
+            self.assertEqual((rows[('g', 'p1')]['played'], rows[('g', 'p1')]['hit']), ('1', '1'))
+            self.assertEqual(rows[('g', 'h1')]['hit'], '1')

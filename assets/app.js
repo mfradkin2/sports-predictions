@@ -90,6 +90,18 @@
     if (DATA[league]) return done();
     loadScript(league, 'data/' + league + '.js', done);
   }
+  var RECORDS = {};
+  function loadRecords(leagues, done) {
+    var pending = leagues.filter(function (k) { return !RECORDS[k]; });
+    if (!pending.length) return done();
+    var left = pending.length;
+    pending.forEach(function (k) {
+      loadScript(k + ':records', 'data/' + k + '-records.js', function () {
+        RECORDS[k] = (window.SP_RECORDS || {})[k] || { teams: {}, players: {} }; if (--left === 0) done();
+      });
+    });
+  }
+
   function loadHistory(leagues, done) {
     var pending = leagues.filter(function (k) { return !HISTORY[k]; });
     if (!pending.length) return done();
@@ -181,7 +193,8 @@
     var awayCls = g.final ? (g.winner === g.away ? 'won' : 'lost') : (homePick ? '' : 'pick');
     var homeCls = g.final ? (g.winner === g.home ? 'won' : 'lost') : (homePick ? 'pick' : '');
     var result = g.correct == null ? '' :
-      '<span class="tag ' + (g.correct ? 'ok' : 'no') + '">' + (g.correct ? '✓' : '✗') + '</span>';
+      '<span class="tag ' + (g.correct ? 'ok' : 'no') + '" title="Our pick was ' + (g.correct ? 'correct' : 'incorrect') + '">' +
+        (g.correct ? '✓ CORRECT' : '✗ INCORRECT') + '</span>';
     var propCount = g.props ? countProps(g.props) : 0;
     var pendingCount = g.props ? countProps(g.props, true) - propCount : 0;
     var tally = propTally(g);
@@ -345,7 +358,7 @@
       var hits = (p.props || []).filter(function (x) { return x.hit != null; });
       var nHit = hits.filter(function (x) { return x.hit; }).length;
       var record = hits.length ? '<span class="tag ' + (nHit >= hits.length / 2 ? 'ok' : 'no') + '" title="Props predicted correctly">' +
-        (nHit >= hits.length / 2 ? '✓ ' : '✗ ') + nHit + '/' + hits.length + '</span>' : '';
+        nHit + ' of ' + hits.length + ' correct</span>' : '';
       var shot = p.headshot ? '<img class="pshot" src="' + esc(p.headshot) + '" alt="" loading="lazy" decoding="async">' : '<span class="pshot" aria-hidden="true"></span>';
       return '<div class="player" data-player="' + i + '" data-athlete="' + esc(p.id || '') + '">' +
         '<button class="player-head" aria-expanded="false">' + shot +
@@ -388,9 +401,10 @@
 
   function propOutcome(p) {
     var unit = p.unit ? ' ' + esc(p.unit.toLowerCase()) : '';
-    if (p.push) return '<span class="prop-live low">PUSH · ' + p.actual + unit + '</span>';
+    var vs = p.line != null ? ' (line ' + p.line + ')' : '';
+    if (p.push) return '<span class="prop-live low">PUSH · had ' + p.actual + unit + vs + '</span>';
     if (p.hit != null) return '<span class="prop-live ' + (p.hit ? 'ok' : 'no') + '">' +
-      (p.hit ? '✓ CORRECT' : '✗ INCORRECT') + ' · ' + p.actual + unit + '</span>';
+      (p.hit ? '✓ CORRECT' : '✗ INCORRECT') + ' · had ' + p.actual + unit + vs + '</span>';
     if (p.played === false) return '<span class="prop-live low">DID NOT PLAY</span>';
     return '';
   }
@@ -662,8 +676,8 @@
       '<th class="num">Edge</th><th>Our pick</th><th class="num">Chance</th>' + (graded ? '<th>Result</th>' : '') + '<th>Game</th></tr></thead><tbody>' +
       list.map(function (r) {
         var p = r.prop;
-        var res = p.push ? '<span class="tag low">PUSH</span>'
-          : (p.hit != null ? '<span class="tag ' + (p.hit ? 'ok' : 'no') + '">' + (p.hit ? '✓ ' : '✗ ') + p.actual + '</span>' : '');
+        var res = p.push ? '<span class="tag low">PUSH · had ' + p.actual + '</span>'
+          : (p.hit != null ? '<span class="tag ' + (p.hit ? 'ok' : 'no') + '">' + (p.hit ? '✓ correct' : '✗ wrong') + ' · had ' + p.actual + '</span>' : '');
         return '<tr><td><b>' + esc(r.player.name) + '</b><br><span style="color:var(--faint)">' +
             esc(r.player.pos || '') + '</span></td>' +
           '<td>' + (isAll() ? '<span class="lg-chip">' + EMOJI[r.league] + '</span> ' : '') + esc(p.label) + '</td>' +
@@ -714,9 +728,103 @@
       }).join('') + '</tbody></table></div>';
   }
 
+  // ── team / player lookup ─────────────────────────────────────────────────
+  function lookupEntries() {
+    var out = [];
+    leaguesInView().forEach(function (k) {
+      var r = RECORDS[k] || {};
+      Object.keys(r.teams || {}).forEach(function (name) {
+        var t = r.teams[name];
+        if (t.n || t.props_n) out.push({ league: k, kind: 'team', id: name, name: name, sub: LABEL[k] });
+      });
+      Object.keys(r.players || {}).forEach(function (id) {
+        var p = r.players[id];
+        if (p.n) out.push({ league: k, kind: 'player', id: id, name: p.name, sub: (p.team ? p.team + ' · ' : '') + LABEL[k] });
+      });
+    });
+    return out;
+  }
+  function lookupBox() {
+    var q = state.lookupQuery || '';
+    var hits = [];
+    if (q.trim().length >= 2) {
+      var needle = q.trim().toLowerCase();
+      hits = lookupEntries().filter(function (e) { return e.name.toLowerCase().indexOf(needle) >= 0; })
+        .sort(function (a, b) { return (a.kind === b.kind ? 0 : (a.kind === 'team' ? -1 : 1)) || a.name.localeCompare(b.name); })
+        .slice(0, 12);
+    }
+    return '<div class="lookup"><input class="search" id="lookup" type="search" placeholder="Look up a team or player (e.g. Yankees, Aaron Judge)…" ' +
+      'value="' + esc(q) + '" aria-label="Look up a team or player" autocomplete="off">' +
+      (hits.length ? '<div class="lookup-results">' + hits.map(function (e) {
+        return '<button class="lookup-item" data-lookup="' + e.league + '|' + e.kind + '|' + esc(e.id) + '">' +
+          '<span>' + EMOJI[e.league] + '</span><b>' + esc(e.name) + '</b><span style="color:var(--faint)">' + esc(e.sub) + '</span>' +
+          '<span class="kind">' + e.kind + '</span></button>';
+      }).join('') + '</div>' : (q.trim().length >= 2 ? '<div class="lookup-results"><div class="lookup-item" style="color:var(--faint)">No graded picks for that name yet.</div></div>' : '')) +
+      '</div>';
+  }
+  function rate(ok, n) { return n ? pct(ok / n, 1) : '—'; }
+  function rateCls(ok, n) { return n >= 5 ? (ok / n >= 0.55 ? 'better' : (ok / n < 0.45 ? 'worse' : '')) : ''; }
+  function byKeyTable(byKey, title) {
+    var keys = Object.keys(byKey || {}).sort(function (a, b) { return byKey[b].n - byKey[a].n; });
+    if (!keys.length) return '';
+    return '<div class="section-title">' + esc(title) + '</div><div class="scroll-x"><table class="grid"><thead><tr>' +
+      '<th>Prop</th><th class="num">Graded</th><th class="num">Correct</th><th class="num">Hit rate</th></tr></thead><tbody>' +
+      keys.map(function (k) {
+        var r = byKey[k];
+        return '<tr><td>' + esc(r.label || k) + '</td><td class="num">' + r.n + '</td><td class="num">' + r.hit + '</td>' +
+          '<td class="num ' + rateCls(r.hit, r.n) + '">' + rate(r.hit, r.n) + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  function lookupPanel() {
+    var sel = state.lookup;
+    if (!sel) return '';
+    var r = RECORDS[sel.league] || {};
+    var head = function (title, sub) {
+      return '<div class="lookup-head"><span style="font-size:20px">' + EMOJI[sel.league] + '</span><div><h2>' + esc(title) + '</h2>' +
+        '<div class="lookup-sub">' + esc(sub) + '</div></div><button class="close" data-lookup-close aria-label="Close">×</button></div>';
+    };
+    if (sel.kind === 'team') {
+      var t = (r.teams || {})[sel.id];
+      if (!t) return '';
+      var out = '<div class="lookup-panel">' + head(t.name, LABEL[sel.league] + ' · track record') +
+        '<div class="section-title">Game picks in ' + esc(t.name) + ' games</div><div class="cards">' +
+        card('All their games', rate(t.ok, t.n), t.ok + ' of ' + t.n + ' picks correct') +
+        card('When we picked them', rate(t.picked_ok, t.picked), t.picked ? t.picked_ok + ' of ' + t.picked + ' correct' : 'never yet') +
+        card('When we picked against them', rate(t.faded_ok, t.faded), t.faded ? t.faded_ok + ' of ' + t.faded + ' correct' : 'never yet') +
+        card('Their players\' props', rate(t.props_hit, t.props_n), t.props_n ? t.props_hit + ' of ' + t.props_n + ' correct' : 'none graded yet') + '</div>';
+      if (t.recent && t.recent.length) {
+        out += '<div class="section-title">Recent games</div><div class="scroll-x"><table class="grid"><thead><tr>' +
+          '<th>Date</th><th>Game</th><th>Our pick</th><th>Score</th><th>Result</th></tr></thead><tbody>' +
+          t.recent.map(function (x) {
+            return '<tr><td>' + shortDate(x.date) + '</td><td>' + (x.home ? esc(x.opp) + ' @ ' + esc(t.name) : esc(t.name) + ' @ ' + esc(x.opp)) + '</td>' +
+              '<td>' + (x.picked ? esc(t.name) : esc(x.opp)) + '</td><td>' + esc(x.score) + '</td>' +
+              '<td><span class="tag ' + (x.ok ? 'ok' : 'no') + '">' + (x.ok ? '✓ correct' : '✗ wrong') + '</span></td></tr>';
+          }).join('') + '</tbody></table></div>';
+      }
+      out += byKeyTable(t.props_by_key, 'Their players\' props by type');
+      return out + '</div>';
+    }
+    var p = (r.players || {})[sel.id];
+    if (!p) return '';
+    var out2 = '<div class="lookup-panel">' + head(p.name, (p.team ? p.team + ' · ' : '') + LABEL[sel.league] + ' · prop track record') +
+      '<div class="cards">' + card('All props', rate(p.hit, p.n), p.hit + ' of ' + p.n + ' correct') + '</div>' +
+      byKeyTable(p.by_key, 'By prop type');
+    if (p.recent && p.recent.length) {
+      out2 += '<div class="section-title">Recent props</div><div class="scroll-x"><table class="grid"><thead><tr>' +
+        '<th>Date</th><th>Opponent</th><th>Prop</th><th class="num">Line</th><th>Our pick</th><th class="num">Actual</th><th>Result</th></tr></thead><tbody>' +
+        p.recent.map(function (x) {
+          return '<tr><td>' + shortDate(x.date) + '</td><td>' + esc(x.opp || '') + '</td><td>' + esc(x.label) + '</td>' +
+            '<td class="num">' + (x.line == null ? '—' : x.line) + '</td><td>' + esc((x.pick || '').toUpperCase()) + '</td>' +
+            '<td class="num">' + (x.actual == null ? '—' : x.actual) + '</td>' +
+            '<td><span class="tag ' + (x.hit ? 'ok' : 'no') + '">' + (x.hit ? '✓ correct' : '✗ wrong') + '</span></td></tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    return out2 + '</div>';
+  }
+
   function recordView() {
     var leagues = leaguesInView();
-    var out = '<div class="note"><b>How this page works.</b> Every pick is locked the moment a game starts and graded ' +
+    var out = lookupBox() + lookupPanel() + '<div class="note"><b>How this page works.</b> Every pick is locked the moment a game starts and graded ' +
       'when it ends. A game pick is correct when the team we chose wins. A player prop is correct when the player\'s ' +
       'final number lands on the side we picked; landing exactly on the line is a push and is not counted. ' +
       'Picks made after a game had already started never count. 50% is a coin flip.</div>';
@@ -739,6 +847,24 @@
     if (!isAll()) {
       var m = (cur() || {}).model || {};
       if (m.curve && m.curve.length > 3) out += curveSvg(m.curve, 'Game picks over time');
+    }
+    var teamRows = [];
+    leagues.forEach(function (k) {
+      var ts = (RECORDS[k] || {}).teams || {};
+      Object.keys(ts).forEach(function (name) { if (ts[name].n) teamRows.push({ league: k, t: ts[name] }); });
+    });
+    if (teamRows.length) {
+      teamRows.sort(function (a, b) { return b.t.n - a.t.n || a.t.name.localeCompare(b.t.name); });
+      out += '<div><div class="section-title">By team</div><div class="scroll-x"><table class="grid"><thead><tr>' +
+        '<th>Team</th><th class="num">Games</th><th class="num">Correct</th><th class="num">Hit rate</th>' +
+        '<th class="num">Picked them</th><th class="num">Picked against</th></tr></thead><tbody>' +
+        teamRows.map(function (x) {
+          var t = x.t;
+          return '<tr><td><button class="linkish" data-lookup="' + x.league + '|team|' + esc(t.name) + '">' + (isAll() ? EMOJI[x.league] + ' ' : '') + esc(t.name) + '</button></td>' +
+            '<td class="num">' + t.n + '</td><td class="num">' + t.ok + '</td><td class="num ' + rateCls(t.ok, t.n) + '">' + rate(t.ok, t.n) + '</td>' +
+            '<td class="num">' + (t.picked ? t.picked_ok + ' of ' + t.picked : '—') + '</td>' +
+            '<td class="num">' + (t.faded ? t.faded_ok + ' of ' + t.faded : '—') + '</td></tr>';
+        }).join('') + '</tbody></table></div><div class="lookup-sub" style="margin-top:6px">Tap a team for its full record, or search a player above.</div></div>';
     }
 
     // ── props ──
@@ -775,6 +901,22 @@
     if (!isAll()) {
       var prc = ((cur() || {}).props_record || {}).curve || [];
       if (prc.length > 3) out += curveSvg(prc, 'Player props over time');
+    }
+    var playerRows = [];
+    leagues.forEach(function (k) {
+      var ps = (RECORDS[k] || {}).players || {};
+      Object.keys(ps).forEach(function (id) { if (ps[id].n >= 3) playerRows.push({ league: k, p: ps[id] }); });
+    });
+    if (playerRows.length) {
+      playerRows.sort(function (a, b) { return b.p.n - a.p.n || a.p.name.localeCompare(b.p.name); });
+      out += '<div><div class="section-title">By player (most graded first)</div><div class="scroll-x"><table class="grid"><thead><tr>' +
+        '<th>Player</th><th>Team</th><th class="num">Props</th><th class="num">Correct</th><th class="num">Hit rate</th></tr></thead><tbody>' +
+        playerRows.slice(0, 40).map(function (x) {
+          var p = x.p;
+          return '<tr><td><button class="linkish" data-lookup="' + x.league + '|player|' + esc(p.id) + '">' + (isAll() ? EMOJI[x.league] + ' ' : '') + esc(p.name) + '</button></td>' +
+            '<td style="color:var(--muted)">' + esc(p.team || '') + '</td><td class="num">' + p.n + '</td><td class="num">' + p.hit + '</td>' +
+            '<td class="num ' + rateCls(p.hit, p.n) + '">' + rate(p.hit, p.n) + '</td></tr>';
+        }).join('') + '</tbody></table></div><div class="lookup-sub" style="margin-top:6px">Showing players with at least three graded props. Search above for anyone else.</div></div>';
     }
     if (!gN && !pN) out += '<div class="empty"><span class="icon">🏆</span>Nothing has been graded yet. The record starts with the first finished game.</div>';
 
@@ -877,6 +1019,15 @@
       root.innerHTML = '<div class="games"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
       return;
     }
+    if (state.view === 'record' || state.view === 'model') {
+      var needR = leaguesInView().filter(function (k) { return !RECORDS[k]; });
+      if (needR.length) {
+        root.innerHTML = '<div class="games"><div class="skeleton"></div><div class="skeleton"></div></div>';
+        var wantR = state.league;
+        loadRecords(needR, function () { if (state.league === wantR && (state.view === 'record' || state.view === 'model')) render(); });
+        return;
+      }
+    }
     if (state.view === 'results') {
       var need = leaguesInView().filter(function (k) { return !HISTORY[k]; });
       if (need.length) {
@@ -910,6 +1061,17 @@
     if (sport) { go(sport.dataset.league, state.view); return; }
     var view = ev.target.closest('.view-tab');
     if (view) { go(state.league, view.dataset.view); return; }
+    var pick = ev.target.closest('[data-lookup]');
+    if (pick) {
+      var lp = pick.dataset.lookup.split('|');
+      state.lookup = { league: lp[0], kind: lp[1], id: lp.slice(2).join('|') };
+      state.lookupQuery = '';
+      render();
+      var panel = document.querySelector('.lookup-panel');
+      if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    if (ev.target.closest('[data-lookup-close]')) { state.lookup = null; render(); return; }
     var jump = ev.target.closest('[data-jump]');
     if (jump) {
       var parts = jump.dataset.jump.split('|');
@@ -962,6 +1124,17 @@
   });
   var searchTimer = null;
   document.addEventListener('input', function (ev) {
+    if (ev.target.id === 'lookup') {
+      state.lookupQuery = ev.target.value;
+      // Redraw only the search box so typing keeps its focus.
+      var box = ev.target.closest('.lookup');
+      if (box) {
+        var v = ev.target.value, caret = ev.target.selectionStart;
+        box.outerHTML = lookupBox();
+        var again = el('lookup'); if (again) { again.focus(); again.setSelectionRange(caret, caret); }
+      }
+      return;
+    }
     if (ev.target.id === 'search') {
       clearTimeout(searchTimer);
       var v = ev.target.value;
@@ -1144,11 +1317,11 @@
             var ok = over === (row.dataset.pick === 'over');
             chip.hidden = false;
             var shown = Math.round(v * 10) / 10;
-            if (!final) { chip.className = 'prop-live live'; chip.textContent = 'Now: ' + shown; }
-            else if (push) { chip.className = 'prop-live low'; chip.textContent = 'PUSH · ' + shown; }
+            if (!final) { chip.className = 'prop-live live'; chip.textContent = 'Now: ' + shown + ' (line ' + line + ')'; }
+            else if (push) { chip.className = 'prop-live low'; chip.textContent = 'PUSH · had ' + shown + ' (line ' + line + ')'; }
             else {
               chip.className = 'prop-live ' + (ok ? 'ok' : 'no');
-              chip.textContent = (ok ? '✓ CORRECT' : '✗ INCORRECT') + ' · ' + shown;
+              chip.textContent = (ok ? '✓ CORRECT' : '✗ INCORRECT') + ' · had ' + shown + ' (line ' + line + ')';
               row.classList.add(ok ? 'right' : 'wrong');
             }
             var range = row.querySelector('.prop-range');

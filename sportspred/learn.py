@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import math
 import os
+from datetime import date, timedelta
 
 from . import config
 from .features import detect_preseason
@@ -455,11 +456,21 @@ class PropsLedger:
                 t['hit'] += int(r['hit'])
         return {gid: t for gid, t in out.items() if t['n'] or t['push']}
 
-    def ungraded_games(self, finished_ids):
-        """Game ids that have finished and still hold ungraded props."""
+    RETRY_DNP_DAYS = 3
+
+    def ungraded_games(self, finished_ids, today=None):
+        """Game ids that have finished and still hold ungraded props, plus
+        recent games where someone was marked did-not-play: a box score can
+        list a player late or under another table, so that verdict is
+        re-checked for a few days before it is final."""
         wanted = set()
+        cutoff = str((today or date.today()) - timedelta(days=self.RETRY_DNP_DAYS))
         for r in self.rows.values():
-            if r.get('graded') != '1' and r.get('game_id') in finished_ids:
+            if r.get('game_id') not in finished_ids:
+                continue
+            if r.get('graded') != '1':
+                wanted.add(r['game_id'])
+            elif r.get('played') == '0' and (r.get('game_date') or '') >= cutoff:
                 wanted.add(r['game_id'])
         return sorted(wanted)
 
@@ -467,8 +478,10 @@ class PropsLedger:
         """Grade every prop for one game from ``boxscore_player_stats`` output."""
         graded = 0
         for r in self.rows.values():
-            if r.get('game_id') != game_id or r.get('graded') == '1':
+            if r.get('game_id') != game_id:
                 continue
+            if r.get('graded') == '1' and r.get('played') != '0':
+                continue                      # a real result is never rewritten
             entry = box.get(str(r.get('athlete_id')))
             r['graded'] = '1'
             if not entry or not entry.get('played', True):

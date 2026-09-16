@@ -52,6 +52,7 @@ def write_payload(payload):
     """
     league = payload['league']
     history = payload.pop('history', [])
+    records = payload.pop('records', {'teams': {}, 'players': {}})
     body = js_safe(json.dumps(payload, separators=(',', ':'), default=str, sort_keys=False))
     js = ('window.SP_DATA=window.SP_DATA||{};\n'
           f'window.SP_DATA[{json.dumps(league)}]={body};\n')
@@ -69,6 +70,14 @@ def write_payload(payload):
     with open(tmp, 'w', encoding='utf-8') as f:
         f.write(hist_js)
     os.replace(tmp, hist_path)
+    rec_js = ('window.SP_RECORDS=window.SP_RECORDS||{};\n'
+              f'window.SP_RECORDS[{json.dumps(league)}]='
+              + js_safe(json.dumps(records, separators=(',', ':'), default=str)) + ';\n')
+    rec_path = os.path.join(config.DATA_DIR, f'{league}-records.js')
+    tmp = rec_path + '.tmp'
+    with open(tmp, 'w', encoding='utf-8') as f:
+        f.write(rec_js)
+    os.replace(tmp, rec_path)
     # No separate .json copy: these files are rewritten every hour, and the
     # payload below is already a single JSON object behind a one-line
     # assignment. Anything wanting the raw numbers can strip that prefix.

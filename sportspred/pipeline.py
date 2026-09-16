@@ -186,6 +186,7 @@ def run(league_key, fetch_props=True, http=None, tune=True):
                             injuries=injuries, props_record=props_record,
                             props_tuning=props_tuning, lines_status=lines_status,
                             props_tallies=props_ledger.tallies())
+    payload['records'] = records_block(trained, props_ledger, memory)
 
     memory.save_archive()
     memory.save_ledger()
@@ -752,6 +753,95 @@ def conf_tier(prob):
     if p >= 0.57:
         return 'med'
     return 'low'
+
+
+RECENT_PER_ENTRY = 8      # graded games / props kept per team or player lookup
+
+
+def records_block(trained, props_ledger, memory):
+    """Per-team and per-player track records for the lookup on the Track
+    Record page. Shipped in a separate lazily loaded file, so it can be as
+    detailed as the ledgers allow without slowing the first paint.
+
+    Teams: game picks involving the team (and split by whether we picked them
+    or against them), their players' props by prop type, and recent graded
+    games. Players: props by prop type and the most recent graded props.
+    Only picks made before game time count, the same rule as everywhere else.
+    """
+    teams, players = {}, {}
+
+    def team_slot(name):
+        return teams.setdefault(name, {
+            'name': name, 'n': 0, 'ok': 0, 'picked': 0, 'picked_ok': 0,
+            'faded': 0, 'faded_ok': 0, 'props_n': 0, 'props_hit': 0,
+            'props_by_key': {}, 'recent': []})
+
+    for rec in trained['records']:
+        g = rec['game']
+        if not g['final'] or not g['winner'] or 'prediction' not in rec:
+            continue
+        if g.get('preseason') or not rec.get('pregame'):
+            continue
+        ok = rec['favored'] == g['winner']
+        for team, opp, home in ((g['home'], g['away'], True), (g['away'], g['home'], False)):
+            t = team_slot(team)
+            t['n'] += 1
+            t['ok'] += int(ok)
+            picked_us = rec['favored'] == team
+            if picked_us:
+                t['picked'] += 1
+                t['picked_ok'] += int(ok)
+            else:
+                t['faded'] += 1
+                t['faded_ok'] += int(ok)
+            t['recent'].append({
+                'date': str(g['date']), 'opp': opp, 'home': home,
+                'picked': picked_us, 'ok': ok,
+                'score': f"{int(g['away_score'] or 0)}-{int(g['home_score'] or 0)}",
+            })
+
+    # Which team each prop row belongs to comes from the game ledger.
+    game_teams = {}
+    for gid, row in memory.ledger.items():
+        game_teams[str(row.get('game_id') or gid)] = (row.get('away_team', ''), row.get('home_team', ''))
+
+    for r in props_ledger.rows.values():
+        if r.get('graded') != '1' or r.get('played') != '1' or r.get('hit') not in ('0', '1'):
+            continue
+        hit = int(r['hit'])
+        away, home = game_teams.get(str(r.get('game_id')), ('', ''))
+        team = home if r.get('side') == 'home' else away
+        opp = away if r.get('side') == 'home' else home
+        pid = str(r.get('athlete_id') or '')
+        if not pid:
+            continue
+        pl = players.setdefault(pid, {
+            'id': pid, 'name': r.get('player', ''), 'team': team, 'n': 0, 'hit': 0,
+            'by_key': {}, 'recent': []})
+        pl['n'] += 1
+        pl['hit'] += hit
+        if team:
+            pl['team'] = team
+        k = pl['by_key'].setdefault(r['key'], {'label': r.get('label', r['key']), 'n': 0, 'hit': 0})
+        k['n'] += 1
+        k['hit'] += hit
+        pl['recent'].append({
+            'date': r.get('game_date', ''), 'opp': opp, 'label': r.get('label', r['key']),
+            'line': num(r.get('line')), 'pick': r.get('pick', ''), 'actual': num(r.get('actual')),
+            'hit': bool(hit)})
+        if team:
+            t = team_slot(team)
+            t['props_n'] += 1
+            t['props_hit'] += hit
+            tk = t['props_by_key'].setdefault(r['key'], {'label': r.get('label', r['key']), 'n': 0, 'hit': 0})
+            tk['n'] += 1
+            tk['hit'] += hit
+
+    for t in teams.values():
+        t['recent'] = sorted(t['recent'], key=lambda x: x['date'], reverse=True)[:RECENT_PER_ENTRY]
+    for pl in players.values():
+        pl['recent'] = sorted(pl['recent'], key=lambda x: x['date'], reverse=True)[:RECENT_PER_ENTRY]
+    return {'teams': teams, 'players': players}
 
 
 def accuracy_block(trained):
