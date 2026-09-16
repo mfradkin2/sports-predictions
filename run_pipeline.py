@@ -29,11 +29,13 @@ def main(argv):
     do_ingest = '--no-ingest' not in flags
     tune = '--no-tune' not in flags
 
-    http = Http(budget_s=240) if fetch_props else None
     payloads, failures = {}, []
 
     for key in leagues:
         print(f'\n=== {LEAGUES[key]["name"]} ===')
+        # Each league gets its own request budget: with four sports in season
+        # a shared one ran out before the last league had fetched anything.
+        http = Http(budget_s=300) if fetch_props else None
         if do_ingest:
             try:
                 ingest.run(key, http=Http(timeout=15, retries=2, pause=0.15, budget_s=600))

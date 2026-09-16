@@ -16,7 +16,7 @@ from .util import (Http, clamp, format_eastern, now_iso, num, parse_iso, read_cs
 RECENT_DAYS = 21        # how far back the Results view can reach
 LIVE_RECENT_DAYS = 4    # finished games kept in the first-paint payload
 UPCOMING_DAYS = 14
-GRADE_CAP = 40          # box scores fetched per run to grade finished props
+GRADE_CAP = 60          # box scores fetched per run to grade finished props
 # Price props only this close to kickoff: further out the lineups are guesses
 # and the payload balloons. Football plays once a week with lineups known days
 # ahead, so it gets the whole week.

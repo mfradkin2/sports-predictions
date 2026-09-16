@@ -428,3 +428,49 @@ class TestEdgeAgainstTheBook(unittest.TestCase):
         # No prices, no book edge.
         q = props._price(spec, 1.0, 1.0, {'line': 0.5, 'books': 1, 'book': 'X'})
         self.assertNotIn('edge_pts', q)
+
+
+class TestLeagueShare(unittest.TestCase):
+    def test_a_league_cannot_take_the_whole_day_from_the_others(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            old = os.environ.get('ODDS_MONTHLY_CREDITS')
+            os.environ['ODDS_MONTHLY_CREDITS'] = str(odds.MIN_REMAINING + 31 * 100)   # 100 a day
+            try:
+                b = odds.Budget(tmp, datetime(2026, 9, 1, tzinfo=timezone.utc))
+                b.spend(10, league='mlb')                      # the first-of-day fetch
+                # MLB may keep going until it has used what the others have not.
+                spent = 10
+                while b.can_spend(10, 'mlb'):
+                    b.spend(10, league='mlb'); spent += 10
+                self.assertEqual(spent, 100)                   # nobody else has spent: all of it
+                # But once NHL has spent, MLB's share is capped at the remainder or a quarter.
+                b2 = odds.Budget(tmp, datetime(2026, 9, 2, tzinfo=timezone.utc))
+                b2.spend(60, league='nhl')
+                self.assertTrue(b2.can_spend(10, 'mlb'))       # 40 left for the others
+                b2.spend(40, league='mlb')
+                self.assertFalse(b2.can_spend(10, 'nhl'))
+                self.assertFalse(b2.can_spend(10, 'mlb'))
+                # And a quarter is always guaranteed even if others have spent it all.
+                b3 = odds.Budget(tmp, datetime(2026, 9, 3, tzinfo=timezone.utc))
+                b3.spend(75, league='nfl')
+                self.assertTrue(b3.can_spend(20, 'nba'))
+            finally:
+                if old is None:
+                    os.environ.pop('ODDS_MONTHLY_CREDITS', None)
+                else:
+                    os.environ['ODDS_MONTHLY_CREDITS'] = old
+
+
+class TestMarketBlend(unittest.TestCase):
+    def test_a_three_game_sample_leans_on_the_book(self):
+        spec = dict(props_for('baseball', 'pitcher')[0], line=None)
+        book = {'line': 2.5, 'books': 2, 'book': '2 books', 'over': -110, 'under': -110}
+        rookie = props._price(spec, 6.0, 6.0, book, sample=3, sport='baseball')
+        veteran = props._price(spec, 6.0, 6.0, book, sample=150, sport='baseball')
+        raw = props._price(spec, 6.0, 6.0, book)
+        # Same projection: the rookie's probability sits much closer to the
+        # book's 50% than the veteran's does.
+        self.assertLess(abs(rookie['over'] - 0.5), abs(veteran['over'] - 0.5))
+        self.assertAlmostEqual(veteran['over'], raw['over'], delta=0.05)
+        self.assertLess(abs(rookie['edge_pts']), abs(veteran['edge_pts']))
+        self.assertEqual(rookie['proj'], veteran['proj'])

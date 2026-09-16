@@ -463,16 +463,18 @@ class PropsLedger:
         recent games where someone was marked did-not-play: a box score can
         list a player late or under another table, so that verdict is
         re-checked for a few days before it is final."""
-        wanted = set()
+        fresh, retry = set(), set()
         cutoff = str((today or date.today()) - timedelta(days=self.RETRY_DNP_DAYS))
         for r in self.rows.values():
             if r.get('game_id') not in finished_ids:
                 continue
             if r.get('graded') != '1':
-                wanted.add(r['game_id'])
+                fresh.add(r['game_id'])
             elif r.get('played') == '0' and (r.get('game_date') or '') >= cutoff:
-                wanted.add(r['game_id'])
-        return sorted(wanted)
+                retry.add(r['game_id'])
+        # Never-graded games first: a re-check must not crowd them out of the
+        # per-run cap.
+        return sorted(fresh) + sorted(retry - fresh)
 
     def grade_game(self, game_id, box):
         """Grade every prop for one game from ``boxscore_player_stats`` output."""

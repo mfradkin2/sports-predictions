@@ -462,3 +462,30 @@ class TestStarterPriors(unittest.TestCase):
         # A fourth receiver is shrunk toward the reserves, a starter toward the starters.
         self.assertEqual(props.group_prior_for({'rec_yds_pg': tiers}, 'rec_yds_pg', 5), tiers['lo'])
         self.assertEqual(props.group_prior_for({'rec_yds_pg': tiers}, 'rec_yds_pg', 90), tiers['hi'])
+
+
+class TestStartingPitcherRole(unittest.TestCase):
+    def test_a_swingman_with_a_starter_line_is_priced_as_a_starter(self):
+        from sportspred.odds import _name_key
+        cfg = config.LEAGUES['mlb']
+        pool = player_pool(['Team A', 'Team B', 'Team C', 'Team D'])   # enough pitchers for a prior
+        # A call-up with seven mostly-relief outings.
+        swing = {'id': 'sw', 'name': 'Team A Swingman', 'short': 'SW', 'pos': 'P', 'team': 'Team A',
+                 'stats': {'gp': 7, 'p_gp': 7, 'starts': 2, 'ip': 14.0, 'p_so': 12, 'p_er': 8, 'p_h': 14}}
+        pool['teama'].append(swing)
+        env = props.team_environment(
+            [dict(final=True, home='Team A', away='Team B', home_score=5, away_score=4)] * 10, cfg)
+        game = {'home': 'Team A', 'away': 'Team B', 'game_id': '1'}
+        lines = {(_name_key(swing['name']), 'outs'): {'line': 14.5, 'books': 3, 'book': '3 books', 'over': -110, 'under': -110},
+                 (_name_key(swing['name']), 'er'): {'line': 2.5, 'books': 3, 'book': '3 books', 'over': -120, 'under': 100}}
+        board = props.build_for_game(game, pool, env, cfg, 'baseball', 0.55, lines=lines, book_mode=True)
+        me = next(p for p in board['home'] if p['id'] == 'sw')
+        outs = next(p for p in me['props'] if p['key'] == 'outs')
+        # Two innings an outing as a reliever would project ~6 outs; as a
+        # starter he is shrunk toward starters (about 15) instead.
+        self.assertGreater(outs['proj'], 11)
+        # Priced as the reliever his season says he is, the outs prop does
+        # not even clear the minimum for a board.
+        as_reliever, _ = props.project_player(swing, 'baseball', 'pitcher', 1.0, max_props=None,
+                                              priors=props.group_priors(pool, 'baseball'))
+        self.assertNotIn('outs', [p['key'] for p in as_reliever])

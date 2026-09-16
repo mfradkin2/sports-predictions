@@ -243,7 +243,7 @@ class Budget:
         if state.get('month') != month:
             state = {'month': month, 'spent_month': 0, 'remaining': None}
         if state.get('day') != day:
-            state['day'], state['spent_today'] = day, 0
+            state['day'], state['spent_today'], state['by_league'] = day, 0, {}
         self.state = state
 
     @property
@@ -256,15 +256,32 @@ class Budget:
         days_left = days_in_month - self.now.day + 1
         return max(0.0, (self.remaining - MIN_REMAINING) / days_left)
 
-    def can_spend(self, cost, first_of_day_ok=True):
+    LEAGUES_SHARING = 4
+
+    def can_spend(self, cost, league=None, first_of_day_ok=True):
+        """Within today's allowance, and within this league's share of it: a
+        league is guaranteed a quarter of the day, plus whatever the others
+        have not used, so the last sport in the run order is never starved."""
         spent = self.state.get('spent_today', 0)
         if spent == 0 and first_of_day_ok and self.remaining - cost > MIN_REMAINING:
             return True                  # never let a day go entirely blank
-        return spent + cost <= self.daily_allowance()
+        allowance = self.daily_allowance()
+        if spent + cost > allowance:
+            return False
+        if league:
+            by = self.state.setdefault('by_league', {})
+            mine = by.get(league, 0)
+            others = sum(v for k, v in by.items() if k != league)
+            share = max(allowance / self.LEAGUES_SHARING, allowance - others)
+            return mine + cost <= share
+        return True
 
-    def spend(self, cost, remaining=None):
+    def spend(self, cost, remaining=None, league=None):
         self.state['spent_today'] = self.state.get('spent_today', 0) + cost
         self.state['spent_month'] = self.state.get('spent_month', 0) + cost
+        if league:
+            by = self.state.setdefault('by_league', {})
+            by[league] = by.get(league, 0) + cost
         if remaining is not None:
             self.state['remaining'] = remaining
 
@@ -317,14 +334,14 @@ def load_lines(league_key, games, http=None, cache_dir=None):
             ev_id = matched.get(g['game_id'])
             if not ev_id:
                 continue
-            if not budget.can_spend(cost):
+            if not budget.can_spend(cost, league_key):
                 status = 'budgeted'          # the rest waits for tomorrow's allowance
                 break
             payload = client.event_props(league_key, ev_id, markets)
             if payload is None:
                 status = 'exhausted' if client.remaining is not None and client.remaining <= MIN_REMAINING else status
                 continue
-            budget.spend(cost, client.remaining)
+            budget.spend(cost, client.remaining, league_key)
             lines = consensus_lines(payload, league_key)
             if not lines and (cache.get(g['game_id']) or {}).get('lines'):
                 continue                     # a blank answer never erases lines we have

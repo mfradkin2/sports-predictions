@@ -32,7 +32,12 @@
   }
   function pct(v, digits) { return v == null ? '—' : (v * 100).toFixed(digits == null ? 0 : digits) + '%'; }
   function el(id) { return document.getElementById(id); }
-  function today() { return new Date().toISOString().slice(0, 10); }
+  function today() {
+    try {
+      // en-CA formats as YYYY-MM-DD; the leagues run on US Eastern time.
+      return new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+    } catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
   function addDays(iso, n) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
   function shortDate(iso) {
     var d = new Date(iso + 'T12:00:00Z');
@@ -58,7 +63,7 @@
   function isAll() { return state.league === 'all'; }
   function leaguesInView() { return isAll() ? LEAGUES.filter(function (k) { return DATA[k]; }) : [state.league]; }
   function cur() { return isAll() ? null : (DATA[state.league] || null); }
-  function todayOf(d) { return (d && d.today) || today(); }
+  function todayOf(d) { return today() || (d && d.today); }
 
   function espnFetch(path) {
     var a = 'https://site.api.espn.com/apis/site/v2/sports/' + path;
@@ -528,7 +533,7 @@
   }
 
   function gameList(items) {
-    if (!items.length) return '<div class="empty"><span class="icon">' + (EMOJI[state.league] || '🏟') + '</span>No games match these filters.</div>';
+    if (!items.length) return '<div class="empty"><span class="icon">' + (EMOJI[state.league] || '🏟') + '</span>' + emptyReason() + '</div>';
     if (!isAll()) return '<div class="games">' + items.map(function (x) { return gameRow(x.g, x.league); }).join('') + '</div>';
     // Overview: group by league so each block reads like its own board.
     var out = '';
@@ -540,12 +545,86 @@
     });
     return out;
   }
+  function emptyReason() {
+    if (isAll()) return 'No games match these filters.';
+    var d = cur() || {}, games = d.games || [], t = today();
+    if (!games.length) return 'No ' + esc(d.name || '') + ' games are on the schedule yet. Picks appear as soon as the league posts games.';
+    var next = games.filter(function (g) { return g.date > t && !g.final; }).sort(function (a, b) { return a.date.localeCompare(b.date); })[0];
+    if (state.view === 'today' && next) {
+      return 'No ' + esc(d.name || '') + ' games today. Next up: ' + shortDate(next.date) + (next.preseason ? ' (preseason)' : '') +
+        ' · <a href="#' + state.league + '/upcoming">see upcoming</a>';
+    }
+    return 'No games match these filters.';
+  }
   function gamesView(scope) {
     var items = filteredGames(scope);
     return toolbar(scope, items.length) + gameList(items);
   }
 
   // ── overview strip (All · Today) ─────────────────────────────────────────
+  function staleNotice() {
+    var newest = null;
+    leaguesInView().forEach(function (k) {
+      var g = (DATA[k] || {}).generated; if (g && (!newest || g > newest)) newest = g;
+    });
+    if (!newest) return '';
+    var age = (Date.now() - new Date(newest).getTime()) / 3600000;
+    if (!(age > 3)) return '';
+    return '<div class="note warn">⚠ These numbers were last refreshed ' + Math.round(age) + ' hours ago. ' +
+      'The site normally refreshes every half hour; this refresh is running late.</div>';
+  }
+
+  function yesterdayRecap() {
+    var y = addDays(today(), -1);
+    var gc = 0, gn = 0, pc = 0, pn = 0;
+    allGames('results').forEach(function (x) {
+      var g = x.g;
+      if (g.date !== y || !g.final) return;
+      if (g.counted && g.correct != null) { gn++; gc += g.correct ? 1 : 0; }
+      var t = propTally(g);
+      if (t) { pn += t.n; pc += t.hit; }
+    });
+    if (!gn && !pn) return '';
+    return '<div class="section-title">Yesterday</div><div class="cards">' +
+      (gn ? card('Game picks', pct(gc / gn, 1), gc + ' of ' + gn + ' correct') : '') +
+      (pn ? card('Player props', pct(pc / pn, 1), pc + ' of ' + pn + ' correct') : '') +
+      card('Full record', '<a href="#' + state.league + '/record">Track Record →</a>', 'by confidence, team and player') +
+      '</div>';
+  }
+
+  function topProps() {
+    var t = today();
+    var rows = [], seen = {};
+    allGames('today').forEach(function (x) {
+      var g = x.g;
+      if (g.final || g.preseason || !g.props || g.props_locked) return;
+      if (g.date !== t && g.date !== addDays(t, 1)) return;
+      ['away', 'home'].forEach(function (side) {
+        (g.props[side] || []).forEach(function (pl) {
+          (pl.props || []).forEach(function (p) {
+            // Only well-founded plays make the strip: a real sample behind the
+            // player and more than one book behind the line.
+            if (p.pending || p.edge_pts == null || p.edge_pts < 3) return;
+            if ((pl.gp || 0) < 10 || (p.books || 0) < 2) return;
+            rows.push({ g: g, league: x.league, pl: pl, p: p });
+          });
+        });
+      });
+    });
+    rows.sort(function (a, b) { return b.p.edge_pts - a.p.edge_pts || b.p.pick_prob - a.p.pick_prob; });
+    var picks = [];
+    rows.forEach(function (r) { var k = r.league + r.pl.id; if (!seen[k] && picks.length < 6) { seen[k] = 1; picks.push(r); } });
+    if (!picks.length) return '';
+    return '<div class="section-title">Prop plays we like most</div><div class="strip">' + picks.map(function (r) {
+      var g = r.g, p = r.p;
+      return '<div class="pick-card" data-jump="' + r.league + '|' + esc(g.id) + '">' +
+        '<div class="pc-top"><span class="lg-chip">' + EMOJI[r.league] + '</span><span class="tag ' + p.conf + '">' + pct(p.pick_prob) + '</span></div>' +
+        '<div class="pc-team">' + esc(r.pl.short || r.pl.name) + '</div>' +
+        '<div class="pc-sub">' + esc(p.label) + ' <b>' + p.pick.toUpperCase() + ' ' + p.line + '</b> · +' + p.edge_pts.toFixed(0) + ' pts vs book</div>' +
+        '<div class="pc-sub">' + esc(g.away_s || g.away) + ' @ ' + esc(g.home_s || g.home) + ' · ' + esc(g.time || 'TBD') + '</div></div>';
+    }).join('') + '</div><div class="lookup-sub" style="margin:-2px 0 10px">Edge is how much likelier we think the pick is than the sportsbook\'s price implies.</div>';
+  }
+
   function bestPicks() {
     var picks = allGames('today').filter(function (x) { return x.g.date === x.t && !x.g.final && !x.g.preseason; })
       .sort(function (a, b) { return b.g.pick_prob - a.g.pick_prob; }).slice(0, 6);
@@ -822,6 +901,22 @@
     return out2 + '</div>';
   }
 
+  function pickStreak() {
+    var games = allGames('results').filter(function (x) { return x.g.final && x.g.counted && x.g.correct != null; })
+      .sort(function (a, b) { return (a.g.date + (a.g.time || '')).localeCompare(b.g.date + (b.g.time || '')); });
+    var n = 0, ok = null, best = 0, run = 0;
+    games.forEach(function (x) {
+      if (x.g.correct) { run++; if (run > best) best = run; } else run = 0;
+    });
+    for (var i = games.length - 1; i >= 0; i--) {
+      var c = games[i].g.correct;
+      if (ok == null) ok = c;
+      if (c !== ok) break;
+      n++;
+    }
+    return { n: n, ok: ok, best: best };
+  }
+
   function recordView() {
     var leagues = leaguesInView();
     var out = lookupBox() + lookupPanel() + '<div class="note"><b>How this page works.</b> Every pick is locked the moment a game starts and graded ' +
@@ -840,8 +935,10 @@
       if (isAll()) perLeague += recordCard(EMOJI[k] + ' ' + LABEL[k], v.correct || 0, v.total || 0);
     });
     var w7 = windowOf(gCurve, 7), w30 = windowOf(gCurve, 30);
+    var streak = pickStreak();
     out += '<div class="section-title">Game picks</div><div class="cards">' +
       recordCard('All time', gC, gN) + recordCard('Last 7 days', w7.correct, w7.n) + recordCard('Last 30 days', w30.correct, w30.n) +
+      (streak.n ? card('Current streak', streak.n + ' ' + (streak.ok ? 'right' : 'wrong'), 'in a row · best run ' + streak.best + ' right') : '') +
       '</div>' + (perLeague ? '<div class="cards">' + perLeague + '</div>' : '') +
       (gN ? tierRows(gTiers, 'Games') : '');
     if (!isAll()) {
@@ -907,6 +1004,15 @@
       var ps = (RECORDS[k] || {}).players || {};
       Object.keys(ps).forEach(function (id) { if (ps[id].n >= 3) playerRows.push({ league: k, p: ps[id] }); });
     });
+    var best = playerRows.filter(function (x) { return x.p.n >= 5; })
+      .sort(function (a, b) { return (b.p.hit / b.p.n) - (a.p.hit / a.p.n) || b.p.n - a.p.n; }).slice(0, 10);
+    if (best.length) {
+      out += '<div><div class="section-title">Players we call best (5+ props)</div><div class="strip">' + best.map(function (x) {
+        return '<div class="pick-card" data-lookup="' + x.league + '|player|' + esc(x.p.id) + '">' +
+          '<div class="pc-top"><span class="lg-chip">' + EMOJI[x.league] + '</span><span class="tag ' + (x.p.hit / x.p.n >= 0.6 ? 'high' : 'med') + '">' + pct(x.p.hit / x.p.n) + '</span></div>' +
+          '<div class="pc-team">' + esc(x.p.name) + '</div><div class="pc-sub">' + x.p.hit + ' of ' + x.p.n + ' props · ' + esc(x.p.team || '') + '</div></div>';
+      }).join('') + '</div></div>';
+    }
     if (playerRows.length) {
       playerRows.sort(function (a, b) { return b.p.n - a.p.n || a.p.name.localeCompare(b.p.name); });
       out += '<div><div class="section-title">By player (most graded first)</div><div class="scroll-x"><table class="grid"><thead><tr>' +
@@ -1041,7 +1147,7 @@
     if (state.view === 'results') html = resultsView();
     else if (state.view === 'props') html = propsView();
     else if (state.view === 'record' || state.view === 'model') html = recordView();
-    else if (state.view === 'today' && isAll()) html = bestPicks() + gamesView('today');
+    else if (state.view === 'today') html = staleNotice() + yesterdayRecap() + (isAll() ? bestPicks() : '') + topProps() + gamesView('today');
     else html = gamesView(state.view);
     root.innerHTML = html;
     if (state.view === 'today') startLive(); else stopLive();
@@ -1050,6 +1156,7 @@
   function go(league, view, replace) {
     state.league = league; state.view = view; state.search = '';
     var hash = '#' + league + '/' + view;
+    if (view === 'record' && state.lookup) hash += '/' + state.lookup.league + ':' + state.lookup.kind + '/' + encodeURIComponent(state.lookup.id);
     if (location.hash !== hash) { if (replace) history.replaceState(null, '', hash); else history.pushState(null, '', hash); }
     render();
     load(league, function () { if (state.league === league) render(); });
@@ -1066,12 +1173,15 @@
       var lp = pick.dataset.lookup.split('|');
       state.lookup = { league: lp[0], kind: lp[1], id: lp.slice(2).join('|') };
       state.lookupQuery = '';
+      state.view = 'record';
+      if (state.league !== 'all') state.league = lp[0];
+      history.replaceState(null, '', '#' + state.league + '/record/' + lp[0] + ':' + lp[1] + '/' + encodeURIComponent(state.lookup.id));
       render();
       var panel = document.querySelector('.lookup-panel');
       if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    if (ev.target.closest('[data-lookup-close]')) { state.lookup = null; render(); return; }
+    if (ev.target.closest('[data-lookup-close]')) { state.lookup = null; history.replaceState(null, '', '#' + state.league + '/record'); render(); return; }
     var jump = ev.target.closest('[data-jump]');
     if (jump) {
       var parts = jump.dataset.jump.split('|');
@@ -1374,6 +1484,14 @@
     var league = known.indexOf(parts[0]) >= 0 ? parts[0] : (window.SP_DEFAULT_LEAGUE || 'all');
     var viewNames = VIEWS.map(function (v) { return v[0]; });
     var view = viewNames.indexOf(parts[1]) >= 0 ? parts[1] : 'today';
+    // #mlb/record/mlb:player/33192 opens that player's page directly.
+    state.lookup = null;
+    if (view === 'record' && parts[2] && parts[3]) {
+      var lk = parts[2].split(':');
+      if (lk.length === 2 && LEAGUES.indexOf(lk[0]) >= 0 && (lk[1] === 'team' || lk[1] === 'player')) {
+        state.lookup = { league: lk[0], kind: lk[1], id: decodeURIComponent(parts.slice(3).join('/')) };
+      }
+    }
     go(league, view, replace !== false);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { fromHash(true); });

@@ -206,7 +206,7 @@ PROPS = {
             {'key': 'hits',   'label': 'Hits',        'stat': 'hits_pg', 'line': 0.5,
              'dist': 'binomial', 'rank': 1, 'min_proj': 0.35, 'unit': 'H'},
             {'key': 'tb',     'label': 'Total Bases', 'stat': 'tb_pg',   'line': 1.5,
-             'dist': 'negbin', 'disp': 1.45, 'rank': 2, 'min_proj': 0.6, 'unit': 'TB'},
+             'dist': 'negbin', 'disp': 2.2, 'rank': 2, 'min_proj': 0.6, 'unit': 'TB'},
             {'key': 'hr',     'label': 'Home Run',    'stat': 'hr_pg',   'line': 0.5,
              'dist': 'poisson', 'rank': 3, 'min_proj': 0.05, 'unit': 'HR'},
             {'key': 'rbi',    'label': 'RBIs',        'stat': 'rbi_pg',  'line': 0.5,

@@ -6,6 +6,10 @@ on:
     # :00 when its runners are busy, and this repo lost most of a night's
     # refreshes that way.
     - cron: '17 * * * *'
+    # A second slot each hour: GitHub still skips some scheduled runs, and a
+    # refresh every half hour means a skipped one costs thirty minutes, not
+    # sixty. Runs never overlap (see concurrency below).
+    - cron: '47 * * * *'
   workflow_dispatch:
     inputs:
       lookback_days:

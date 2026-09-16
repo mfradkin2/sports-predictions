@@ -462,7 +462,24 @@ def own_prior(player, sport, group):
     return rates
 
 
-def project_player(player, sport, group, factor, max_props=5, tuning=None, priors=None):
+def starter_scale(rates, starter_prior):
+    """A reliever's per-outing line re-expressed over a starter's innings:
+    his quality per inning is his, the workload is a starter's."""
+    ip_outing = (rates.get('outs_pg') or 0) / 3.0
+    tiers = (starter_prior or {}).get('outs_pg') or {}
+    ip_start = ((tiers.get('median') or 15.0) / 3.0) * 0.9     # spot starters go a little shorter
+    if ip_outing <= 0:
+        return rates
+    out = dict(rates)
+    for stat in ('p_so_pg', 'p_er_pg', 'p_h_pg'):
+        if rates.get(stat) is not None:
+            out[stat] = rates[stat] / ip_outing * ip_start
+    out['outs_pg'] = ip_start * 3.0
+    return out
+
+
+def project_player(player, sport, group, factor, max_props=5, tuning=None, priors=None,
+                   role=None):
     """Every prop we can price for one player, best signal first
     (``max_props=None`` returns them all). ``priors`` is ``group_priors``
     output; with it, thin samples are shrunk toward the group's typical rate.
@@ -472,8 +489,20 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
     gp = rates.get('gp') or 0
     if group == 'pitcher' and rates.get('p_gp'):
         gp = rates['p_gp']
-    group_prior = (priors or {}).get(prior_role(sport, group, rates)) or {}
+    natural = prior_role(sport, group, rates)
+    group_prior = (priors or {}).get(role or natural) or {}
     mine = own_prior(player, sport, group)
+    k_group = None
+    if role and role != natural:
+        # Priced in a role his numbers were not earned in (a reliever making a
+        # start): his own history says little, so the role's typical line
+        # carries most of the weight and last season is ignored unless it was
+        # in this role too.
+        if mine is not None and prior_role(sport, group, mine) != role:
+            mine = None
+        k_group = 3 * SHRINK_GAMES.get(sport, 10)
+        if role == 'pitcher:starter':
+            rates = starter_scale(rates, group_prior)
     out = []
     for raw_spec in props_for(sport, group):
         spec, bias = apply_tuning(raw_spec, tuning)
@@ -496,12 +525,13 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
         if own is not None and own > 0:
             base = shrink(season, gp, own, sport, k=OWN_PRIOR_GAMES.get(sport))
         else:
-            base = shrink(season, gp, group_prior_for(group_prior, spec['stat'], season), sport)
+            base = shrink(season, gp, group_prior_for(group_prior, spec['stat'], season), sport, k=k_group)
         projection = base * factor * bias
         if projection < spec.get('min_proj', 0.0):
             continue
-        priced = _price(spec, base, projection, season=season)
+        priced = _price(spec, base, projection, season=season, sample=gp, sport=sport)
         priced['_base'] = base
+        priced['_gp'] = gp
         if from_prev:
             priced['season_prev'] = True
         out.append(priced)
@@ -577,7 +607,13 @@ def apply_tuning(spec, tuning):
     return out, float(t.get('bias', 1.0))
 
 
-def _price(spec, baseline, projection, book=None, season=None):
+# Until we know a player, the market knows him better: our probability is
+# blended toward the book's implied one by sample size, reaching half weight
+# at this many games. Our projection itself is untouched.
+MARKET_BLEND_GAMES = {'baseball': 12, 'basketball': 8, 'hockey': 10, 'football': 3}
+
+
+def _price(spec, baseline, projection, book=None, season=None, sample=None, sport=None):
     """Assemble the published record for one prop.
 
     ``baseline`` is the (shrunk) rate the projection grew from; ``season``
@@ -594,6 +630,11 @@ def _price(spec, baseline, projection, book=None, season=None):
     if book is not None:
         spec = dict(spec, line=float(book['line']))
     line, p_over = over_probability(spec, projection, baseline)
+    market = implied_over(book.get('over'), book.get('under')) if book is not None else None
+    if market is not None and sample is not None:
+        k = MARKET_BLEND_GAMES.get(sport or '', 10)
+        w = float(sample) / (float(sample) + k)
+        p_over = clamp(w * p_over + (1 - w) * market, 0.01, 0.99)
     sd = _spread(spec, projection)
     # Edge is how far this matchup moves the player off their own season
     # baseline, in standard deviations — not the gap to the line. On a fixed
@@ -635,7 +676,7 @@ def _price(spec, baseline, projection, book=None, season=None):
             out['book_over'] = int(book['over'])
         if book.get('under') is not None:
             out['book_under'] = int(book['under'])
-        implied = implied_over(book.get('over'), book.get('under'))
+        implied = market
         if implied is not None:
             # The edge that matters against a market: our probability for the
             # side we lean to, minus what the book's own price says, with the
@@ -739,8 +780,17 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
             factor = matchup_factor('', sport, group, exp, env, home, away, is_home)
             if report and report.get('level') == 'limited':
                 factor *= LIMITED_FACTOR
+            # A pitcher the books post starter markets for, or the announced
+            # starter, is priced as a starter tonight whatever his season
+            # says: a swingman's relief outings say nothing about a start.
+            role = None
+            if sport == 'baseball' and group == 'pitcher':
+                announced = ((starters or {}).get(side) or {}).get('name', '')
+                posted = any(line_for(lines, player.get('name', ''), k) for k in ('outs', 'k', 'er', 'p_hits'))
+                if (announced and announced == player.get('name')) or posted:
+                    role = 'pitcher:starter'
             props, gp = project_player(player, sport, group, factor, tuning=tuning,
-                                       max_props=None, priors=priors)
+                                       max_props=None, priors=priors, role=role)
             if not props:
                 continue
             # Re-price each prop with its own matchup factor, against the
@@ -760,7 +810,8 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                 projection = base * f * bias
                 book = line_for(lines, player.get('name', ''), p['key'])
                 if book:
-                    priced.append(_price(spec, base, projection, book, season=p['season']))
+                    priced.append(_price(spec, base, projection, book, season=p['season'],
+                                         sample=p.get('_gp', gp), sport=sport))
                     n_book += 1
                 elif book_mode:
                     priced.append(pending_prop(spec, base, projection, season=p['season']))
@@ -836,6 +887,9 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
         for e in entries:
             e.pop('_rank', None)
             e.pop('_book', None)
+            for pr in e['props']:
+                pr.pop('_gp', None)
+                pr.pop('_base', None)
         out[side] = entries
         # Listed-out players from this team's pool, most prominent first, so
         # the matchup panel can say who is missing.
