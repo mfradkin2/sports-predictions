@@ -623,3 +623,48 @@ class TestLiveColumnNames(unittest.TestCase):
         # 150⅓ innings, 60 ER -> 3.59
         self.assertAlmostEqual(eras['angels'], round(9 * 60 / (150 + 1 / 3), 2), places=2)
         self.assertNotIn('thin', eras)
+
+
+class TestPriorSeasonAttachment(unittest.TestCase):
+    def _http(self, calls):
+        class H:
+            last_headers = {}
+            errors = {}
+            def get_json(self, url, cache=True):
+                calls.append(url)
+                if 'season=2025' in url:
+                    return {'categories': [{'name': 'passing', 'names': ['gamesPlayed', 'passingYards']}],
+                            'athletes': [{'athlete': {'id': '1', 'displayName': 'QB One', 'teamName': 'Bills',
+                                                      'position': {'abbreviation': 'QB'}},
+                                          'categories': [{'name': 'passing', 'totals': ['17', '4080']}]}]}
+                return None
+        return H()
+
+    def test_attaches_when_the_season_is_young_and_caches(self):
+        import tempfile
+        from sportspred import config, pipeline
+        calls = []
+        pool = {'bills': [{'id': '1', 'name': 'QB One', 'pos': 'QB', 'stats': {'gp': 1, 'pass_yds': 334}},
+                          {'id': '2', 'name': 'Nobody', 'pos': 'WR', 'stats': {'gp': 1, 'rec': 2}}]}
+        with tempfile.TemporaryDirectory() as tmp:
+            old = config.DATA_DIR
+            config.DATA_DIR = tmp
+            try:
+                n = pipeline.attach_prior_season('nfl', config.LEAGUES['nfl'], pool, self._http(calls),
+                                                 today=date(2026, 9, 16))
+                self.assertEqual(n, 1)
+                self.assertEqual(pool['bills'][0]['prev']['pass_yds'], 4080)
+                self.assertNotIn('prev', pool['bills'][1])
+                self.assertTrue(any('season=2025' in u for u in calls))
+                # Second call within the cache window makes no request.
+                calls.clear()
+                pipeline.attach_prior_season('nfl', config.LEAGUES['nfl'], pool, self._http(calls),
+                                             today=date(2026, 9, 16))
+                self.assertEqual(calls, [])
+                # A mature season does not bother.
+                calls.clear()
+                grown = {'bills': [{'id': '1', 'pos': 'QB', 'stats': {'gp': 12, 'pass_yds': 3000}}]}
+                self.assertEqual(pipeline.attach_prior_season('nfl', config.LEAGUES['nfl'], grown, self._http(calls)), 0)
+                self.assertEqual(calls, [])
+            finally:
+                config.DATA_DIR = old
