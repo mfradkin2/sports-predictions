@@ -800,7 +800,32 @@
    "model_version": 3,
    "notes": "814 completed games",
    "reason": "kept incumbent (challenger 0.6874 vs 0.6862)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-16T19:37:37Z",
+   "metrics": {
+    "acc": 0.5552,
+    "brier": 0.2471,
+    "elo_only": {
+     "acc": 0.5428,
+     "brier": 0.2472,
+     "logloss": 0.6875,
+     "n": 724
+    },
+    "glm_only": {
+     "acc": 0.5304,
+     "brier": 0.253,
+     "logloss": 0.6998,
+     "n": 724
+    },
+    "logloss": 0.6874,
+    "n": 724
+   },
+   "model_version": 3,
+   "notes": "814 completed games",
+   "reason": "kept incumbent (challenger 0.6874 vs 0.6862)"
   }
  ],
- "updated": "2026-09-16T19:24:34Z"
+ "updated": "2026-09-16T19:37:42Z"
 }
