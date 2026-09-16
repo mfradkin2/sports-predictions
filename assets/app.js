@@ -404,7 +404,7 @@
     var deltaCls = p.delta > 0.01 ? 'up' : (p.delta < -0.01 ? 'down' : '');
     var deltaTxt = p.delta == null || Math.abs(p.delta) < 0.01 ? '' : (p.delta > 0 ? '+' : '') + p.delta + ' vs season';
     var boxKey = (p.stat || '').replace(/_pg$/, '');
-    var sub = '<span class="prop-sub">season ' + p.season + ' ' + esc(p.unit || '') +
+    var sub = '<span class="prop-sub">' + (p.season_prev ? 'last season ' : 'season ') + p.season + ' ' + esc(p.unit || '') +
         (deltaTxt ? ' · <span class="delta ' + deltaCls + '">' + deltaTxt + '</span>' : '') + '</span>';
     if (p.pending) {
       return '<div class="prop pending" data-stat="' + esc(boxKey) + '">' +

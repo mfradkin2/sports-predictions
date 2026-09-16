@@ -297,3 +297,21 @@ class TestPropsFreeze(unittest.TestCase):
         self.boards.save()
         again = FrozenBoards('mlb', history_dir=self.dir)
         self.assertTrue(again.is_frozen('g9'))
+
+
+class TestPreseasonPropsAreSkipped(unittest.TestCase):
+    def test_price_props_ignores_exhibition_games(self):
+        from datetime import date, timedelta
+        from sportspred import config, pipeline
+        from tests.helpers import player_pool
+        today = date.today()
+        cfg = config.LEAGUES['mlb']
+        def rec(gid, preseason):
+            return {'game': {'game_id': gid, 'date': today + timedelta(days=1), 'final': False, 'preseason': preseason,
+                             'home': 'Team A', 'away': 'Team B', 'home_score': 0, 'away_score': 0, 'winner': '',
+                             'row': {'game_start_utc': (today + timedelta(days=1)).strftime('%Y-%m-%dT23:00Z')}},
+                    'prediction': {'prob': 0.55}}
+        records = [rec('pre', True), rec('reg', False)]
+        boards = pipeline.price_props('mlb', cfg, records, player_pool(['Team A', 'Team B']), {}, {}, None)
+        self.assertIn('reg', boards)
+        self.assertNotIn('pre', boards)
