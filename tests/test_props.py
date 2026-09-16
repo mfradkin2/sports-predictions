@@ -354,3 +354,99 @@ class TestPreviousSeasonPrior(unittest.TestCase):
     def test_yes_only_markets_get_a_market_probability(self):
         self.assertAlmostEqual(props.implied_over(150, None), 0.4 / 1.06, places=4)
         self.assertIsNone(props.implied_over(None, None))
+
+
+def _hockey_pool():
+    def skater(i, team, gp, goals, assists, sog):
+        return {'id': f'{team}s{i}', 'name': f'{team} Skater {i}', 'pos': 'C' if i % 2 else 'D', 'team': team,
+                'stats': {'gp': gp, 'goals': goals, 'assists': assists, 'points': goals + assists,
+                          'sog': sog, 'blocks': 40, 'toi': 18.0}}
+    def goalie(team, gp, saves):
+        return {'id': f'{team}g', 'name': f'{team} Goalie', 'pos': 'G', 'team': team,
+                'stats': {'gp': gp, 'saves': saves, 'ga': int(gp * 2.6), 'sv_pct': 0.91}}
+    pool = {}
+    for team in ('Boston Bruins', 'Toronto Maple Leafs'):
+        key = team.lower().replace(' ', '')
+        pool[key] = [skater(i, key, 78, 20 + 3 * i, 25 + 2 * i, 180 + 10 * i) for i in range(8)] + [goalie(key, 55, 1500)]
+    return pool
+
+
+def _basketball_pool():
+    def player(i, team, gp):
+        return {'id': f'{team}p{i}', 'name': f'{team} Player {i}', 'pos': 'G' if i < 2 else 'F', 'team': team,
+                'stats': {'gp': gp, 'pts': 12 + 3 * i, 'reb': 4 + i, 'ast': 2 + i, 'fg3': 1 + i * 0.3,
+                          'stl': 1.0, 'blk': 0.5, 'min': 30, '__avg__': ['pts', 'reb', 'ast', 'fg3', 'stl', 'blk', 'min']}}
+    return {t.lower().replace(' ', ''): [player(i, t.lower().replace(' ', ''), 70) for i in range(9)]
+            for t in ('Boston Celtics', 'Miami Heat')}
+
+
+class TestHockeyAndBasketballBoards(unittest.TestCase):
+    """The winter leagues run through the same code, but their feeds, groups
+    and markets differ; this pins down that a board comes out of each."""
+
+    def _env(self, cfg, home, away):
+        return props.team_environment(
+            [dict(final=True, home=home, away=away, home_score=4, away_score=2)] * 10, cfg)
+
+    def test_hockey_board_prices_skaters_and_the_goalie_against_book_lines(self):
+        from sportspred.odds import _name_key
+        cfg, pool = config.LEAGUES['nhl'], _hockey_pool()
+        env = self._env(cfg, 'Boston Bruins', 'Toronto Maple Leafs')
+        star = pool['bostonbruins'][7]['name']
+        lines = {(_name_key(star), 'sog'): {'line': 3.5, 'books': 3, 'book': '3 books', 'over': -120, 'under': 100},
+                 (_name_key(star), 'points'): {'line': 0.5, 'books': 2, 'book': '2 books', 'over': -150, 'under': 120},
+                 (_name_key('bostonbruins Goalie'), 'saves'): {'line': 27.5, 'books': 1, 'book': 'DraftKings', 'over': -110, 'under': -110}}
+        board = props.build_for_game({'home': 'Boston Bruins', 'away': 'Toronto Maple Leafs', 'game_id': '9'},
+                                     pool, env, cfg, 'hockey', 0.6, lines=lines, book_mode=True)
+        home = {p['name']: p for p in board['home']}
+        self.assertIn(star, home)
+        booked = {p['key']: p for p in home[star]['props'] if not p.get('pending')}
+        self.assertEqual(booked['sog']['line'], 3.5)
+        self.assertEqual(booked['sog']['line_source'], 'book')
+        self.assertIn('edge_pts', booked['sog'])
+        goalie = home['bostonbruins Goalie']
+        saves = next(p for p in goalie['props'] if p['key'] == 'saves')
+        self.assertEqual(saves['line'], 27.5)
+        self.assertIn('pick', saves)
+        # Away side has no lines yet: all blank, but present.
+        self.assertTrue(board['away'])
+        self.assertTrue(all(p.get('pending') for pl in board['away'] for p in pl['props']))
+
+    def test_basketball_board_uses_the_feeds_averages(self):
+        from sportspred.odds import _name_key
+        cfg, pool = config.LEAGUES['nba'], _basketball_pool()
+        env = self._env(cfg, 'Boston Celtics', 'Miami Heat')
+        star = pool['bostonceltics'][8]['name']
+        lines = {(_name_key(star), 'pts'): {'line': 34.5, 'books': 4, 'book': '4 books', 'over': -110, 'under': -110},
+                 (_name_key(star), 'pra'): {'line': 52.5, 'books': 2, 'book': '2 books', 'over': -115, 'under': -105}}
+        board = props.build_for_game({'home': 'Boston Celtics', 'away': 'Miami Heat', 'game_id': '8'},
+                                     pool, env, cfg, 'basketball', 0.55, lines=lines, book_mode=True)
+        home = {p['name']: p for p in board['home']}
+        pts = next(p for p in home[star]['props'] if p['key'] == 'pts')
+        self.assertEqual(pts['line'], 34.5)
+        self.assertEqual(pts['season'], 36.0)          # the feed's own per-game average
+        self.assertIn(pts['pick'], ('over', 'under'))
+        pra = next(p for p in home[star]['props'] if p['key'] == 'pra')
+        self.assertAlmostEqual(pra['season'], 36 + 12 + 10, places=1)
+
+    def test_opening_night_prices_from_last_season(self):
+        cfg, pool = config.LEAGUES['nhl'], _hockey_pool()
+        env = self._env(cfg, 'Boston Bruins', 'Toronto Maple Leafs')
+        # Nobody has played yet, but everyone has last season on record.
+        for roster in pool.values():
+            for p in roster:
+                p['prev'] = dict(p['stats'])
+                p['stats'] = {k: 0 for k in p['stats']}
+        board = props.build_for_game({'home': 'Boston Bruins', 'away': 'Toronto Maple Leafs', 'game_id': '7'},
+                                     pool, env, cfg, 'hockey', 0.5, book_mode=False)
+        self.assertTrue(board['home'])
+        sog = next(p for pl in board['home'] for p in pl['props'] if p['key'] == 'sog')
+        self.assertTrue(sog.get('season_prev'))
+        self.assertGreater(sog['proj'], 1.5)
+        # And with no previous season either, nothing is invented.
+        for roster in pool.values():
+            for p in roster:
+                p.pop('prev')
+        empty = props.build_for_game({'home': 'Boston Bruins', 'away': 'Toronto Maple Leafs', 'game_id': '6'},
+                                     pool, env, cfg, 'hockey', 0.5, book_mode=False)
+        self.assertEqual(empty['home'], [])

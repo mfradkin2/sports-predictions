@@ -264,8 +264,8 @@ def attach_prior_season(league_key, cfg, pool, http, today=None):
     gps = sorted(num(p.get('stats', {}).get('gp')) or num(p.get('stats', {}).get('p_gp')) or 0
                  for roster in pool.values() for p in roster)
     gps = [g for g in gps if g > 0]
-    if not gps or gps[len(gps) // 2] >= PRIOR_SEASON_UNTIL_GP.get(sport, 20):
-        return 0
+    if gps and gps[len(gps) // 2] >= PRIOR_SEASON_UNTIL_GP.get(sport, 20):
+        return 0                              # no games at all (opening night) still fetches
     season = prev_season(league_key, today)
     cache_path = os.path.join(config.DATA_DIR, f'{league_key}_players_prev.json')
     cached = read_json(cache_path, {}) or {}
@@ -423,13 +423,14 @@ def price_props(league_key, cfg, records, pool, injuries, tuning, http, boards=N
     targets = [r for r in records
                if not r['game']['final']
                and not started(r['game'], now)
+               and not is_preseason(r['game'])      # exhibition lineups are guesses
                and today <= r['game']['date'] <= min(horizon, near)
                and r['game']['game_id']]
     if not targets:
         return {}
 
     starters = {}
-    if sport == 'baseball':
+    if sport == 'baseball' and http is not None:
         for offset in range(0, 3):
             stamp = (today + timedelta(days=offset)).strftime('%Y%m%d')
             board = espn.fetch_scoreboard(http, sport, league, stamp)

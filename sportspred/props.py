@@ -460,14 +460,19 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
         if spec.get('dist') == 'binomial':
             spec = dict(spec, trials=rates.get('ab_pg'))
         season = num(rates.get(spec['stat']))
-        if season is None or season <= 0:
-            continue
+        own = num(mine.get(spec['stat'])) if mine else None
+        from_prev = False
+        if gp < 1 or season is None or season <= 0:
+            # Nothing this season yet (opening night): last season's rate is
+            # the whole projection, and the page says so.
+            if own is None or own <= 0 or gp >= 1:
+                continue
+            season, from_prev = own, True
         # A rate no one has ever posted means the games-played figure is
         # wrong for this player; better no prop than an absurd one.
         cap = PER_GAME_MAX.get(spec['stat'][:-3] if spec['stat'].endswith('_pg') else spec['stat'])
         if cap is not None and season > cap:
             continue
-        own = num(mine.get(spec['stat'])) if mine else None
         if own is not None and own > 0:
             base = shrink(season, gp, own, sport, k=OWN_PRIOR_GAMES.get(sport))
         else:
@@ -477,6 +482,8 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
             continue
         priced = _price(spec, base, projection, season=season)
         priced['_base'] = base
+        if from_prev:
+            priced['season_prev'] = True
         out.append(priced)
     # Most popular first, but let a genuinely strong read jump the queue.
     out.sort(key=lambda p: (p['rank'] - (3 if p['conf'] == 'high' else 0)))
@@ -704,8 +711,11 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                                   'detail': report.get('detail', '')})
                 continue
             rates = derive(sport, per_game(player.get('stats') or {}))
+            mine = own_prior(player, sport, group)
             if (rates.get('gp') or 0) < 1:
-                continue
+                if not mine:
+                    continue
+                rates = mine                  # opening night: rank by last season
             factor = matchup_factor('', sport, group, exp, env, home, away, is_home)
             if report and report.get('level') == 'limited':
                 factor *= LIMITED_FACTOR
@@ -736,6 +746,8 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                     priced.append(pending_prop(spec, base, projection, season=p['season']))
                 else:
                     priced.append(_price(spec, base, projection, season=p['season']))
+                if p.get('season_prev'):
+                    priced[-1]['season_prev'] = True
             priced = select_props(priced, book_mode, 5)
             if not priced:
                 continue
