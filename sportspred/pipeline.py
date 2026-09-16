@@ -259,6 +259,11 @@ def prev_season(league_key, today=None):
     return today.year - 1
 
 
+def looks_like_a_full_season(by_id, sport):
+    gp_top = sorted((num(v.get('gp')) or num(v.get('p_gp')) or 0 for v in by_id.values()), reverse=True)[:25]
+    return bool(gp_top) and gp_top[-1] >= FULL_SEASON_MIN_GP.get(sport, 20)
+
+
 def attach_prior_season(league_key, cfg, pool, http, today=None):
     """Give each player his previous season's line as ``prev`` when the
     current season is too young to trust. Returns how many were attached."""
@@ -274,7 +279,9 @@ def attach_prior_season(league_key, cfg, pool, http, today=None):
     fetched = parse_iso(cached.get('updated'))
     fresh = (fetched is not None and cached.get('season') == season
              and (datetime.now(timezone.utc) - fetched).days < PRIOR_SEASON_CACHE_DAYS)
-    by_id = cached.get('players') or {} if fresh else {}
+    by_id = (cached.get('players') or {}) if fresh else {}
+    if by_id and not looks_like_a_full_season(by_id, sport):
+        by_id = {}                            # a bad cache is refetched, not trusted
     if not by_id and http is not None:
         try:
             prior_pool = espn.fetch_athlete_stats(http, sport, league, season=season)
@@ -287,10 +294,10 @@ def attach_prior_season(league_key, cfg, pool, http, today=None):
         # A previous season should look like one. If the busiest players in
         # it played only a handful of games we were handed an exhibition
         # slate or a partial year, and that is worse than no prior at all.
-        gp_top = sorted((num(v.get('gp')) or num(v.get('p_gp')) or 0 for v in by_id.values()), reverse=True)[:25]
-        if not gp_top or gp_top[-1] < FULL_SEASON_MIN_GP.get(sport, 20):
+        if by_id and not looks_like_a_full_season(by_id, sport):
+            gp_top = sorted((num(v.get('gp')) or num(v.get('p_gp')) or 0 for v in by_id.values()), reverse=True)[:25]
             print(f'  [{cfg["name"]}] previous season ({season}) feed rejected: '
-                  f'{len(by_id)} players, busiest played {gp_top[-1] if gp_top else 0:.0f} games')
+                  f'{len(by_id)} players, busiest played {gp_top[-1]:.0f} games')
             by_id = {}
         if by_id:
             write_json(cache_path, {'updated': now_iso(), 'season': season, 'players': by_id}, indent=None)

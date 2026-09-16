@@ -415,13 +415,30 @@ def group_priors(pool, sport):
         if len(pairs) < 5:
             continue
         pairs.sort(key=lambda x: -x[0])
-        upper = pairs[:max(3, len(pairs) // 2)]
-        weight = sum(gp for _, gp in upper)
-        if weight > 0:
-            out.setdefault(role, {})[stat] = sum(v * gp for v, gp in upper) / weight
+        half = max(3, len(pairs) // 2)
+        upper, lower = pairs[:half], pairs[half:] or pairs[-3:]
+
+        def wmean(ps):
+            w = sum(gp for _, gp in ps)
+            return sum(v * gp for v, gp in ps) / w if w > 0 else None
+
+        out.setdefault(role, {})[stat] = {
+            'hi': wmean(upper), 'lo': wmean(lower), 'median': pairs[len(pairs) // 2][0]}
     _PRIOR_CACHE.clear()
     _PRIOR_CACHE[key] = out
     return out
+
+
+def group_prior_for(group_prior, stat, rate):
+    """The tier of the group a player belongs to: a starter-level rate is
+    shrunk toward the starters' mean, a reserve-level one toward the
+    reserves', so a fourth receiver is never projected like a first."""
+    tiers = (group_prior or {}).get(stat)
+    if not tiers:
+        return None
+    if rate is None:
+        return tiers.get('hi')
+    return tiers.get('hi') if rate >= (tiers.get('median') or 0) else tiers.get('lo')
 
 
 def shrink(rate, gp, prior, sport, k=None):
@@ -479,7 +496,7 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
         if own is not None and own > 0:
             base = shrink(season, gp, own, sport, k=OWN_PRIOR_GAMES.get(sport))
         else:
-            base = shrink(season, gp, group_prior.get(spec['stat']), sport)
+            base = shrink(season, gp, group_prior_for(group_prior, spec['stat'], season), sport)
         projection = base * factor * bias
         if projection < spec.get('min_proj', 0.0):
             continue
