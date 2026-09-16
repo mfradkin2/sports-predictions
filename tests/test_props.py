@@ -489,3 +489,23 @@ class TestStartingPitcherRole(unittest.TestCase):
         as_reliever, _ = props.project_player(swing, 'baseball', 'pitcher', 1.0, max_props=None,
                                               priors=props.group_priors(pool, 'baseball'))
         self.assertNotIn('outs', [p['key'] for p in as_reliever])
+
+
+class TestTotalBasesAtLeastOne(unittest.TestCase):
+    def test_tb_over_half_is_the_chance_of_a_hit(self):
+        rates = {'hits_pg': 0.9, 'ab_pg': 3.8}
+        pz = props.hitless_chance(rates)
+        self.assertAlmostEqual(pz, (1 - 0.9 / 3.8) ** 3.8, places=6)
+        spec = next(s for s in config.props_for('baseball', 'batter') if s['key'] == 'tb')
+        tail = props.total_bases_tail(dict(rates, doubles=0.2, triples=0.02, hr=0.15))
+        spec = dict(spec, line=0.5, p_le=tail)
+        line, p_over = props.over_probability(spec, 1.2)
+        self.assertAlmostEqual(p_over, 1 - pz, places=4)
+        # 1.5 is "two hits or an extra-base hit": lower than 0.5 but above the
+        # bare chance of two hits.
+        _, p2 = props.over_probability(dict(spec, line=1.5), 1.2)
+        self.assertLess(p2, p_over)
+        self.assertGreater(p2, 1 - tail[0] - (3.8 * (0.9 / 3.8) * (1 - 0.9 / 3.8) ** 2.8))
+        # Other lines still come from the count distribution.
+        _, p3 = props.over_probability(dict(spec, line=2.5), 1.2)
+        self.assertLess(p3, p2)

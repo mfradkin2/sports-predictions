@@ -124,10 +124,18 @@
     if (tabs && !tabs.dataset.built) {
       tabs.innerHTML = ['all'].concat(LEAGUES).map(function (k) {
         return '<button class="sport" role="tab" data-league="' + k + '" aria-selected="false">' +
-          '<span class="em">' + EMOJI[k] + '</span>' + LABEL[k] + '</button>';
+          '<span class="em">' + EMOJI[k] + '</span>' + LABEL[k] + '<span class="sc" id="sc-' + k + '"></span></button>';
       }).join('');
       tabs.dataset.built = '1';
     }
+    // Today's game count on each sport, so the eye goes where the action is.
+    var t = today(), total = 0;
+    LEAGUES.forEach(function (k) {
+      var n = ((DATA[k] || {}).games || []).filter(function (g) { return g.date === t && !g.preseason; }).length;
+      total += n;
+      var badge = el('sc-' + k); if (badge) badge.textContent = n ? String(n) : '';
+    });
+    var allBadge = el('sc-all'); if (allBadge) allBadge.textContent = total ? String(total) : '';
     var views = el('views');
     if (views && !views.dataset.built) {
       views.innerHTML = VIEWS.map(function (v) {
@@ -145,7 +153,7 @@
     });
     var accent = el('accent-style');
     var d = cur();
-    if (accent) accent.textContent = ':root{--accent:' + (d ? d.accent : '#14b8a6') + '}';
+    if (accent) accent.textContent = ':root{--accent:' + (d ? d.accent : '#7c83ff') + '}';
     var sub = el('brand-sub');
     if (sub) {
       if (d) {
@@ -540,7 +548,7 @@
     LEAGUES.forEach(function (k) {
       var mine = items.filter(function (x) { return x.league === k; });
       if (!mine.length) return;
-      out += '<div class="section-title">' + EMOJI[k] + ' ' + LABEL[k] + ' <span class="count-inline">' + mine.length + '</span></div>' +
+      out += '<div class="section-title" id="sec-' + k + '">' + EMOJI[k] + ' ' + LABEL[k] + ' <span class="count-inline">' + mine.length + '</span></div>' +
         '<div class="games">' + mine.map(function (x) { return gameRow(x.g, k); }).join('') + '</div>';
     });
     return out;
@@ -623,6 +631,16 @@
         '<div class="pc-sub">' + esc(p.label) + ' <b>' + p.pick.toUpperCase() + ' ' + p.line + '</b> · +' + p.edge_pts.toFixed(0) + ' pts vs book</div>' +
         '<div class="pc-sub">' + esc(g.away_s || g.away) + ' @ ' + esc(g.home_s || g.home) + ' · ' + esc(g.time || 'TBD') + '</div></div>';
     }).join('') + '</div><div class="lookup-sub" style="margin:-2px 0 10px">Edge is how much likelier we think the pick is than the sportsbook\'s price implies.</div>';
+  }
+
+  function jumpBar(scope) {
+    var items = filteredGames(scope), counts = {};
+    items.forEach(function (x) { counts[x.league] = (counts[x.league] || 0) + 1; });
+    var ks = LEAGUES.filter(function (k) { return counts[k]; });
+    if (ks.length < 2) return '';
+    return '<div class="jump">' + ks.map(function (k) {
+      return '<button class="chip" data-scroll="sec-' + k + '"><span class="lg-chip">' + EMOJI[k] + '</span><b>' + LABEL[k] + '</b><span class="n">' + counts[k] + '</span></button>';
+    }).join('') + '</div>';
   }
 
   function bestPicks() {
@@ -1147,7 +1165,7 @@
     if (state.view === 'results') html = resultsView();
     else if (state.view === 'props') html = propsView();
     else if (state.view === 'record' || state.view === 'model') html = recordView();
-    else if (state.view === 'today') html = staleNotice() + yesterdayRecap() + (isAll() ? bestPicks() : '') + topProps() + gamesView('today');
+    else if (state.view === 'today') html = staleNotice() + yesterdayRecap() + (isAll() ? bestPicks() : '') + topProps() + (isAll() ? jumpBar('today') : '') + gamesView('today');
     else html = gamesView(state.view);
     root.innerHTML = html;
     if (state.view === 'today') startLive(); else stopLive();
@@ -1168,6 +1186,9 @@
     if (sport) { go(sport.dataset.league, state.view); return; }
     var view = ev.target.closest('.view-tab');
     if (view) { go(state.league, view.dataset.view); return; }
+    var scrollTo = ev.target.closest('[data-scroll]');
+    if (scrollTo) { var sec = el(scrollTo.dataset.scroll); if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    if (ev.target.closest('.totop')) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
     var pick = ev.target.closest('[data-lookup]');
     if (pick) {
       var lp = pick.dataset.lookup.split('|');
@@ -1494,6 +1515,16 @@
     }
     go(league, view, replace !== false);
   }
+  (function () {
+    var btn = document.createElement('button');
+    btn.className = 'totop'; btn.setAttribute('aria-label', 'Back to top'); btn.textContent = '↑';
+    document.body.appendChild(btn);
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(function () { btn.classList.toggle('show', window.scrollY > 700); ticking = false; });
+    }, { passive: true });
+  })();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { fromHash(true); });
   else fromHash(true);
 })();

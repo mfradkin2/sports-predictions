@@ -300,6 +300,32 @@ def standard_line(baseline):
 BINOMIAL_DEFAULT_TRIALS = 4.0        # at-bats a game when the feed has none
 
 
+def hitless_chance(rates, factor=1.0):
+    """P(no hit tonight) from the hitter's hit rate per at-bat, the same
+    binomial the hits prop uses. None when the feed has no at-bats."""
+    tail = total_bases_tail(rates, factor)
+    return tail.get(0) if tail else None
+
+
+def total_bases_tail(rates, factor=1.0):
+    """{0: P(TB <= 0), 1: P(TB <= 1)} from the hitter's own splits.
+
+    TB <= 0 is a hitless game. TB <= 1 is a hitless game or exactly one hit
+    that was a single; the single share comes from his extra-base hits.
+    """
+    hits = num(rates.get('hits_pg'))
+    ab = num(rates.get('ab_pg'))
+    if hits is None or not ab or ab <= 0:
+        return {}
+    n = max(ab, 2.0)
+    p = clamp(hits * factor / n, 0.0, 0.95)
+    p0 = (1.0 - p) ** n
+    p1 = n * p * (1.0 - p) ** (n - 1)
+    xbh = (num(rates.get('doubles')) or 0) + (num(rates.get('triples')) or 0) + (num(rates.get('hr')) or 0)
+    single_share = clamp(1.0 - xbh / hits, 0.3, 1.0) if hits > 0 else 0.7
+    return {0: p0, 1: min(p0 + p1 * single_share, 0.995)}
+
+
 def _trials(spec, projection):
     """Trials for a binomial prop: the player's at-bats a game, never fewer
     than would make the projection impossible."""
@@ -328,7 +354,13 @@ def over_probability(spec, projection, baseline=None):
     if line is None:
         line = standard_line(baseline if baseline is not None else projection)
     line = float(line)
-    if dist == 'normal':
+    p_le = spec.get('p_le') or {}
+    if int(math.floor(line)) in p_le:
+        # Some lines have a better-founded derivation than the count
+        # distribution: total bases 0.5 is "gets a hit", 1.5 is "two hits or
+        # an extra-base hit", both built from the hitter's own splits.
+        p_over = 1.0 - float(p_le[int(math.floor(line))])
+    elif dist == 'normal':
         p_over = norm_sf(line, projection, spec['sigma'](projection))
     elif dist == 'binomial':
         # Hits are one chance per at-bat, so they scatter less than a Poisson
@@ -803,6 +835,8 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                 spec, bias = apply_tuning(spec, tuning)
                 if spec.get('dist') == 'binomial':
                     spec = dict(spec, trials=rates.get('ab_pg'))
+                if sport == 'baseball' and p['key'] == 'tb':
+                    spec = dict(spec, p_le=total_bases_tail(rates, factor))
                 f = matchup_factor(p['key'], sport, group, exp, env, home, away, is_home)
                 if report and report.get('level') == 'limited':
                     f *= LIMITED_FACTOR

@@ -21,7 +21,7 @@ HISTORY_DIR = os.path.join(BASE, 'history')
 # ─────────────────────────────────────────────────────────────────────────────
 LEAGUES = {
     'mlb': {
-        'name': 'MLB', 'emoji': '⚾', 'accent': '#10b981',
+        'name': 'MLB', 'emoji': '⚾', 'accent': '#38bdf8',
         'espn_path': 'baseball/mlb', 'sport': 'baseball',
         'csv_file': 'mlb_2026_schedule_enriched.csv', 'season_label': '2026 Season',
         # Elo priors — MLB has the flattest talent curve of the four leagues.
@@ -39,7 +39,7 @@ LEAGUES = {
         ],
     },
     'nhl': {
-        'name': 'NHL', 'emoji': '🏒', 'accent': '#22d3ee',
+        'name': 'NHL', 'emoji': '🏒', 'accent': '#2dd4bf',
         'espn_path': 'hockey/nhl', 'sport': 'hockey',
         'csv_file': 'nhl_2026_schedule_enriched.csv', 'season_label': '2025–26 Season',
         'elo': {'k': 6.0, 'hfa': 34.0, 'mov': 0.70, 'regress': 0.30, 'scale': 400.0},
