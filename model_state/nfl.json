@@ -1,0 +1,277 @@
+{
+ "archive_size": 16,
+ "best": {
+  "adopted_at": "2026-09-16T00:14:39Z",
+  "metrics": {
+   "acc": 0.625,
+   "brier": 0.2376,
+   "logloss": 0.6681,
+   "n": 16
+  },
+  "params": {
+   "blend_w": 0.0,
+   "calibration": {
+    "a": 1.0,
+    "b": 0.0,
+    "n": 0
+   },
+   "elo_params": {
+    "hfa": 48.0,
+    "k": 20.0,
+    "mov": 1.0,
+    "regress": 0.33,
+    "scale": 400.0
+   },
+   "l2": null
+  },
+  "reason": "log loss 0.6750 -> 0.6681"
+ },
+ "elo": {
+  "games_seen": {
+   "Arizona Cardinals": 1,
+   "Atlanta Falcons": 1,
+   "Baltimore Ravens": 1,
+   "Buffalo Bills": 1,
+   "Carolina Panthers": 1,
+   "Chicago Bears": 1,
+   "Cincinnati Bengals": 1,
+   "Cleveland Browns": 1,
+   "Dallas Cowboys": 1,
+   "Denver Broncos": 1,
+   "Detroit Lions": 1,
+   "Green Bay Packers": 1,
+   "Houston Texans": 1,
+   "Indianapolis Colts": 1,
+   "Jacksonville Jaguars": 1,
+   "Kansas City Chiefs": 1,
+   "Las Vegas Raiders": 1,
+   "Los Angeles Chargers": 1,
+   "Los Angeles Rams": 1,
+   "Miami Dolphins": 1,
+   "Minnesota Vikings": 1,
+   "New England Patriots": 1,
+   "New Orleans Saints": 1,
+   "New York Giants": 1,
+   "New York Jets": 1,
+   "Philadelphia Eagles": 1,
+   "Pittsburgh Steelers": 1,
+   "San Francisco 49ers": 1,
+   "Seattle Seahawks": 1,
+   "Tampa Bay Buccaneers": 1,
+   "Tennessee Titans": 1,
+   "Washington Commanders": 1
+  },
+  "params": {
+   "hfa": 48.0,
+   "k": 20.0,
+   "mov": 1.0,
+   "regress": 0.33,
+   "scale": 400.0
+  },
+  "ratings": {
+   "Arizona Cardinals": 1529.82,
+   "Atlanta Falcons": 1482.44,
+   "Baltimore Ravens": 1534.23,
+   "Buffalo Bills": 1520.83,
+   "Carolina Panthers": 1463.55,
+   "Chicago Bears": 1536.45,
+   "Cincinnati Bengals": 1516.43,
+   "Cleveland Browns": 1472.82,
+   "Dallas Cowboys": 1481.45,
+   "Denver Broncos": 1473.9,
+   "Detroit Lions": 1505.85,
+   "Green Bay Packers": 1475.6,
+   "Houston Texans": 1479.17,
+   "Indianapolis Colts": 1465.77,
+   "Jacksonville Jaguars": 1527.18,
+   "Kansas City Chiefs": 1526.1,
+   "Las Vegas Raiders": 1522.86,
+   "Los Angeles Chargers": 1470.18,
+   "Los Angeles Rams": 1464.6,
+   "Miami Dolphins": 1477.14,
+   "Minnesota Vikings": 1524.4,
+   "New England Patriots": 1488.3,
+   "New Orleans Saints": 1494.15,
+   "New York Giants": 1518.55,
+   "New York Jets": 1530.68,
+   "Philadelphia Eagles": 1509.28,
+   "Pittsburgh Steelers": 1517.56,
+   "San Francisco 49ers": 1535.4,
+   "Seattle Seahawks": 1511.7,
+   "Tampa Bay Buccaneers": 1483.57,
+   "Tennessee Titans": 1469.32,
+   "Washington Commanders": 1490.72
+  }
+ },
+ "last_metrics": {
+  "acc": 0.625,
+  "brier": 0.2376,
+  "logloss": 0.6681,
+  "n": 16
+ },
+ "league": "nfl",
+ "ledger": {
+  "components": {},
+  "graded": 0,
+  "trust": null
+ },
+ "model_version": 3,
+ "new_games_this_run": 0,
+ "props": {
+  "graded_this_run": 0,
+  "record": {
+   "by_conf": {},
+   "by_key": {},
+   "hit": 0,
+   "pct": null,
+   "total": 0
+  },
+  "tuning": {}
+ },
+ "runs": [
+  {
+   "adopted": true,
+   "at": "2026-09-15T20:49:23Z",
+   "metrics": {
+    "acc": 0.6,
+    "brier": 0.241,
+    "logloss": 0.675,
+    "n": 15
+   },
+   "model_version": 3,
+   "notes": "15 completed games",
+   "reason": "first fit"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-15T21:00:31Z",
+   "metrics": {
+    "acc": 0.6,
+    "brier": 0.241,
+    "logloss": 0.675,
+    "n": 15
+   },
+   "model_version": 3,
+   "notes": "15 completed games",
+   "reason": "kept incumbent (challenger 0.6750 vs 0.6750)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-15T21:11:09Z",
+   "metrics": {
+    "acc": 0.6,
+    "brier": 0.241,
+    "logloss": 0.675,
+    "n": 15
+   },
+   "model_version": 3,
+   "notes": "15 completed games",
+   "reason": "kept incumbent (challenger 0.6750 vs 0.6750)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-15T21:12:38Z",
+   "metrics": {
+    "acc": 0.6,
+    "brier": 0.241,
+    "logloss": 0.675,
+    "n": 15
+   },
+   "model_version": 3,
+   "notes": "15 completed games",
+   "reason": "kept incumbent (challenger 0.6750 vs 0.6750)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-15T21:14:32Z",
+   "metrics": {
+    "acc": 0.6,
+    "brier": 0.241,
+    "logloss": 0.675,
+    "n": 15
+   },
+   "model_version": 3,
+   "notes": "15 completed games",
+   "reason": "kept incumbent (challenger 0.6750 vs 0.6750)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-15T21:23:22Z",
+   "metrics": {
+    "acc": 0.6,
+    "brier": 0.241,
+    "logloss": 0.675,
+    "n": 15
+   },
+   "model_version": 3,
+   "notes": "15 completed games",
+   "reason": "kept incumbent (challenger 0.6750 vs 0.6750)"
+  },
+  {
+   "adopted": true,
+   "at": "2026-09-16T00:14:39Z",
+   "metrics": {
+    "acc": 0.625,
+    "brier": 0.2376,
+    "logloss": 0.6681,
+    "n": 16
+   },
+   "model_version": 3,
+   "notes": "16 completed games",
+   "reason": "log loss 0.6750 -> 0.6681"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-16T00:21:25Z",
+   "metrics": {
+    "acc": 0.625,
+    "brier": 0.2376,
+    "logloss": 0.6681,
+    "n": 16
+   },
+   "model_version": 3,
+   "notes": "16 completed games",
+   "reason": "kept incumbent (challenger 0.6681 vs 0.6681)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-16T00:24:43Z",
+   "metrics": {
+    "acc": 0.625,
+    "brier": 0.2376,
+    "logloss": 0.6681,
+    "n": 16
+   },
+   "model_version": 3,
+   "notes": "16 completed games",
+   "reason": "kept incumbent (challenger 0.6681 vs 0.6681)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-16T00:31:16Z",
+   "metrics": {
+    "acc": 0.625,
+    "brier": 0.2376,
+    "logloss": 0.6681,
+    "n": 16
+   },
+   "model_version": 3,
+   "notes": "16 completed games",
+   "reason": "kept incumbent (challenger 0.6681 vs 0.6681)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-16T00:33:23Z",
+   "metrics": {
+    "acc": 0.625,
+    "brier": 0.2376,
+    "logloss": 0.6681,
+    "n": 16
+   },
+   "model_version": 3,
+   "notes": "16 completed games",
+   "reason": "kept incumbent (challenger 0.6681 vs 0.6681)"
+  }
+ ],
+ "updated": "2026-09-16T00:33:25Z"
+}

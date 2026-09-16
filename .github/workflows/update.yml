@@ -2,142 +2,78 @@ name: Refresh Sports Predictions
 
 on:
   schedule:
-    # Runs every hour on the hour
+    # Every hour on the hour.
     - cron: '0 * * * *'
-  workflow_dispatch:   # allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      lookback_days:
+        description: 'Days of past schedule to re-fetch (raise for a one-off backfill)'
+        required: false
+        default: ''
+      skip_props:
+        description: 'Skip the player-statistics fetch'
+        type: boolean
+        required: false
+        default: false
+
+# Never let two refreshes race each other onto the same branch.
+concurrency:
+  group: refresh-predictions
+  cancel-in-progress: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
-      contents: write   # needed to push back to the repo
+      contents: write
 
     steps:
-      # ── 1. Check out repo ─────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Set up R ────────────────────────────────────────────────────────
-      - name: Set up R
-        uses: r-lib/actions/setup-r@v2
-        with:
-          r-version: '4.3'
-
-      # ── 2b. System libs httr/curl need when compiling from source ─────────
-      - name: Install system dependencies for R
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
-
-      # ── 3. Install R packages (use Posit PPM for prebuilt binaries) ───────
-      - name: Install R packages
-        run: |
-          Rscript -e 'options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/latest")); install.packages(c("httr","jsonlite","dplyr"))'
-          Rscript -e 'for (p in c("httr","jsonlite","dplyr")) if (!requireNamespace(p, quietly = TRUE)) stop("Failed to install ", p)'
-
-      # ── 4. Run MLB model ───────────────────────────────────────────────────
-      - name: Run MLB predictions model
-        run: Rscript generate_mlb_predictions.R
-        continue-on-error: true   # don't abort if one league has issues
-
-      # ── 5. Run NHL model ───────────────────────────────────────────────────
-      - name: Run NHL predictions model
-        run: Rscript generate_nhl_predictions.R
-        continue-on-error: true
-
-      # ── 6. Run NBA model ───────────────────────────────────────────────────
-      - name: Run NBA predictions model
-        run: Rscript generate_nba_predictions.R
-        continue-on-error: true
-
-      # ── 7. Run NFL model ───────────────────────────────────────────────────
-      - name: Run NFL predictions model
-        run: Rscript generate_nfl_predictions.R
-        continue-on-error: true
-
-      # ── 8. Generate HTML dashboards ────────────────────────────────────────
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Generate league dashboards
-        run: python3 generate_league_dashboard.py mlb nhl nba nfl
+      # The whole build is standard-library Python: no packages to install.
+      - name: Run tests
+        run: python3 -m unittest discover -s tests
 
-      # ── 9. Rebuild hub index.html ──────────────────────────────────────────
-      - name: Rebuild hub index.html
+      # Ingest from ESPN, learn, predict, price props, render. A league whose
+      # feed is down keeps its previous data; the site is rebuilt regardless.
+      - name: Ingest, train, project props and rebuild the site
+        env:
+          SP_LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days }}
         run: |
-          cat > index.html << 'HUBEOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Sports Prediction Hub</title>
-          <style>
-            :root { --bg: #0d1117; --bg2: #161b22; --border: #30363d; --text: #e6edf3; --muted: #8b949e; }
-            * { box-sizing: border-box; margin: 0; padding: 0; }
-            body { background: var(--bg); color: var(--text);
-                   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-            .sport-nav { display: flex; background: var(--bg2); border-bottom: 2px solid var(--border);
-                         position: sticky; top: 0; z-index: 100; }
-            .sport-tab { flex: 1; padding: 14px 8px; text-align: center; cursor: pointer;
-                         font-size: 14px; font-weight: 600; color: var(--muted);
-                         border-bottom: 3px solid transparent; transition: all .2s; user-select: none; }
-            .sport-tab:hover { color: var(--text); background: #1c2128; }
-            .sport-tab[data-sport="mlb"].active { border-color: #2563eb; color: #60a5fa; }
-            .sport-tab[data-sport="nhl"].active { border-color: #0ea5e9; color: #38bdf8; }
-            .sport-tab[data-sport="nba"].active { border-color: #ef4444; color: #f87171; }
-            .sport-tab[data-sport="nfl"].active { border-color: #6366f1; color: #818cf8; }
-            .sport-emoji { font-size: 20px; display: block; margin-bottom: 2px; }
-            .sport-panel { display: none; }
-            .sport-panel.active { display: block; }
-            iframe { width: 100%; height: calc(100vh - 60px); border: none; display: block; }
-          </style>
-          </head>
-          <body>
-          <nav class="sport-nav">
-            <div class="sport-tab active" data-sport="mlb" onclick="switchSport(this,'mlb')">
-              <span class="sport-emoji">⚾</span>MLB
-            </div>
-            <div class="sport-tab" data-sport="nhl" onclick="switchSport(this,'nhl')">
-              <span class="sport-emoji">🏒</span>NHL
-            </div>
-            <div class="sport-tab" data-sport="nba" onclick="switchSport(this,'nba')">
-              <span class="sport-emoji">🏀</span>NBA
-            </div>
-            <div class="sport-tab" data-sport="nfl" onclick="switchSport(this,'nfl')">
-              <span class="sport-emoji">🏈</span>NFL
-            </div>
-          </nav>
-          <div id="panel-mlb" class="sport-panel active"><iframe src="mlb.html" title="MLB"></iframe></div>
-          <div id="panel-nhl" class="sport-panel"><iframe src="nhl.html" title="NHL" loading="lazy"></iframe></div>
-          <div id="panel-nba" class="sport-panel"><iframe src="nba.html" title="NBA" loading="lazy"></iframe></div>
-          <div id="panel-nfl" class="sport-panel"><iframe src="nfl.html" title="NFL" loading="lazy"></iframe></div>
-          <script>
-          function switchSport(el, sport) {
-            document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.sport-panel').forEach(p => p.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById('panel-' + sport).classList.add('active');
-          }
-          </script>
-          </body>
-          </html>
-          HUBEOF
+          python3 run_pipeline.py ${{ github.event.inputs.skip_props == 'true' && '--no-props' || '' }}
 
-      # ── 10. Commit & push ──────────────────────────────────────────────────
-      - name: Commit and push updated predictions
+      - name: Commit and push
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html \
-                  mlb.html nhl.html nba.html nfl.html \
-                  mlb_predictions.csv \
-                  nhl_2026_schedule_enriched.csv \
-                  nba_2026_schedule_enriched.csv \
-                  nfl_2026_schedule_enriched.csv
-          # Only commit if there are actual changes
-          git diff --cached --quiet || \
-            git commit -m "Auto-refresh: MLB/NHL/NBA/NFL predictions $(date +'%Y-%m-%d')"
-          git push
+          git add -A -- \
+            index.html mlb.html nhl.html nba.html nfl.html \
+            assets data history model_state \
+            mlb_predictions.csv \
+            nhl_2026_schedule_enriched.csv \
+            nba_2026_schedule_enriched.csv \
+            nfl_2026_schedule_enriched.csv
+          if git diff --cached --quiet; then
+            echo "Nothing changed this run."
+            exit 0
+          fi
+          git commit -m "Auto-refresh: predictions and player props $(date -u +'%Y-%m-%d %H:%M UTC')"
+          # The hourly schedule can collide with a push; rebase and retry.
+          for attempt in 1 2 3 4; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push failed (attempt $attempt); rebasing on origin."
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            sleep $((2 ** attempt))
+          done
+          echo "Could not push after 4 attempts." >&2
+          exit 1

@@ -2,55 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sports Prediction Hub</title>
-<style>
-  :root { --bg: #0d1117; --bg2: #161b22; --border: #30363d; --text: #e6edf3; --muted: #8b949e; }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text);
-         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-  .sport-nav { display: flex; background: var(--bg2); border-bottom: 2px solid var(--border);
-               position: sticky; top: 0; z-index: 100; }
-  .sport-tab { flex: 1; padding: 14px 8px; text-align: center; cursor: pointer;
-               font-size: 14px; font-weight: 600; color: var(--muted);
-               border-bottom: 3px solid transparent; transition: all .2s; user-select: none; }
-  .sport-tab:hover { color: var(--text); background: #1c2128; }
-  .sport-tab[data-sport="mlb"].active { border-color: #2563eb; color: #60a5fa; }
-  .sport-tab[data-sport="nhl"].active { border-color: #0ea5e9; color: #38bdf8; }
-  .sport-tab[data-sport="nba"].active { border-color: #ef4444; color: #f87171; }
-  .sport-tab[data-sport="nfl"].active { border-color: #6366f1; color: #818cf8; }
-  .sport-emoji { font-size: 20px; display: block; margin-bottom: 2px; }
-  .sport-panel { display: none; }
-  .sport-panel.active { display: block; }
-  iframe { width: 100%; height: calc(100vh - 60px); border: none; display: block; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Model-driven game predictions and player prop projections for MLB, NFL, NBA and NHL, refreshed hourly.">
+<meta name="color-scheme" content="dark light">
+<title>Sports Predictions — MLB, NFL, NBA & NHL</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><text y=%2213%22 font-size=%2213%22>🎯</text></svg>">
+<link rel="preload" as="script" href="assets/app.js?v=eb99f5ee">
+<link rel="stylesheet" href="assets/app.css?v=eb99f5ee">
+<style id="accent-style"></style>
 </head>
 <body>
-<nav class="sport-nav">
-  <div class="sport-tab active" data-sport="mlb" onclick="switchSport(this,'mlb')">
-    <span class="sport-emoji">⚾</span>MLB
+<header class="top">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">🎯</span>
+    <span>
+      <span class="brand-name">Sports Predictions</span>
+      <span class="brand-sub" id="brand-sub">Model-driven game predictions and player prop projections</span>
+    </span>
+    <span class="brand-spacer"></span>
+    <span class="live-pill" id="live-pill">Loading…</span>
   </div>
-  <div class="sport-tab" data-sport="nhl" onclick="switchSport(this,'nhl')">
-    <span class="sport-emoji">🏒</span>NHL
-  </div>
-  <div class="sport-tab" data-sport="nba" onclick="switchSport(this,'nba')">
-    <span class="sport-emoji">🏀</span>NBA
-  </div>
-  <div class="sport-tab" data-sport="nfl" onclick="switchSport(this,'nfl')">
-    <span class="sport-emoji">🏈</span>NFL
-  </div>
-</nav>
-<div id="panel-mlb" class="sport-panel active"><iframe src="mlb.html" title="MLB"></iframe></div>
-<div id="panel-nhl" class="sport-panel"><iframe src="nhl.html" title="NHL" loading="lazy"></iframe></div>
-<div id="panel-nba" class="sport-panel"><iframe src="nba.html" title="NBA" loading="lazy"></iframe></div>
-<div id="panel-nfl" class="sport-panel"><iframe src="nfl.html" title="NFL" loading="lazy"></iframe></div>
+  <nav class="sports" id="sports" role="tablist" aria-label="Sport"></nav>
+  <nav class="views" id="views" role="tablist" aria-label="View"></nav>
+</header>
+<main class="wrap" id="main">
+  <div class="games"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+</main>
 <script>
-function switchSport(el, sport) {
-  document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.sport-panel').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('panel-' + sport).classList.add('active');
-}
+window.SP_LEAGUES=["mlb", "nfl", "nba", "nhl"];
+window.SP_DEFAULT_LEAGUE="all";
 </script>
+<script src="data/mlb.js"></script>
+<script src="assets/app.js?v=eb99f5ee" defer></script>
 </body>
 </html>
