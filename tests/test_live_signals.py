@@ -699,3 +699,35 @@ class TestPriorSeasonSanity(unittest.TestCase):
                 self.assertFalse(os.path.exists(os.path.join(tmp, 'nfl_players_prev.json')))
             finally:
                 config.DATA_DIR = old
+
+
+class TestBadPriorCacheIsRefetched(unittest.TestCase):
+    def test_a_cached_exhibition_slate_is_not_trusted(self):
+        import json as _json
+        import tempfile
+        from sportspred import config, pipeline
+        from sportspred.util import now_iso
+        calls = []
+        class H:
+            last_headers = {}
+            errors = {}
+            def get_json(self, url, cache=True):
+                calls.append(url)
+                return {'categories': [{'name': 'passing', 'names': ['gamesPlayed', 'passingYards']}],
+                        'athletes': [{'athlete': {'id': str(i), 'displayName': f'P{i}', 'teamName': 'Bills',
+                                                  'position': {'abbreviation': 'QB'}},
+                                      'categories': [{'name': 'passing', 'totals': ['17', '4000']}]} for i in range(40)]}
+        pool = {'bills': [{'id': '1', 'name': 'P1', 'pos': 'QB', 'stats': {'gp': 1, 'pass_yds': 300}}]}
+        with tempfile.TemporaryDirectory() as tmp:
+            with open(os.path.join(tmp, 'nfl_players_prev.json'), 'w') as f:
+                _json.dump({'updated': now_iso(), 'season': 2025,
+                            'players': {str(i): {'gp': 3, 'pass_yds': 500} for i in range(40)}}, f)
+            old = config.DATA_DIR
+            config.DATA_DIR = tmp
+            try:
+                n = pipeline.attach_prior_season('nfl', config.LEAGUES['nfl'], pool, H(), today=date(2026, 9, 16))
+                self.assertEqual(n, 1)
+                self.assertEqual(pool['bills'][0]['prev']['pass_yds'], 4000)
+                self.assertTrue(calls)
+            finally:
+                config.DATA_DIR = old

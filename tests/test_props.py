@@ -456,5 +456,9 @@ class TestStarterPriors(unittest.TestCase):
     def test_group_prior_reflects_starters_not_the_bench(self):
         pool = {'t': [{'id': str(i), 'pos': 'WR', 'stats': {'gp': 1, 'rec_yds': y, 'rec': max(1, y // 12), 'targets': 3}}
                       for i, y in enumerate([110, 95, 80, 70, 60, 8, 5, 3, 0, 0])]}
-        prior = props.group_priors(pool, 'football')['wr']['rec_yds_pg']
-        self.assertGreater(prior, 70)          # the upper half, not the 43-yard roster mean
+        tiers = props.group_priors(pool, 'football')['wr']['rec_yds_pg']
+        self.assertGreater(tiers['hi'], 70)    # the upper half, not the 43-yard roster mean
+        self.assertLess(tiers['lo'], 10)
+        # A fourth receiver is shrunk toward the reserves, a starter toward the starters.
+        self.assertEqual(props.group_prior_for({'rec_yds_pg': tiers}, 'rec_yds_pg', 5), tiers['lo'])
+        self.assertEqual(props.group_prior_for({'rec_yds_pg': tiers}, 'rec_yds_pg', 90), tiers['hi'])
