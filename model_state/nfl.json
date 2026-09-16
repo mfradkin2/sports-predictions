@@ -128,6 +128,7 @@
    "by_conf": {},
    "by_key": {},
    "by_source": {},
+   "curve": [],
    "hit": 0,
    "pct": null,
    "total": 0
@@ -433,7 +434,20 @@
    "model_version": 3,
    "notes": "16 completed games",
    "reason": "kept incumbent (challenger 0.6681 vs 0.6681)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-16T21:00:50Z",
+   "metrics": {
+    "acc": 0.625,
+    "brier": 0.2376,
+    "logloss": 0.6681,
+    "n": 16
+   },
+   "model_version": 3,
+   "notes": "16 completed games",
+   "reason": "kept incumbent (challenger 0.6681 vs 0.6681)"
   }
  ],
- "updated": "2026-09-16T19:38:49Z"
+ "updated": "2026-09-16T21:00:53Z"
 }
