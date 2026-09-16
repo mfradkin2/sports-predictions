@@ -23,7 +23,7 @@ LEAGUES = {
     'mlb': {
         'name': 'MLB', 'emoji': '⚾', 'accent': '#10b981',
         'espn_path': 'baseball/mlb', 'sport': 'baseball',
-        'csv_file': 'mlb_predictions.csv', 'season_label': '2026 Season',
+        'csv_file': 'mlb_2026_schedule_enriched.csv', 'season_label': '2026 Season',
         # Elo priors — MLB has the flattest talent curve of the four leagues.
         'elo': {'k': 4.0, 'hfa': 24.0, 'mov': 0.55, 'regress': 0.32, 'scale': 400.0},
         'home_edge': 0.54,

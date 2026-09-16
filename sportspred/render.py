@@ -154,7 +154,7 @@ def write_site(payloads):
     for key in leagues:
         cfg = LEAGUES[key]
         page = _shell(
-            title=f'{cfg["name"]} Predictions — {SITE_NAME}',
+            title=f'{SITE_NAME} — {cfg["name"]}',
             description=f'{cfg["name"]} game predictions and player prop projections.',
             version=version, default_league=key, leagues=leagues, preload=key)
         _write(os.path.join(config.BASE, f'{key}.html'), page)
