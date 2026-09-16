@@ -366,7 +366,11 @@ def confidence(prob):
 # group by this many games' worth of prior, so a hot week or a September
 # call-up's four games do not project as if they were a full season.
 SHRINK_GAMES = {'baseball': 20, 'basketball': 10, 'hockey': 15, 'football': 3}
-PRIOR_MIN_GP = {'baseball': 15, 'basketball': 10, 'hockey': 15, 'football': 2}
+PRIOR_MIN_GP = {'baseball': 15, 'basketball': 10, 'hockey': 15, 'football': 1}
+# A player's own previous season, when we have it, outranks the group prior
+# and carries more weight: this many games' worth.
+OWN_PRIOR_GAMES = {'baseball': 30, 'basketball': 15, 'hockey': 20, 'football': 5}
+OWN_PRIOR_MIN_GP = {'baseball': 40, 'basketball': 20, 'hockey': 25, 'football': 5}
 _PRIOR_CACHE = {}
 
 
@@ -417,12 +421,25 @@ def group_priors(pool, sport):
     return out
 
 
-def shrink(rate, gp, prior, sport):
-    """Season rate pulled toward the group prior by sample size."""
+def shrink(rate, gp, prior, sport, k=None):
+    """Season rate pulled toward the prior by sample size."""
     if prior is None:
         return rate
-    k = SHRINK_GAMES.get(sport, 10)
+    k = SHRINK_GAMES.get(sport, 10) if k is None else k
     return (gp * rate + k * prior) / (gp + k)
+
+
+def own_prior(player, sport, group):
+    """Per-game rates from the player's previous season, if it was a real
+    one, else None."""
+    prev = player.get('prev')
+    if not prev:
+        return None
+    rates = derive(sport, per_game(prev))
+    gp = rates.get('p_gp') if group == 'pitcher' and rates.get('p_gp') else rates.get('gp')
+    if (gp or 0) < OWN_PRIOR_MIN_GP.get(sport, 20):
+        return None
+    return rates
 
 
 def project_player(player, sport, group, factor, max_props=5, tuning=None, priors=None):
@@ -436,6 +453,7 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
     if group == 'pitcher' and rates.get('p_gp'):
         gp = rates['p_gp']
     group_prior = (priors or {}).get(prior_role(sport, group, rates)) or {}
+    mine = own_prior(player, sport, group)
     out = []
     for raw_spec in props_for(sport, group):
         spec, bias = apply_tuning(raw_spec, tuning)
@@ -449,7 +467,11 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
         cap = PER_GAME_MAX.get(spec['stat'][:-3] if spec['stat'].endswith('_pg') else spec['stat'])
         if cap is not None and season > cap:
             continue
-        base = shrink(season, gp, group_prior.get(spec['stat']), sport)
+        own = num(mine.get(spec['stat'])) if mine else None
+        if own is not None and own > 0:
+            base = shrink(season, gp, own, sport, k=OWN_PRIOR_GAMES.get(sport))
+        else:
+            base = shrink(season, gp, group_prior.get(spec['stat']), sport)
         projection = base * factor * bias
         if projection < spec.get('min_proj', 0.0):
             continue
@@ -598,14 +620,22 @@ def _price(spec, baseline, projection, book=None, season=None):
     return out
 
 
-def implied_over(over_price, under_price):
-    """Vig-free probability of the over from a book's two American prices."""
-    if over_price is None or under_price is None:
-        return None
+ONE_SIDED_OVERROUND = 1.06    # typical vig on a yes-only market (anytime TD)
 
+
+def implied_over(over_price, under_price):
+    """Vig-free probability of the over from a book's American prices.
+
+    A yes-only market (anytime scorer) has no other side to strip the vig
+    with, so a typical overround is assumed instead.
+    """
     def raw(price):
         return 100.0 / (price + 100.0) if price > 0 else -price / (-price + 100.0)
 
+    if over_price is None:
+        return None
+    if under_price is None:
+        return clamp(raw(float(over_price)) / ONE_SIDED_OVERROUND, 0.01, 0.99)
     po, pu = raw(float(over_price)), raw(float(under_price))
     return po / (po + pu) if po + pu > 0 else None
 

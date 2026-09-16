@@ -231,10 +231,68 @@ def load_pool(league_key, cfg, http):
         status = 'cached' if pool else 'unavailable'
     else:
         fill_games_played(league_key, pool)
+        attach_prior_season(league_key, cfg, pool, http)
         write_json(cache_path, {'updated': now_iso(), 'pool': pool}, indent=None)
     if league_key == 'mlb' and pool:
         _TEAM_ERA['mlb'] = team_era_from_pool(pool)
     return pool, status
+
+
+# Early in a season a player's own previous season is a far better prior than
+# the position average: one week of football says little about a receiver
+# who has posted the same numbers for five years. Fetched while the median
+# player has fewer games than this, and cached for a few days.
+PRIOR_SEASON_UNTIL_GP = {'football': 8, 'baseball': 30, 'basketball': 20, 'hockey': 20}
+PRIOR_SEASON_CACHE_DAYS = 3
+
+
+def prev_season(league_key, today=None):
+    """ESPN's id for the season before the one in progress."""
+    today = today or today_utc()
+    if league_key in ('nba', 'nhl'):
+        # Winter seasons are named by their end year: the 2026-27 season is
+        # 2027, and it starts in the autumn of 2026.
+        current = today.year + 1 if today.month >= 9 else today.year
+        return current - 1
+    return today.year - 1
+
+
+def attach_prior_season(league_key, cfg, pool, http, today=None):
+    """Give each player his previous season's line as ``prev`` when the
+    current season is too young to trust. Returns how many were attached."""
+    sport, league = cfg['espn_path'].split('/')
+    gps = sorted(num(p.get('stats', {}).get('gp')) or num(p.get('stats', {}).get('p_gp')) or 0
+                 for roster in pool.values() for p in roster)
+    gps = [g for g in gps if g > 0]
+    if not gps or gps[len(gps) // 2] >= PRIOR_SEASON_UNTIL_GP.get(sport, 20):
+        return 0
+    season = prev_season(league_key, today)
+    cache_path = os.path.join(config.DATA_DIR, f'{league_key}_players_prev.json')
+    cached = read_json(cache_path, {}) or {}
+    fetched = parse_iso(cached.get('updated'))
+    fresh = (fetched is not None and cached.get('season') == season
+             and (datetime.now(timezone.utc) - fetched).days < PRIOR_SEASON_CACHE_DAYS)
+    by_id = cached.get('players') or {} if fresh else {}
+    if not by_id and http is not None:
+        try:
+            prior_pool = espn.fetch_athlete_stats(http, sport, league, season=season)
+        except Exception:                    # noqa: BLE001
+            prior_pool = {}
+        for roster in (prior_pool or {}).values():
+            for p in roster:
+                if p.get('id') and p.get('stats'):
+                    by_id[str(p['id'])] = p['stats']
+        if by_id:
+            write_json(cache_path, {'updated': now_iso(), 'season': season, 'players': by_id}, indent=None)
+    n = 0
+    for roster in pool.values():
+        for p in roster:
+            prev = by_id.get(str(p.get('id') or ''))
+            if prev:
+                p['prev'] = prev
+                n += 1
+    print(f'  [{cfg["name"]}] previous season ({season}) as prior for {n} players')
+    return n
 
 
 def fill_games_played(league_key, pool):

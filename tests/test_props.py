@@ -322,3 +322,35 @@ class TestBinomialHits(unittest.TestCase):
         hits = next(p for p in priced if p['key'] == 'hits')
         # 1.0 hits over 4.0 at-bats: P(1+) = 1 - 0.75^4 = 0.684
         self.assertAlmostEqual(hits['over'], 1 - 0.75 ** 4, places=3)
+
+
+class TestPreviousSeasonPrior(unittest.TestCase):
+    def test_one_game_leans_on_last_season(self):
+        qb = {'stats': {'gp': 1, 'pass_yds': 334, 'pass_att': 29, 'pass_cmp': 20, 'pass_td': 2, 'pass_int': 0,
+                        'rush_yds': 23, 'rush_att': 6},
+              'pos': 'QB',
+              'prev': {'gp': 17, 'pass_yds': 4080, 'pass_att': 544, 'pass_cmp': 357, 'pass_td': 34, 'pass_int': 8,
+                       'rush_yds': 510, 'rush_att': 102}}
+        priced, gp = props.project_player(qb, 'football', 'qb', 1.0, max_props=None)
+        yds = next(p for p in priced if p['key'] == 'pass_yds')
+        # (1 x 334 + 5 x 240) / 6 = 255.7, not last week's 334
+        self.assertAlmostEqual(yds['proj'], (334 + 5 * 240) / 6, delta=0.5)
+        self.assertEqual(yds['season'], 334)
+
+    def test_a_thin_previous_season_is_ignored(self):
+        rb = {'stats': {'gp': 1, 'rush_yds': 156, 'rush_att': 29, 'rec': 5, 'rec_yds': 30, 'rush_td': 2, 'rec_td': 0},
+              'pos': 'RB', 'prev': {'gp': 2, 'rush_yds': 40, 'rush_att': 10}}
+        priced, _ = props.project_player(rb, 'football', 'rb', 1.0, max_props=None)
+        self.assertAlmostEqual(next(p for p in priced if p['key'] == 'rush_yds')['proj'], 156, delta=0.5)
+
+    def test_previous_season_id(self):
+        from datetime import date
+        from sportspred.pipeline import prev_season
+        self.assertEqual(prev_season('nfl', date(2026, 9, 16)), 2025)
+        self.assertEqual(prev_season('mlb', date(2026, 9, 16)), 2025)
+        self.assertEqual(prev_season('nhl', date(2026, 10, 20)), 2026)   # 2026-27 is "2027"
+        self.assertEqual(prev_season('nba', date(2027, 2, 1)), 2026)
+
+    def test_yes_only_markets_get_a_market_probability(self):
+        self.assertAlmostEqual(props.implied_over(150, None), 0.4 / 1.06, places=4)
+        self.assertIsNone(props.implied_over(None, None))
