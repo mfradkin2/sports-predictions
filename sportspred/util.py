@@ -295,6 +295,7 @@ class Http:
         self.calls = 0
         self.failures = 0
         self.errors = {}              # url -> why the last attempt failed
+        self.last_headers = {}        # response headers of the last success
         self.ctx = ssl.create_default_context()
         self.dump_dir = os.environ.get('SP_DEBUG_DUMP', '').strip() or None
 
@@ -332,6 +333,7 @@ class Http:
                 with urllib.request.urlopen(req, timeout=self.timeout,
                                             context=self.ctx) as resp:
                     raw = resp.read()
+                    self.last_headers = {k.lower(): v for k, v in resp.headers.items()}
                 text = raw.decode('utf-8', 'replace')
                 try:
                     data = json.loads(text)

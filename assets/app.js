@@ -128,7 +128,7 @@
     });
     var accent = el('accent-style');
     var d = cur();
-    if (accent) accent.textContent = ':root{--accent:' + (d ? d.accent : '#3b82f6') + '}';
+    if (accent) accent.textContent = ':root{--accent:' + (d ? d.accent : '#14b8a6') + '}';
     var sub = el('brand-sub');
     if (sub) {
       if (d) {
@@ -156,10 +156,25 @@
     }
     return '<div class="center" data-time="1"><span class="gtime">' + esc(g.time || 'TBD') + '</span></div>';
   }
-  function countProps(p) {
+  function countProps(p, pendingToo) {
     var n = 0;
-    ['away', 'home'].forEach(function (s) { (p[s] || []).forEach(function (pl) { n += (pl.props || []).length; }); });
+    ['away', 'home'].forEach(function (s) { (p[s] || []).forEach(function (pl) {
+      (pl.props || []).forEach(function (x) { if (pendingToo || !x.pending) n++; });
+    }); });
     return n;
+  }
+  function propTally(g) {
+    // Graded props for this game: from the ledger tally (any age) or the board.
+    if (g.props_tally && g.props_tally.n) return g.props_tally;
+    if (!g.props) return null;
+    var t = { n: 0, hit: 0, push: 0 };
+    ['away', 'home'].forEach(function (s) { (g.props[s] || []).forEach(function (pl) {
+      (pl.props || []).forEach(function (x) {
+        if (x.push) t.push++;
+        else if (x.hit != null) { t.n++; if (x.hit) t.hit++; }
+      });
+    }); });
+    return t.n || t.push ? t : null;
   }
 
   function gameRow(g, league) {
@@ -169,6 +184,12 @@
     var result = g.correct == null ? '' :
       '<span class="tag ' + (g.correct ? 'ok' : 'no') + '">' + (g.correct ? '✓' : '✗') + '</span>';
     var propCount = g.props ? countProps(g.props) : 0;
+    var pendingCount = g.props ? countProps(g.props, true) - propCount : 0;
+    var tally = propTally(g);
+    var propTag = tally
+      ? '<span class="tag ' + (tally.hit >= tally.n / 2 ? 'ok' : 'no') + '" title="Player props graded correct">PROPS ' + tally.hit + '/' + tally.n + '</span>'
+      : (propCount ? '<span class="tag props">' + propCount + ' PROPS</span>'
+        : (pendingCount ? '<span class="tag low" title="Waiting on sportsbook lines">PROPS · NO LINES YET</span>' : ''));
     var flag = g.preseason ? '<span class="tag low">PRESEASON</span>'
       : (g.final && !g.counted && state.showCountBadge ? '<span class="tag low">NOT COUNTED</span>' : '');
     var lock = g.locked ? '<span class="lock" title="Locked at first pitch">🔒</span>' : '';
@@ -190,7 +211,7 @@
             '<span class="pick">' + (homePick ? '→' : '←') + ' <b>' +
               nameSpans(g.favored, homePick ? (g.home_s || g.home) : (g.away_s || g.away)) + '</b> ' + pct(g.pick_prob) + '</span>' +
             '<span class="tag ' + g.conf + '">' + g.conf.toUpperCase() + '</span>' + flag +
-            (propCount ? '<span class="tag props">' + propCount + ' PROPS</span>' : '') + result +
+            propTag + result +
           '</span></span>' +
         '<span class="chev" aria-hidden="true">▾</span>' +
       '</button><div class="detail" hidden></div></article>';
@@ -199,7 +220,7 @@
   // ── game detail ──────────────────────────────────────────────────────────
   function buildDetail(g, d) {
     var tabs = [['matchup', 'Matchup']];
-    var hasProps = g.props && countProps(g.props) > 0;
+    var hasProps = g.props && countProps(g.props, true) > 0;
     if (hasProps) {
       tabs.push(['away', (g.away_s || g.away) + ' props']);
       tabs.push(['home', (g.home_s || g.home) + ' props']);
@@ -301,7 +322,7 @@
 
   // ── players & props ──────────────────────────────────────────────────────
   function headlineProp(props) {
-    var list = props || [];
+    var list = (props || []).filter(function (p) { return !p.pending; });
     if (!list.length) return null;
     var popular = list.filter(function (p) { return (p.rank || 99) <= 3; });
     var pool = popular.length ? popular : list;
@@ -313,13 +334,20 @@
   function playersPanel(g, side) {
     var players = (g.props && g.props[side]) || [];
     if (!players.length) return '<div class="empty"><span class="icon">👤</span>No player projections for this side.</div>';
-    var locked = g.props_locked ? '<div class="note">🔒 Locked at first pitch. The live box score is shown against each line; ' +
-      'no line, projection or probability changes once the game starts.</div>' : '';
+    var locked = g.props_locked ? '<div class="note">🔒 Locked at first pitch. Each prop is checked against the box score and marked ' +
+      '<b>correct</b> or <b>incorrect</b>; no line, projection or probability changes once the game starts.</div>' : '';
+    var blanks = 0;
+    players.forEach(function (p) { (p.props || []).forEach(function (x) { if (x.pending) blanks++; }); });
+    if (blanks && !g.props_locked) {
+      locked += '<div class="note">' + blanks + ' prop' + (blanks === 1 ? '' : 's') + ' still waiting on a sportsbook line. ' +
+        'The projection is ours; the line, lean and probability fill in automatically once a book posts one.</div>';
+    }
     return locked + '<div class="players">' + players.map(function (p, i) {
       var best = headlineProp(p.props);
       var hits = (p.props || []).filter(function (x) { return x.hit != null; });
-      var record = hits.length ? '<span class="tag ' + (hits.filter(function (x) { return x.hit; }).length >= hits.length / 2 ? 'ok' : 'no') + '">' +
-        hits.filter(function (x) { return x.hit; }).length + '/' + hits.length + '</span>' : '';
+      var nHit = hits.filter(function (x) { return x.hit; }).length;
+      var record = hits.length ? '<span class="tag ' + (nHit >= hits.length / 2 ? 'ok' : 'no') + '" title="Props predicted correctly">' +
+        (nHit >= hits.length / 2 ? '✓ ' : '✗ ') + nHit + '/' + hits.length + '</span>' : '';
       var shot = p.headshot ? '<img class="pshot" src="' + esc(p.headshot) + '" alt="" loading="lazy" decoding="async">' : '<span class="pshot" aria-hidden="true"></span>';
       return '<div class="player" data-player="' + i + '" data-athlete="' + esc(p.id || '') + '">' +
         '<button class="player-head" aria-expanded="false">' + shot +
@@ -333,6 +361,24 @@
     }).join('') + '</div>';
   }
 
+  function lineSource(p) {
+    if (p.line_source === 'book') {
+      var who = p.book || 'book';
+      return '<span class="src book" title="Sportsbook consensus line' + (p.books > 1 ? ' (median of ' + p.books + ' books)' : '') + '">' + esc(who) + '</span>';
+    }
+    if (p.line_source === 'model') return '<span class="src model" title="No sportsbook feed: line derived from the season baseline">model line</span>';
+    return '';
+  }
+
+  function propOutcome(p) {
+    var unit = p.unit ? ' ' + esc(p.unit.toLowerCase()) : '';
+    if (p.push) return '<span class="prop-live low">PUSH · ' + p.actual + unit + '</span>';
+    if (p.hit != null) return '<span class="prop-live ' + (p.hit ? 'ok' : 'no') + '">' +
+      (p.hit ? '✓ CORRECT' : '✗ INCORRECT') + ' · ' + p.actual + unit + '</span>';
+    if (p.played === false) return '<span class="prop-live low">DNP</span>';
+    return '';
+  }
+
   function propRow(p) {
     var lo = p.range ? p.range[0] : p.proj, hi = p.range ? p.range[1] : p.proj;
     var span = Math.max(hi - lo, 1e-6), pad = span * 0.35, min = lo - pad, max = hi + pad;
@@ -340,16 +386,23 @@
     var deltaCls = p.delta > 0.01 ? 'up' : (p.delta < -0.01 ? 'down' : '');
     var deltaTxt = p.delta == null || Math.abs(p.delta) < 0.01 ? '' : (p.delta > 0 ? '+' : '') + p.delta + ' vs season';
     var boxKey = (p.stat || '').replace(/_pg$/, '');
-    var outcome = '';
-    if (p.push) outcome = '<span class="prop-live low">PUSH ' + p.actual + '</span>';
-    else if (p.hit != null) outcome = '<span class="prop-live ' + (p.hit ? 'ok' : 'no') + '">' + (p.hit ? '✓ HIT' : '✗ MISS') + ' · ' + p.actual + '</span>';
-    else if (p.played === false) outcome = '<span class="prop-live low">DNP</span>';
+    var sub = '<span class="prop-sub">season ' + p.season + ' ' + esc(p.unit || '') +
+        (deltaTxt ? ' · <span class="delta ' + deltaCls + '">' + deltaTxt + '</span>' : '') + '</span>';
+    if (p.pending) {
+      return '<div class="prop pending" data-stat="' + esc(boxKey) + '">' +
+        '<span class="prop-name">' + esc(p.label) + '<span class="prop-live" hidden></span>' + sub + '</span>' +
+        '<span class="prop-nums"><span class="prop-num"><span class="lbl">Line</span><span class="blank" title="No sportsbook line posted yet">—</span></span>' +
+          '<span class="prop-num"><span class="lbl">Proj</span>' + p.proj + '</span></span>' +
+        '<span class="prop-range" title="Likely range ' + lo + '–' + hi + '">' +
+          '<i style="left:' + toPct(lo).toFixed(1) + '%;width:' + (toPct(hi) - toPct(lo)).toFixed(1) + '%"></i></span>' +
+        '<span class="prop-pick"><span class="tag low">NO LINE YET</span></span></div>';
+    }
+    var outcome = propOutcome(p);
     var dot = p.actual != null && !p.push ? '<b class="live-dot" style="left:' + Math.max(0, Math.min(100, toPct(p.actual))).toFixed(1) + '%"></b>' : '';
-    return '<div class="prop" data-stat="' + esc(boxKey) + '" data-line="' + p.line + '" data-lo="' + lo + '" data-hi="' + hi + '">' +
-      '<span class="prop-name">' + esc(p.label) + (outcome || '<span class="prop-live" hidden></span>') +
-        '<span class="prop-sub">season ' + p.season + ' ' + esc(p.unit || '') +
-        (deltaTxt ? ' · <span class="delta ' + deltaCls + '">' + deltaTxt + '</span>' : '') + '</span></span>' +
-      '<span class="prop-nums"><span class="prop-num"><span class="lbl">Line</span>' + p.line + '</span>' +
+    return '<div class="prop' + (p.hit != null ? (p.hit ? ' right' : ' wrong') : '') + '" data-stat="' + esc(boxKey) + '" data-line="' + p.line +
+      '" data-pick="' + p.pick + '" data-lo="' + lo + '" data-hi="' + hi + '">' +
+      '<span class="prop-name">' + esc(p.label) + (outcome || '<span class="prop-live" hidden></span>') + sub + '</span>' +
+      '<span class="prop-nums"><span class="prop-num"><span class="lbl">Line</span>' + p.line + lineSource(p) + '</span>' +
         '<span class="prop-num"><span class="lbl">Proj</span>' + p.proj + '</span></span>' +
       '<span class="prop-range" title="Likely range ' + lo + '–' + hi + '">' +
         '<i style="left:' + toPct(lo).toFixed(1) + '%;width:' + (toPct(hi) - toPct(lo)).toFixed(1) + '%"></i>' +
@@ -488,6 +541,9 @@
         ? card(label, pct(v.pct, 1), v.correct + ' of ' + v.total + ' verified picks')
         : card(label, bt && bt.pct != null ? pct(bt.pct, 1) + ' backtest' : '—', 'no verified picks yet');
     });
+    var pn = 0, ph = 0;
+    leagues.forEach(function (k) { var pr = (DATA[k] || {}).props_record || {}; pn += pr.total || 0; ph += pr.hit || 0; });
+    if (pn) cards += card('Player props', pct(ph / pn, 1), ph + ' of ' + pn + ' graded props correct');
     var played = filteredGames('results').length;
     if (!total && !backfilled && !played) {
       return '<div class="empty"><span class="icon">' + (EMOJI[state.league] || '🏟') + '</span>No completed games yet. Results appear once games have been played.</div>';
@@ -513,6 +569,7 @@
       ['away', 'home'].forEach(function (side) {
         (g.props[side] || []).forEach(function (pl) {
           (pl.props || []).forEach(function (p) {
+            if (p.pending) return;
             out.push({ g: g, side: side, player: pl, prop: p, league: k });
           });
         });
@@ -525,9 +582,12 @@
     var d = cur() || {};
     var rows = allProps();
     if (!rows.length) {
+      var ls = d.lines_status || {};
       var why = d.props_status === 'unavailable'
         ? 'Player statistics could not be fetched on the last run. The board fills in automatically on the next refresh.'
-        : 'No upcoming games with player projections right now.';
+        : (ls.mode === 'book' && !ls.games
+          ? 'Waiting on sportsbook lines: the books have not posted player markets for the next games yet. Props fill in automatically once they do.'
+          : 'No upcoming games with player projections right now.');
       return '<div class="empty"><span class="icon">👤</span>' + esc(why) + '</div>';
     }
     var f = state.filters.props ||
@@ -579,31 +639,39 @@
         esc(state.search) + '" aria-label="Filter players"></div>',
       list.length + ' props');
 
+    var graded = list.some(function (r) { return r.prop.hit != null || r.prop.push; });
     var body = '<div class="scroll-x"><table class="grid"><thead><tr>' +
       '<th>Player</th><th>Prop</th><th class="num">Line</th><th class="num">Proj</th>' +
-      '<th class="num">Edge</th><th>Lean</th><th class="num">Prob</th><th>Game</th></tr></thead><tbody>' +
+      '<th class="num">Edge</th><th>Lean</th><th class="num">Prob</th>' + (graded ? '<th>Result</th>' : '') + '<th>Game</th></tr></thead><tbody>' +
       list.map(function (r) {
         var p = r.prop;
+        var res = p.push ? '<span class="tag low">PUSH</span>'
+          : (p.hit != null ? '<span class="tag ' + (p.hit ? 'ok' : 'no') + '">' + (p.hit ? '✓ ' : '✗ ') + p.actual + '</span>' : '');
         return '<tr><td><b>' + esc(r.player.name) + '</b><br><span style="color:var(--faint)">' +
             esc(r.player.pos || '') + '</span></td>' +
           '<td>' + (isAll() ? '<span class="lg-chip">' + EMOJI[r.league] + '</span> ' : '') + esc(p.label) + '</td>' +
-          '<td class="num">' + p.line + '</td>' +
+          '<td class="num">' + p.line + '<br>' + lineSource(p) + '</td>' +
           '<td class="num">' + p.proj + '</td>' +
           '<td class="num ' + (p.edge > 0.05 ? 'better' : (p.edge < -0.05 ? 'worse' : '')) + '">' +
             (p.edge == null ? '—' : (p.edge > 0 ? '+' : '') + p.edge.toFixed(2) + 'σ') + '</td>' +
           '<td><span class="pickdir ' + p.pick + '">' + p.pick.toUpperCase() + '</span></td>' +
           '<td class="num"><span class="tag ' + p.conf + '">' + pct(p.pick_prob) + '</span></td>' +
+          (graded ? '<td>' + res + '</td>' : '') +
           '<td style="color:var(--muted)">' + esc(r.g.away) + ' @ ' + esc(r.g.home) +
             '<br><span style="color:var(--faint)">' + shortDate(r.g.date) + '</span></td></tr>';
       }).join('') + '</tbody></table></div>';
 
-    var note = '<div class="note">Lines are set at each player\'s season baseline and priced against a ' +
-      'matchup-adjusted projection, so a lean reflects the model disagreeing with that baseline — these ' +
-      'are not sportsbook numbers, so check the real market before acting on anything here. ' +
-      '<b>Model edge</b> sorts by how far this matchup moves a player off their own season ' +
-      'baseline, in standard deviations — that is the part the model has an opinion about. ' +
-      '<b>Confidence</b> sorts by raw probability instead, which favours near-certainties such as ' +
-      'an unlikely home run.</div>';
+    var bookMode = leaguesInView().some(function (k) { return ((DATA[k] || {}).lines_status || {}).mode === 'book'; });
+    var note = bookMode
+      ? '<div class="note"><b>Line</b> is the sportsbook consensus (the median where several books post the market). ' +
+        '<b>Proj</b> is this site\'s own projection: the player\'s season rate adjusted for the opponent, expected game ' +
+        'script, home/away and injuries, corrected by what the graded ledger has learned. The lean and probability are ' +
+        'where that projection lands against the book\'s line, and <b>Edge</b> is that gap in standard deviations. ' +
+        'A market with no line yet stays blank and fills in once a book posts one.</div>'
+      : '<div class="note">No sportsbook feed is connected, so <b>Line</b> is derived from each player\'s season baseline ' +
+        'and marked <i>model line</i>. <b>Proj</b> is the site\'s matchup-adjusted projection; <b>Edge</b> is how far ' +
+        'the matchup moves a player off their baseline, in standard deviations. Add an ODDS_API_KEY secret to price ' +
+        'against real market lines.</div>';
     return note + bar + body;
   }
 
@@ -700,6 +768,7 @@
         card('High confidence', pct(bc.high && bc.high.pct, 1), (bc.high ? bc.high.n : 0) + ' props') +
         card('Medium', pct(bc.med && bc.med.pct, 1), (bc.med ? bc.med.n : 0) + ' props') +
         card('Low', pct(bc.low && bc.low.pct, 1), (bc.low ? bc.low.n : 0) + ' props') +
+        (pr.by_source && pr.by_source.book ? card('vs sportsbook lines', pct(pr.by_source.book.pct, 1), pr.by_source.book.n + ' props') : '') +
         '</div>';
       var keys = Object.keys(pr.by_key || {}).sort(function (a, b) {
         return pr.by_key[b].n - pr.by_key[a].n;
@@ -1035,16 +1104,23 @@
         gameEl.querySelectorAll('.player[data-athlete]').forEach(function (pl) {
           var st = box[pl.dataset.athlete];
           if (!st) return;
-          pl.querySelectorAll('.prop[data-stat]').forEach(function (row) {
+          pl.querySelectorAll('.prop[data-line]').forEach(function (row) {
             var v = st[row.dataset.stat];
             if (v == null) return;
             var chip = row.querySelector('.prop-live');
             var line = parseFloat(row.dataset.line);
-            var over = v > line;
+            if (!isFinite(line)) return;
+            var over = v > line, push = Math.abs(v - line) < 1e-9;
+            var ok = over === (row.dataset.pick === 'over');
             chip.hidden = false;
-            chip.className = 'prop-live ' + (final ? (over ? 'ok' : 'no') : 'live');
-            chip.textContent = (final ? 'Final: ' : 'Now: ') + (Math.round(v * 10) / 10) +
-              (final ? (over ? ' ✓ over' : ' ✓ under') : '');
+            var shown = Math.round(v * 10) / 10;
+            if (!final) { chip.className = 'prop-live live'; chip.textContent = 'Now: ' + shown; }
+            else if (push) { chip.className = 'prop-live low'; chip.textContent = 'PUSH · ' + shown; }
+            else {
+              chip.className = 'prop-live ' + (ok ? 'ok' : 'no');
+              chip.textContent = (ok ? '✓ CORRECT' : '✗ INCORRECT') + ' · ' + shown;
+              row.classList.add(ok ? 'right' : 'wrong');
+            }
             var range = row.querySelector('.prop-range');
             if (range) {
               var lo = +row.dataset.lo, hi = +row.dataset.hi;

@@ -103,8 +103,11 @@ def is_average_name(name):
     return any(m in n for m in AVG_MARKERS)
 
 
+# Pitching games are kept apart from batting games: a position player who
+# pitched an inning in a blowout (or a two-way player) must not have his
+# 140 batting games replaced by four pitching appearances.
 PITCHING_ALIASES = {
-    'gp': ['gamesplayed', 'gp', 'g', 'appearances'],
+    'p_gp': ['gamesplayed', 'gp', 'g', 'appearances'],
     'starts': ['gamesstarted', 'gs'],
     'ip': ['inningspitched', 'innings', 'ip'],
     'p_so': ['strikeouts', 'so', 'k'],

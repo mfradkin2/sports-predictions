@@ -347,8 +347,8 @@ class LeagueMemory:
 #  Player-prop ledger: the same discipline, applied to every projection
 # ─────────────────────────────────────────────────────────────────────────────
 PROP_FIELDS = ['game_id', 'game_date', 'athlete_id', 'player', 'side', 'key', 'label',
-               'stat', 'dist', 'line', 'proj', 'season', 'over', 'pick', 'conf',
-               'recorded_at', 'actual', 'played', 'graded', 'hit', 'push']
+               'stat', 'dist', 'line', 'line_source', 'book', 'proj', 'season', 'over',
+               'pick', 'conf', 'recorded_at', 'actual', 'played', 'graded', 'hit', 'push']
 PROP_TUNING_MIN = 30       # graded props of one kind before its parameters move
 PROP_TUNING_FULL = 200     # ... and the sample size at which they move fully
 
@@ -386,11 +386,15 @@ class PropsLedger:
     def record(self, game, side, player, prop):
         if not game.get('game_id') or not player.get('id'):
             return False
+        if prop.get('pending') or prop.get('line') is None:
+            return False                 # nothing was predicted yet
         row = {
             'game_id': game['game_id'], 'game_date': str(game['date']),
             'athlete_id': player['id'], 'player': player.get('name', ''), 'side': side,
             'key': prop['key'], 'label': prop['label'], 'stat': prop.get('stat', ''),
-            'dist': prop.get('dist', ''), 'line': prop['line'], 'proj': prop['proj'],
+            'dist': prop.get('dist', ''), 'line': prop['line'],
+            'line_source': prop.get('line_source', 'model'), 'book': prop.get('book', ''),
+            'proj': prop['proj'],
             'season': prop['season'], 'over': prop['over'], 'pick': prop['pick'],
             'conf': prop['conf'], 'recorded_at': now_iso(),
             'actual': '', 'played': '', 'graded': '0', 'hit': '', 'push': '',
@@ -400,6 +404,56 @@ class PropsLedger:
             return False
         self.rows[k] = row
         return True
+
+    def board_for(self, game_id):
+        """Rebuild a game's board from its ledger rows.
+
+        The fallback for a started game whose pre-kickoff board was never
+        stored (the boards file post-dates the ledger, or was lost): the ledger
+        holds every number the board showed, so the outcome can still be
+        checked against what was actually published.
+        """
+        rows = [r for r in self.rows.values() if r.get('game_id') == str(game_id)]
+        if not rows:
+            return None
+        board = {'away': [], 'home': []}
+        players = {}
+        for r in sorted(rows, key=lambda r: (r.get('side', ''), r.get('player', ''), r.get('key', ''))):
+            side = r.get('side') if r.get('side') in ('away', 'home') else 'home'
+            pk = (side, r.get('athlete_id'))
+            if pk not in players:
+                players[pk] = {'id': r.get('athlete_id', ''), 'name': r.get('player', ''),
+                               'short': r.get('player', ''), 'pos': '', 'group': '',
+                               'gp': 0, 'headshot': '', 'props': []}
+                board[side].append(players[pk])
+            over = num(r.get('over'), 0.5)
+            prop = {'key': r.get('key', ''), 'label': r.get('label', r.get('key', '')),
+                    'unit': '', 'line': num(r.get('line')), 'proj': num(r.get('proj')),
+                    'season': num(r.get('season')), 'over': round(over, 4),
+                    'under': round(1 - over, 4), 'pick': r.get('pick', 'over'),
+                    'pick_prob': round(max(over, 1 - over), 4), 'conf': r.get('conf', 'low'),
+                    'stat': r.get('stat', ''), 'dist': r.get('dist', ''),
+                    'line_source': r.get('line_source') or 'model', 'rank': 99}
+            if r.get('book'):
+                prop['book'] = r['book']
+            if prop['proj'] is not None and prop['season'] is not None:
+                prop['delta'] = round(prop['proj'] - prop['season'], 2)
+            players[pk]['props'].append(prop)
+        return board
+
+    def tallies(self):
+        """{game_id: {'n', 'hit', 'push'}} over graded props, for the Results view."""
+        out = {}
+        for r in self.rows.values():
+            if r.get('graded') != '1' or r.get('played') != '1':
+                continue
+            t = out.setdefault(r.get('game_id'), {'n': 0, 'hit': 0, 'push': 0})
+            if r.get('push') == '1':
+                t['push'] += 1
+            elif r.get('hit') in ('0', '1'):
+                t['n'] += 1
+                t['hit'] += int(r['hit'])
+        return {gid: t for gid, t in out.items() if t['n'] or t['push']}
 
     def ungraded_games(self, finished_ids):
         """Game ids that have finished and still hold ungraded props."""
@@ -462,11 +516,18 @@ class PropsLedger:
             c = by_conf.setdefault(r.get('conf', 'low'), {'n': 0, 'hit': 0})
             c['n'] += 1
             c['hit'] += int(hit)
-        for d in list(by_key.values()) + list(by_conf.values()):
+        by_source = {}
+        for r in rows:
+            if r.get('hit') not in ('0', '1'):
+                continue
+            s = by_source.setdefault(r.get('line_source') or 'model', {'n': 0, 'hit': 0})
+            s['n'] += 1
+            s['hit'] += int(r['hit'])
+        for d in list(by_key.values()) + list(by_conf.values()) + list(by_source.values()):
             d['pct'] = round(d['hit'] / d['n'], 4) if d['n'] else None
         total = sum(v['n'] for v in by_conf.values())
         hits = sum(v['hit'] for v in by_conf.values())
-        return {'total': total, 'hit': hits,
+        return {'total': total, 'hit': hits, 'by_source': by_source,
                 'pct': round(hits / total, 4) if total else None,
                 'by_key': by_key, 'by_conf': by_conf}
 

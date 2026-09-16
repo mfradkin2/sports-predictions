@@ -21,7 +21,7 @@ HISTORY_DIR = os.path.join(BASE, 'history')
 # ─────────────────────────────────────────────────────────────────────────────
 LEAGUES = {
     'mlb': {
-        'name': 'MLB', 'emoji': '⚾', 'accent': '#3b82f6',
+        'name': 'MLB', 'emoji': '⚾', 'accent': '#10b981',
         'espn_path': 'baseball/mlb', 'sport': 'baseball',
         'csv_file': 'mlb_predictions.csv', 'season_label': '2026 Season',
         # Elo priors — MLB has the flattest talent curve of the four leagues.
@@ -39,7 +39,7 @@ LEAGUES = {
         ],
     },
     'nhl': {
-        'name': 'NHL', 'emoji': '🏒', 'accent': '#0ea5e9',
+        'name': 'NHL', 'emoji': '🏒', 'accent': '#22d3ee',
         'espn_path': 'hockey/nhl', 'sport': 'hockey',
         'csv_file': 'nhl_2026_schedule_enriched.csv', 'season_label': '2025–26 Season',
         'elo': {'k': 6.0, 'hfa': 34.0, 'mov': 0.70, 'regress': 0.30, 'scale': 400.0},
@@ -56,7 +56,7 @@ LEAGUES = {
         ],
     },
     'nba': {
-        'name': 'NBA', 'emoji': '🏀', 'accent': '#ef4444',
+        'name': 'NBA', 'emoji': '🏀', 'accent': '#fb923c',
         'espn_path': 'basketball/nba', 'sport': 'basketball',
         'csv_file': 'nba_2026_schedule_enriched.csv', 'season_label': '2025–26 Season',
         'elo': {'k': 18.0, 'hfa': 62.0, 'mov': 1.00, 'regress': 0.25, 'scale': 400.0},
@@ -72,7 +72,7 @@ LEAGUES = {
         ],
     },
     'nfl': {
-        'name': 'NFL', 'emoji': '🏈', 'accent': '#8b5cf6',
+        'name': 'NFL', 'emoji': '🏈', 'accent': '#a78bfa',
         'espn_path': 'football/nfl', 'sport': 'football',
         'csv_file': 'nfl_2026_schedule_enriched.csv', 'season_label': '2026 Season',
         'elo': {'k': 20.0, 'hfa': 48.0, 'mov': 1.00, 'regress': 0.33, 'scale': 400.0},
@@ -286,12 +286,6 @@ PROPS = {
             {'key': 'scrim',   'label': 'Rush + Rec Yards', 'stat': 'scrim_yds_pg', 'line': None,
              'dist': 'normal', 'sigma': _sig(0.60, 12.0), 'rank': 4, 'min_proj': 25.0, 'unit': 'YDS'},
         ],
-        'def': [
-            {'key': 'tackles', 'label': 'Tackles + Assists', 'stat': 'tackles_pg', 'line': None,
-             'dist': 'negbin', 'disp': 1.4, 'rank': 1, 'min_proj': 3.0, 'unit': 'TKL'},
-            {'key': 'sacks',   'label': 'Sacks', 'stat': 'sacks_pg', 'line': 0.5,
-             'dist': 'poisson', 'rank': 2, 'min_proj': 0.2, 'unit': 'SACK'},
-        ],
     },
     'hockey': {
         'skater': [
@@ -324,7 +318,7 @@ GROUP_QUOTA = {
     'baseball': [('pitcher', 1), ('batter', 6)],
     'hockey': [('goalie', 1), ('skater', 6)],
     'basketball': [('skater', 7)],
-    'football': [('qb', 1), ('rb', 2), ('wr', 3), ('def', 1)],
+    'football': [('qb', 1), ('rb', 2), ('wr', 4)],   # offence only
 }
 
 

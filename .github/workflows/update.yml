@@ -46,6 +46,9 @@ jobs:
       - name: Ingest, train, project props and rebuild the site
         env:
           SP_LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days }}
+          # Sportsbook lines for player props (https://the-odds-api.com). Add
+          # the key as a repository secret; without it lines are model-derived.
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: |
           python3 run_pipeline.py ${{ github.event.inputs.skip_props == 'true' && '--no-props' || '' }}
 

@@ -18,8 +18,16 @@ Elo edge, recent form, scoring margin, rest, home/road splits, head-to-head.
 most-shopped markets: hits, total bases, home runs, RBIs and strikeouts in
 baseball; points, rebounds, assists and threes in basketball; passing,
 rushing and receiving lines in football; shots, points and saves in hockey.
-Each carries a projection, a line, a likely range, and an over/under
-probability. A league-wide **Player Props** board ranks the whole slate.
+The **line is the sportsbook consensus** (the median where several books post
+the market, via The Odds API) and the **projection is the site's own**: the
+player's season rate adjusted for the opponent, the expected game script,
+home/away and the injury report, corrected by what the graded ledger has
+learned. Each prop shows both, a likely range, and the over/under
+probability of that projection against the book's line. A market the books
+have not posted yet stays blank and fills in on a later run. Once the game
+ends every prop is marked correct or incorrect against the box score.
+Football boards cover offensive players only. A league-wide **Player
+Props** board ranks the whole slate.
 
 **Predictions are frozen at kickoff.** The first forecast published for a game
 is written to a ledger and is what the site shows from then on, so a finished
@@ -63,9 +71,10 @@ Everything is standard-library Python; there is nothing to install and no R.
    validation, and recalibrates with Platt scaling.
 6. **Project** (`sportspred/props.py`) turns each player's season line into a
    per-game rate, adjusts it for the opponent, the projected game environment
-   and the injury report, and prices it with a Poisson, negative binomial or
-   normal distribution. In baseball the two probable starters' ERAs also shift
-   the game's standings prior.
+   and the injury report, and prices it against the sportsbook line
+   (`sportspred/odds.py`) with a Poisson, negative binomial or normal
+   distribution. In baseball the two probable starters' ERAs also shift the
+   game's standings prior.
 7. **Freeze** — the prediction is written to `history/<league>_ledger.csv` and
    never rewritten. Later runs read it back rather than recomputing.
 8. **Render** (`sportspred/render.py`) writes a data file per league plus a
@@ -156,6 +165,15 @@ python3 -m unittest discover -s tests   # the test suite
 
 Only the standard library is required.
 
+Sportsbook lines need an API key from [The Odds API](https://the-odds-api.com):
+set `ODDS_API_KEY` locally, and add it as a repository secret of the same
+name so the hourly refresh can use it. Lines are fetched for games within
+36 hours of kickoff and re-fetched every `ODDS_REFRESH_HOURS` (default 4)
+so newly posted players fill in; each fetch costs one credit per market,
+and the client stops with 40 credits in reserve. Without a key the board
+prices against lines derived from each player's season baseline and says
+so.
+
 A wider one-off backfill of past results:
 
 ```bash
@@ -181,8 +199,8 @@ SP_LOOKBACK_DAYS=120 python3 run_pipeline.py mlb
 
 ## A note on the numbers
 
-These are model projections, not betting advice and not sportsbook lines.
-Prop lines here are anchored to each player's own season baseline, so a "lean"
-means the model disagrees with that baseline for this matchup — it says
-nothing about whether a real market price offers value. Check the actual
+These are model projections, not betting advice. Prop lines come from the
+sportsbooks where a market exists; the projection, lean and probability are
+the site's own read against that line, and the graded record on the Model
+tab is the only measure of how good that read has been. Check the actual
 market before acting on anything here.

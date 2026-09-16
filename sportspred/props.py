@@ -19,6 +19,7 @@ from collections import defaultdict
 
 from .config import props_for, quota_for
 from .espn import find_team, norm_team
+from .odds import line_for
 from .util import clamp, negbin_sf, norm_sf, num, poisson_sf
 
 # Ceiling on any per-game rate we will believe out of the raw feed; anything
@@ -37,6 +38,8 @@ PER_GAME_MAX = {
     'saves': 55, 'ga': 9, 'toi': 30,
 }
 
+# Pitching counting stats are per appearance, batting ones per game played.
+PITCHING_KEYS = {'ip', 'p_so', 'p_er', 'p_h', 'p_bb', 'p_hr', 'wins', 'starts'}
 RATE_STATS = {'avg', 'obp', 'slg', 'ops', 'era', 'whip', 'sv_pct', 'gaa', 'gp',
               'starts', 'toi', 'min'}
 
@@ -47,9 +50,7 @@ POSITION_GROUP = {
     'football': lambda pos: (
         'qb' if pos.upper() == 'QB' else
         'rb' if pos.upper() in ('RB', 'FB', 'HB') else
-        'wr' if pos.upper() in ('WR', 'TE') else
-        'def' if pos.upper() in ('LB', 'DE', 'DT', 'CB', 'S', 'SS', 'FS',
-                                 'MLB', 'OLB', 'ILB', 'NT', 'DB', 'EDGE') else ''
+        'wr' if pos.upper() in ('WR', 'TE') else ''      # offence only
     ),
 }
 
@@ -71,9 +72,12 @@ def per_game(stats):
       two triples a game.
     """
     gp = num(stats.get('gp')) or 0
+    p_gp = num(stats.get('p_gp')) or 0       # pitching appearances, if any
+    if not gp and p_gp:
+        gp = p_gp                             # a pure pitcher: one set of games
     already_avg = set(stats.get('__avg__') or [])
     values = {k: num(v) for k, v in stats.items()
-              if k not in ('__avg__', 'gp_est') and num(v) is not None}
+              if k not in ('__avg__', 'gp_est', 'p_gp') and num(v) is not None}
     avg_counting = {k for k in already_avg if k not in RATE_STATS}
 
     # Does this block hold season totals?
@@ -95,13 +99,16 @@ def per_game(stats):
         if key in RATE_STATS or key in already_avg:
             out[key] = v
             continue
+        games = p_gp if (key in PITCHING_KEYS and p_gp) else gp
         cap = PER_GAME_MAX.get(key)
         if cap is not None and v > cap:
-            if gp >= 1:
-                out[key] = v / gp
+            if games >= 1:
+                out[key] = v / games
             continue                      # a total with no games to divide by
-        out[key] = v / gp if (block_is_totals and gp >= 1) else v
+        out[key] = v / games if (block_is_totals and games >= 1) else v
     out['gp'] = gp
+    if p_gp:
+        out['p_gp'] = p_gp
     return out
 
 
@@ -335,23 +342,125 @@ def confidence(prob):
     return 'low'
 
 
-def project_player(player, sport, group, factor, max_props=5, tuning=None):
-    """Every prop we can price for one player, best signal first."""
+# A player's per-game rate is shrunk toward the typical rate for his position
+# group by this many games' worth of prior, so a hot week or a September
+# call-up's four games do not project as if they were a full season.
+SHRINK_GAMES = {'baseball': 20, 'basketball': 10, 'hockey': 15, 'football': 3}
+PRIOR_MIN_GP = {'baseball': 15, 'basketball': 10, 'hockey': 15, 'football': 2}
+_PRIOR_CACHE = {}
+
+
+def group_priors(pool, sport):
+    """Mean per-game rate of each prop stat across the pool, per position
+    group, from players with enough games to be believable."""
+    key = (id(pool), sport)
+    if key in _PRIOR_CACHE:
+        return _PRIOR_CACHE[key]
+    sums = {}
+    min_gp = PRIOR_MIN_GP.get(sport, 10)
+    for roster in (pool or {}).values():
+        for player in roster or []:
+            group = player_group(sport, player.get('pos', ''))
+            if not group:
+                continue
+            rates = derive(sport, per_game(player.get('stats') or {}))
+            if (rates.get('gp') or 0) < min_gp:
+                continue
+            for spec in props_for(sport, group):
+                v = num(rates.get(spec['stat']))
+                if v is None:
+                    continue
+                acc = sums.setdefault((group, spec['stat']), [0.0, 0])
+                acc[0] += v
+                acc[1] += 1
+    out = {}
+    for (group, stat), (total, n) in sums.items():
+        if n >= 5:
+            out.setdefault(group, {})[stat] = total / n
+    _PRIOR_CACHE.clear()
+    _PRIOR_CACHE[key] = out
+    return out
+
+
+def shrink(rate, gp, prior, sport):
+    """Season rate pulled toward the group prior by sample size."""
+    if prior is None:
+        return rate
+    k = SHRINK_GAMES.get(sport, 10)
+    return (gp * rate + k * prior) / (gp + k)
+
+
+def project_player(player, sport, group, factor, max_props=5, tuning=None, priors=None):
+    """Every prop we can price for one player, best signal first
+    (``max_props=None`` returns them all). ``priors`` is ``group_priors``
+    output; with it, thin samples are shrunk toward the group's typical rate.
+    The published ``season`` figure is always the player's actual rate; the
+    shrunk one drives the projection and travels as ``_base``."""
     rates = derive(sport, per_game(player.get('stats') or {}))
     gp = rates.get('gp') or 0
+    if group == 'pitcher' and rates.get('p_gp'):
+        gp = rates['p_gp']
+    group_prior = (priors or {}).get(group) or {}
     out = []
     for raw_spec in props_for(sport, group):
         spec, bias = apply_tuning(raw_spec, tuning)
-        base = num(rates.get(spec['stat']))
-        if base is None or base <= 0:
+        season = num(rates.get(spec['stat']))
+        if season is None or season <= 0:
             continue
+        # A rate no one has ever posted means the games-played figure is
+        # wrong for this player; better no prop than an absurd one.
+        cap = PER_GAME_MAX.get(spec['stat'][:-3] if spec['stat'].endswith('_pg') else spec['stat'])
+        if cap is not None and season > cap:
+            continue
+        base = shrink(season, gp, group_prior.get(spec['stat']), sport)
         projection = base * factor * bias
         if projection < spec.get('min_proj', 0.0):
             continue
-        out.append(_price(spec, base, projection))
+        priced = _price(spec, base, projection, season=season)
+        priced['_base'] = base
+        out.append(priced)
     # Most popular first, but let a genuinely strong read jump the queue.
     out.sort(key=lambda p: (p['rank'] - (3 if p['conf'] == 'high' else 0)))
-    return out[:max_props], gp
+    return (out if max_props is None else out[:max_props]), gp
+
+
+def pending_prop(spec, baseline, projection, season=None):
+    """A prop the books have not posted a line for yet: the projection is
+    shown, the line, probability and lean stay blank until a line arrives."""
+    season = baseline if season is None else season
+    return {
+        'key': spec['key'],
+        'label': spec['label'],
+        'unit': spec.get('unit', ''),
+        'line': None,
+        'proj': round(projection, 2),
+        'season': round(season, 2),
+        'delta': round(projection - season, 2),
+        'range': likely_range(spec, projection),
+        'rank': spec.get('rank', 99),
+        'stat': spec.get('stat', ''),
+        'dist': spec.get('dist', ''),
+        'line_source': 'pending',
+        'pending': True,
+    }
+
+
+BOOK_MAX_PROPS = 6         # priced props kept per player when the books post many
+PENDING_RANK = 3           # blank rows are kept for the popular markets only
+BOOK_MAX_PLAYERS = 12      # every player the books price, up to this many a side
+
+
+def select_props(priced, book_mode, max_props):
+    """Which of a player's props make the board, most useful first."""
+    if not book_mode:
+        priced.sort(key=lambda p: (p['rank'] - (3 if p.get('conf') == 'high' else 0)))
+        return priced[:max_props]
+    booked = sorted([p for p in priced if not p.get('pending')],
+                    key=lambda p: (p['rank'] - (3 if p.get('conf') == 'high' else 0)))
+    pending = sorted([p for p in priced if p.get('pending') and p['rank'] <= PENDING_RANK],
+                     key=lambda p: p['rank'])
+    booked = booked[:BOOK_MAX_PROPS]
+    return booked + pending[:max(0, max_props - len(booked))]
 
 
 LIMITED_FACTOR = 0.92      # a questionable / day-to-day player's projection
@@ -372,8 +481,22 @@ def apply_tuning(spec, tuning):
     return out, float(t.get('bias', 1.0))
 
 
-def _price(spec, baseline, projection):
-    """Assemble the published record for one prop."""
+def _price(spec, baseline, projection, book=None, season=None):
+    """Assemble the published record for one prop.
+
+    ``baseline`` is the (shrunk) rate the projection grew from; ``season``
+    the player's actual season rate, shown on the page, if different.
+
+    ``book`` is the sportsbook consensus for this player and market (see
+    ``odds.consensus_lines``). When it is present the prop is priced against
+    the market's line and the edge is the projection's distance from that
+    line; without it the line is derived from the season baseline and the
+    edge is how far the matchup moves the player off that baseline.
+    """
+    book = book if book and book.get('line') is not None else None
+    season = baseline if season is None else season
+    if book is not None:
+        spec = dict(spec, line=float(book['line']))
     line, p_over = over_probability(spec, projection, baseline)
     sd = _spread(spec, projection)
     # Edge is how far this matchup moves the player off their own season
@@ -382,17 +505,20 @@ def _price(spec, baseline, projection):
     # of the player, so ranking a slate by it just lists the weakest hitters
     # under a home-run line. Baseline movement is the part the model actually
     # has an opinion about.
-    edge = (projection - baseline) / sd if sd > 0 else 0.0
     # Gap to the line, kept for display: it explains the probability.
     line_gap = (projection - line) / sd if sd > 0 else 0.0
-    return {
+    # Against a real market line the gap *is* the edge: the book has already
+    # priced the player's talent into its number, so what is left is our
+    # disagreement with the market.
+    edge = line_gap if book is not None else ((projection - baseline) / sd if sd > 0 else 0.0)
+    out = {
         'key': spec['key'],
         'label': spec['label'],
         'unit': spec.get('unit', ''),
         'line': round(line, 1),
         'proj': round(projection, 2),
-        'season': round(baseline, 2),
-        'delta': round(projection - baseline, 2),
+        'season': round(season, 2),
+        'delta': round(projection - season, 2),
         'range': likely_range(spec, projection),
         'over': round(p_over, 4),
         'under': round(1 - p_over, 4),
@@ -404,7 +530,16 @@ def _price(spec, baseline, projection):
         'rank': spec.get('rank', 99),
         'stat': spec.get('stat', ''),
         'dist': spec.get('dist', ''),
+        'line_source': 'book' if book is not None else 'model',
     }
+    if book is not None:
+        out['book'] = book.get('book') or ''
+        out['books'] = int(book.get('books') or 0)
+        if book.get('over') is not None:
+            out['book_over'] = int(book['over'])
+        if book.get('under') is not None:
+            out['book_under'] = int(book['under'])
+    return out
 
 
 def player_group(sport, pos):
@@ -425,7 +560,7 @@ def _sort_key(sport, group, rates):
         return rates.get('tb_pg', 0) + rates.get('hits_pg', 0)
     if sport == 'football':
         return (rates.get('pass_yds_pg', 0) / 10.0 + rates.get('scrim_yds_pg', 0) / 6.0
-                + rates.get('rec_pg', 0) + rates.get('tackles_pg', 0) / 2.0)
+                + rates.get('rec_pg', 0))
     if sport == 'hockey':
         if group == 'goalie':
             return rates.get('saves_pg', 0)
@@ -434,16 +569,25 @@ def _sort_key(sport, group, rates):
 
 
 def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
-                   max_players=7, starters=None, injuries=None, tuning=None):
+                   max_players=7, starters=None, injuries=None, tuning=None,
+                   lines=None, book_mode=False):
     """Prop board for one game: {'home': [...], 'away': [...]}.
 
     ``injuries`` is ``{team: {athlete_id: report}}`` from the injury feed. A
     player listed as out is left off the board; one listed as questionable is
     kept, marked, and projected a little lower.
+
+    ``lines`` is this game's sportsbook consensus from ``odds.load_lines``.
+    In ``book_mode`` (the odds feed is connected) a prop is priced only
+    against a market line: every player the books have posted makes the
+    board, and a popular market with no line yet is shown blank and fills in
+    on a later run once the books post it. Outside book mode lines are
+    derived from each player's season baseline and labelled as such.
     """
     home = game_row['home']
     away = game_row['away']
     exp = expected_scores(env, home, away, home_win_prob, cfg)
+    priors = group_priors(pool, sport)
     out = {}
 
     for side, team, is_home in (('away', away, False), ('home', home, True)):
@@ -467,21 +611,34 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
             factor = matchup_factor('', sport, group, exp, env, home, away, is_home)
             if report and report.get('level') == 'limited':
                 factor *= LIMITED_FACTOR
-            props, gp = project_player(player, sport, group, factor, tuning=tuning)
+            props, gp = project_player(player, sport, group, factor, tuning=tuning,
+                                       max_props=None, priors=priors)
             if not props:
                 continue
-            # Re-price each prop with its own matchup factor.
-            priced = []
+            # Re-price each prop with its own matchup factor, against the
+            # book's line where there is one.
+            priced, n_book = [], 0
             for p in props:
                 spec = next((s for s in props_for(sport, group) if s['key'] == p['key']), None)
                 if spec is None:
-                    priced.append(p)
                     continue
                 spec, bias = apply_tuning(spec, tuning)
                 f = matchup_factor(p['key'], sport, group, exp, env, home, away, is_home)
                 if report and report.get('level') == 'limited':
                     f *= LIMITED_FACTOR
-                priced.append(_price(spec, p['season'], p['season'] * f * bias))
+                base = p.get('_base', p['season'])
+                projection = base * f * bias
+                book = line_for(lines, player.get('name', ''), p['key'])
+                if book:
+                    priced.append(_price(spec, base, projection, book, season=p['season']))
+                    n_book += 1
+                elif book_mode:
+                    priced.append(pending_prop(spec, base, projection, season=p['season']))
+                else:
+                    priced.append(_price(spec, base, projection, season=p['season']))
+            priced = select_props(priced, book_mode, 5)
+            if not priced:
+                continue
             entry = {
                 'id': player.get('id', ''),
                 'name': player.get('name', ''),
@@ -492,6 +649,7 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                 'headshot': player.get('headshot', ''),
                 'props': priced,
                 '_rank': _sort_key(sport, group, rates),
+                '_book': n_book,
             }
             if report and report.get('level') == 'limited':
                 entry['status'] = report.get('status', 'Questionable')
@@ -499,22 +657,36 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
             by_group.setdefault(group, []).append(entry)
 
         # Fill a fixed number of slots per position group, then top up from
-        # whoever is left so a thin roster still produces a full board.
+        # whoever is left so a thin roster still produces a full board. With
+        # the books connected, everyone they have priced comes first.
         entries, used = [], set()
-        for group_name, slots in quota_for(sport):
-            group_players = sorted(by_group.get(group_name, []), key=lambda e: -e['_rank'])
-            for e in group_players[:slots]:
+        if book_mode:
+            booked = [e for lst in by_group.values() for e in lst if e['_book']]
+            booked.sort(key=lambda e: (-e['_book'], -e['_rank']))
+            for e in booked[:BOOK_MAX_PLAYERS]:
                 entries.append(e)
                 used.add(id(e))
+        for group_name, slots in quota_for(sport):
+            group_players = sorted(by_group.get(group_name, []), key=lambda e: -e['_rank'])
+            taken = 0
+            for e in group_players:
+                if taken >= slots or len(entries) >= max(max_players, len(used)):
+                    break
+                if id(e) in used:
+                    continue
+                entries.append(e)
+                used.add(id(e))
+                taken += 1
         if len(entries) < max_players:
             rest = [e for lst in by_group.values() for e in lst if id(e) not in used]
             rest.sort(key=lambda e: -e['_rank'])
             entries.extend(rest[:max_players - len(entries)])
 
-        entries = entries[:max_players]
-        # Lead with the most prominent players, grouped by position.
+        entries = entries[:max(max_players, BOOK_MAX_PLAYERS if book_mode else 0)]
+        # Lead with the most prominent players, grouped by position; players
+        # the books have priced ahead of those still waiting on a line.
         order = {g: i for i, (g, _) in enumerate(quota_for(sport))}
-        entries.sort(key=lambda e: (order.get(e['group'], 99), -e['_rank']))
+        entries.sort(key=lambda e: (0 if e['_book'] else 1, order.get(e['group'], 99), -e['_rank']))
 
         # Baseball: the announced starter leads the board even if a reliever
         # has thrown more innings. This runs after the sort above, which would
@@ -527,10 +699,11 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                 if match is not None:
                     match['role'] = 'Probable starter'
                     entries = [match] + [e for e in entries if e is not match]
-                    entries = entries[:max_players]
+                    entries = entries[:max(max_players, BOOK_MAX_PLAYERS if book_mode else 0)]
 
         for e in entries:
             e.pop('_rank', None)
+            e.pop('_book', None)
         out[side] = entries
         # Listed-out players from this team's pool, most prominent first, so
         # the matchup panel can say who is missing.

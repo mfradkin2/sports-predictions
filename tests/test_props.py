@@ -217,7 +217,7 @@ class TestPositionGroups(unittest.TestCase):
         self.assertEqual(props.player_group('hockey', 'C'), 'skater')
         self.assertEqual(props.player_group('football', 'QB'), 'qb')
         self.assertEqual(props.player_group('football', 'TE'), 'wr')
-        self.assertEqual(props.player_group('football', 'LB'), 'def')
+        self.assertEqual(props.player_group('football', 'LB'), '')   # defence: no props
         self.assertEqual(props.player_group('basketball', 'PG'), 'skater')
 
     def test_unknown_football_position_is_skipped(self):
@@ -232,3 +232,71 @@ class TestPositionGroups(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestSmallSampleShrinkage(unittest.TestCase):
+    def setUp(self):
+        self.pool = player_pool(['Team A', 'Team B', 'Team C', 'Team D'])
+        self.priors = props.group_priors(self.pool, 'baseball')
+
+    def test_priors_exist_for_the_batter_markets(self):
+        self.assertIn('hits_pg', self.priors['batter'])
+        self.assertIn('p_so_pg', self.priors['pitcher'])
+
+    def test_a_four_game_hot_streak_is_pulled_toward_the_group(self):
+        hot = {'id': 'x', 'name': 'Hot Callup', 'pos': 'LF',
+               'stats': {'gp': 4, 'ab': 16, 'hits': 10, 'hr': 3, 'rbi': 8, 'runs': 6,
+                         'doubles': 2, 'triples': 0, 'sb': 0}}
+        raw, _ = props.project_player(hot, 'baseball', 'batter', 1.0, max_props=None)
+        shrunk, _ = props.project_player(hot, 'baseball', 'batter', 1.0, max_props=None,
+                                         priors=self.priors)
+        raw_hits = next(p for p in raw if p['key'] == 'hits')
+        shr_hits = next(p for p in shrunk if p['key'] == 'hits')
+        self.assertLess(shr_hits['proj'], raw_hits['proj'] * 0.5)
+        # The page still shows the player's true season rate.
+        self.assertEqual(shr_hits['season'], raw_hits['season'])
+        self.assertEqual(shr_hits['season'], 2.5)
+
+    def test_a_full_season_barely_moves(self):
+        regular = self.pool['teama'][0]
+        raw, _ = props.project_player(regular, 'baseball', 'batter', 1.0, max_props=None)
+        shrunk, _ = props.project_player(regular, 'baseball', 'batter', 1.0, max_props=None,
+                                         priors=self.priors)
+        a = next(p for p in raw if p['key'] == 'hits')['proj']
+        b = next(p for p in shrunk if p['key'] == 'hits')['proj']
+        self.assertLess(abs(a - b) / a, 0.15)
+
+
+class TestTwoWayPlayers(unittest.TestCase):
+    """A hitter who also pitched keeps his batting games; the pitching line is
+    rated per appearance."""
+
+    def test_pitching_games_do_not_replace_batting_games(self):
+        bat = extract_stats('baseball', ['gamesPlayed', 'hits', 'atBats', 'homeRuns'],
+                            [139, 139, 502, 45])
+        pitch = extract_stats('baseball', ['gamesPlayed', 'inningsPitched', 'strikeouts'],
+                              [14, 70.0, 84], category='pitching')
+        merged = dict(bat)
+        merged.update({k: v for k, v in pitch.items() if k != '__avg__'})
+        self.assertEqual(merged['gp'], 139)
+        self.assertEqual(merged['p_gp'], 14)
+        out = props.per_game(merged)
+        self.assertAlmostEqual(out['hits'], 1.0, places=6)
+        self.assertAlmostEqual(out['p_so'], 6.0, places=6)
+        self.assertAlmostEqual(out['ip'], 5.0, places=6)
+        self.assertEqual(out['gp'], 139)
+
+    def test_a_pure_pitcher_still_has_games(self):
+        pitch = extract_stats('baseball', ['gamesPlayed', 'inningsPitched', 'strikeouts'],
+                              [28, 170.1, 180], category='pitching')
+        out = props.per_game(pitch)
+        self.assertEqual(out['gp'], 28)
+        self.assertAlmostEqual(out['p_so'], 180 / 28, places=6)
+
+    def test_position_player_who_pitched_once_is_priced_as_a_hitter(self):
+        stats = {'gp': 120, 'ab': 400, 'hits': 102, 'hr': 5, 'rbi': 40, 'runs': 45,
+                 'doubles': 20, 'triples': 1, 'sb': 2, 'p_gp': 2, 'ip': 2.0, 'p_so': 1, 'p_er': 3}
+        priced, gp = props.project_player({'stats': stats, 'pos': 'C'}, 'baseball', 'batter', 1.0)
+        self.assertEqual(gp, 120)
+        hits = next(p for p in priced if p['key'] == 'hits')
+        self.assertAlmostEqual(hits['season'], 0.85, places=2)

@@ -4,7 +4,7 @@ from __future__ import annotations
 import os
 from datetime import date, datetime, timedelta, timezone
 
-from . import espn, model, props as props_mod
+from . import espn, model, odds, props as props_mod
 from . import config
 from .config import LEAGUES
 from .glm import score
@@ -163,13 +163,15 @@ def run(league_key, fetch_props=True, http=None, tune=True):
     props_ledger = PropsLedger(league_key)
     boards = FrozenBoards(league_key)
     prop_board, prop_status = {}, pool_status
+    lines_status = {'status': 'off', 'mode': 'model', 'games': 0}
     graded_props = 0
     if fetch_props and http is not None:
         graded_props = grade_props(league_key, cfg, props_ledger, records, http)
         props_tuning = props_ledger.tune()
         if pool:
             prop_board = price_props(league_key, cfg, records, pool,
-                                     injuries, props_tuning, http, boards)
+                                     injuries, props_tuning, http, boards,
+                                     lines_status=lines_status)
             record_props(props_ledger, records, prop_board, boards)
     else:
         props_tuning = props_ledger.tune()
@@ -182,7 +184,8 @@ def run(league_key, fetch_props=True, http=None, tune=True):
     payload = build_payload(league_key, cfg, trained, memory, components,
                             n_graded, ledger_trust, prop_board, prop_status,
                             injuries=injuries, props_record=props_record,
-                            props_tuning=props_tuning)
+                            props_tuning=props_tuning, lines_status=lines_status,
+                            props_tallies=props_ledger.tallies())
 
     memory.save_archive()
     memory.save_ledger()
@@ -194,7 +197,7 @@ def run(league_key, fetch_props=True, http=None, tune=True):
         'ledger': {'graded': n_graded, 'components': components,
                    'trust': ledger_trust},
         'props': {'graded_this_run': graded_props, 'record': props_record,
-                  'tuning': props_tuning},
+                  'tuning': props_tuning, 'lines': lines_status},
         'archive_size': len(memory.archive),
         'new_games_this_run': added,
     })
@@ -345,11 +348,14 @@ def starter_edge_by_game(records, pool):
     return out
 
 
-def price_props(league_key, cfg, records, pool, injuries, tuning, http, boards=None):
+def price_props(league_key, cfg, records, pool, injuries, tuning, http, boards=None,
+                lines_status=None):
     """Price props for games that have not started yet.
 
     A game that has already started is never re-priced: its board was frozen
-    at first pitch (see ``frozen_boards_for``).
+    at first pitch (see ``frozen_boards_for``). Lines come from the sportsbooks
+    where ``ODDS_API_KEY`` is set (``odds.load_lines``); ``lines_status``, if a
+    dict is passed, receives the outcome of that lookup.
     """
     sport, league = cfg['espn_path'].split('/')
     today = today_utc()
@@ -372,6 +378,16 @@ def price_props(league_key, cfg, records, pool, injuries, tuning, http, boards=N
             if board:
                 starters.update(espn.probable_starters(board))
 
+    try:
+        book_lines, status = odds.load_lines(league_key, [r['game'] for r in targets], http)
+    except Exception as exc:                 # noqa: BLE001 - lines are optional
+        book_lines, status = {}, f'error: {type(exc).__name__}'
+    book_mode = status not in ('disabled',) and not status.startswith('error')
+    if lines_status is not None:
+        lines_status['status'] = status
+        lines_status['mode'] = 'book' if book_mode else 'model'
+        lines_status['games'] = sum(1 for r in targets if book_lines.get(r['game']['game_id']))
+
     env = props_mod.team_environment([r['game'] for r in records], cfg)
     out = {}
     for rec in targets:
@@ -379,7 +395,8 @@ def price_props(league_key, cfg, records, pool, injuries, tuning, http, boards=N
         try:
             board = props_mod.build_for_game(
                 game, pool, env, cfg, sport, rec['prediction']['prob'],
-                starters=starters.get(game['game_id']), injuries=injuries, tuning=tuning)
+                starters=starters.get(game['game_id']), injuries=injuries, tuning=tuning,
+                lines=book_lines.get(game['game_id']), book_mode=book_mode)
         except Exception:                    # noqa: BLE001
             continue
         out[game['game_id']] = board
@@ -407,7 +424,12 @@ def frozen_boards_for(records, boards, ledger, live_boards):
             continue
         board = boards.get(gid)
         if not board:
-            continue
+            # No stored board (started before boards existed, or the file was
+            # lost): the ledger holds what was published, so rebuild from it.
+            board = ledger.board_for(gid)
+            if not board:
+                continue
+            boards.store(game, board, frozen=True)
         boards.freeze(gid)
         boards.annotate(gid, ledger.rows.values())
         board = dict(boards.get(gid))
@@ -482,7 +504,8 @@ def injuries_for_game(game, injuries, pool, limit=6):
 # ─────────────────────────────────────────────────────────────────────────────
 def build_payload(league_key, cfg, trained, memory, components, n_graded,
                   ledger_trust, prop_board, prop_status, injuries=None,
-                  props_record=None, props_tuning=None):
+                  props_record=None, props_tuning=None, lines_status=None,
+                  props_tallies=None):
     today = today_utc()
     recent_cut = today - timedelta(days=RECENT_DAYS)
     horizon = today + timedelta(days=UPCOMING_DAYS)
@@ -491,6 +514,7 @@ def build_payload(league_key, cfg, trained, memory, components, n_graded,
     # goes to a history file the Results view loads on demand, so the first
     # paint does not pay for a month of box scores.
     live_cut = today - timedelta(days=LIVE_RECENT_DAYS)
+    tallies = props_tallies or {}
     games, history = [], []
     for rec in trained['records']:
         g = rec['game']
@@ -500,9 +524,11 @@ def build_payload(league_key, cfg, trained, memory, components, n_graded,
             games.append(game_json(rec, cfg, league_key,
                                    prop_board.get(g['game_id']), trained,
                                    injuries=injuries_for_game(g, injuries, _pool_cache(league_key))
-                                   if not g['final'] else None))
+                                   if not g['final'] else None,
+                                   props_tally=tallies.get(g['game_id'])))
         elif g['final'] and not g.get('preseason') and g['date'] >= recent_cut:
-            history.append(game_json(rec, cfg, league_key, None, trained))
+            history.append(game_json(rec, cfg, league_key, None, trained,
+                                     props_tally=tallies.get(g['game_id'])))
     games.sort(key=lambda g: (g['date'], g['time'] or '', g['home']))
     history.sort(key=lambda g: g['date'], reverse=True)
 
@@ -539,6 +565,7 @@ def build_payload(league_key, cfg, trained, memory, components, n_graded,
         },
         'stats': cfg['stats'],
         'props_status': prop_status,
+        'lines_status': lines_status or {'status': 'off', 'mode': 'model', 'games': 0},
         'props_record': props_record or {},
         'props_tuning': props_tuning or {},
         'preseason_excluded': sum(
@@ -562,7 +589,7 @@ def _pool_cache(league_key):
     return _POOL_CACHE[league_key]
 
 
-def game_json(rec, cfg, league_key, props, trained, injuries=None):
+def game_json(rec, cfg, league_key, props, trained, injuries=None, props_tally=None):
     g = rec['game']
     row = g['row']
     pred = rec.get('prediction') or {}
@@ -633,6 +660,8 @@ def game_json(rec, cfg, league_key, props, trained, injuries=None):
     if props:
         out['props'] = props
         out['props_locked'] = bool(props.get('locked'))
+    if props_tally:
+        out['props_tally'] = props_tally
     if injuries:
         out['injuries'] = injuries
     if pred.get('starter_edge'):

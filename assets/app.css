@@ -1,21 +1,24 @@
 /* Sports Predictions — shared stylesheet.
    One file for all four leagues, so the browser downloads and parses it once
-   instead of re-reading an inline copy on every page. */
+   instead of re-reading an inline copy on every page.
+
+   Palette: a deep green-slate ground with a teal accent; emerald for a hit,
+   rose for a miss, amber for caution. Each league overrides --accent. */
 
 :root {
   color-scheme: dark;
-  --bg: #0b0f16;
-  --bg1: #11161f;
-  --bg2: #161d28;
-  --bg3: #1d2634;
-  --line: #273041;
-  --line-soft: #1e2635;
-  --text: #e8eef7;
-  --muted: #93a1b5;
-  --faint: #67748a;
-  --accent: #3b82f6;
-  --good: #34d399;
-  --bad: #f87171;
+  --bg: #0c1113;
+  --bg1: #131a1d;
+  --bg2: #182125;
+  --bg3: #1f2a2f;
+  --line: #2a373d;
+  --line-soft: #223037;
+  --text: #e9f1f0;
+  --muted: #9db0ad;
+  --faint: #6f8480;
+  --accent: #14b8a6;
+  --good: #4ade80;
+  --bad: #fb7185;
   --warn: #fbbf24;
   --radius: 10px;
   --shadow: 0 2px 10px rgba(0, 0, 0, .35);
@@ -25,11 +28,11 @@
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
-    --bg: #f5f7fa; --bg1: #ffffff; --bg2: #ffffff; --bg3: #eef2f7;
-    --line: #dbe2ec; --line-soft: #e8edf4;
-    --text: #131a24; --muted: #5a6677; --faint: #8794a6;
-    --good: #0f9d68; --bad: #d64545; --warn: #b7791f;
-    --shadow: 0 1px 4px rgba(16, 24, 40, .08);
+    --bg: #f3f6f5; --bg1: #ffffff; --bg2: #ffffff; --bg3: #e8eeec;
+    --line: #d3dcd9; --line-soft: #e3eae7;
+    --text: #12201d; --muted: #52655f; --faint: #7f918c;
+    --accent: #0d9488; --good: #15803d; --bad: #be123c; --warn: #b45309;
+    --shadow: 0 1px 4px rgba(16, 32, 28, .08);
   }
 }
 
@@ -50,7 +53,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 /* ── Header ───────────────────────────────────────────────────────────── */
 .top {
   position: sticky; top: 0; z-index: 50;
-  background: var(--bg1);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 9%, var(--bg1)), var(--bg1) 70%);
   border-bottom: 1px solid var(--line);
   padding-top: env(safe-area-inset-top, 0px);
 }
@@ -168,7 +171,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .bar { display: flex; height: 4px; border-radius: 3px; overflow: hidden; background: var(--bg3); }
 .bar i { display: block; height: 100%; }
 .bar .a { background: var(--faint); }
-.bar .h { background: var(--accent); }
+.bar .h { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, var(--bg3)), var(--accent)); }
 .metarow { display: flex; align-items: center; gap: 6px; font-size: 11.5px; min-width: 0; }
 .pick { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pick b { color: var(--text); font-weight: 600; }
@@ -270,6 +273,17 @@ table.grid tr:last-child td { border-bottom: none; }
 .prop-live.live { background: color-mix(in srgb, var(--good) 22%, transparent); color: var(--good); }
 .prop-live.ok { background: color-mix(in srgb, var(--good) 22%, transparent); color: var(--good); }
 .prop-live.no { background: color-mix(in srgb, var(--bad) 22%, transparent); color: var(--bad); }
+.prop.right { background: color-mix(in srgb, var(--good) 7%, transparent); }
+.prop.wrong { background: color-mix(in srgb, var(--bad) 7%, transparent); }
+.prop.pending .prop-name, .prop.pending .prop-num { color: var(--muted); }
+.prop .blank { color: var(--faint); }
+.src {
+  display: block; font-size: 9.5px; font-weight: 600; letter-spacing: .03em;
+  text-transform: uppercase; margin-top: 1px; white-space: nowrap;
+}
+.src.book { color: var(--accent); }
+.src.model { color: var(--faint); }
+table.grid .src { display: inline; }
 .live-dot {
   position: absolute; top: -3px; width: 11px; height: 11px; margin-left: -5px;
   border-radius: 50%; background: var(--good); border: 2px solid var(--bg1);
