@@ -527,7 +527,21 @@ class PropsLedger:
             d['pct'] = round(d['hit'] / d['n'], 4) if d['n'] else None
         total = sum(v['n'] for v in by_conf.values())
         hits = sum(v['hit'] for v in by_conf.values())
-        return {'total': total, 'hit': hits, 'by_source': by_source,
+        # Daily series, same shape as the game ledger's learning curve.
+        by_day = {}
+        for r in rows:
+            if r.get('hit') not in ('0', '1'):
+                continue
+            slot = by_day.setdefault((r.get('game_date') or '')[:10], [0, 0])
+            slot[1] += 1
+            slot[0] += int(r['hit'])
+        curve, run_c, run_n = [], 0, 0
+        for d in sorted(by_day):
+            c, n = by_day[d]
+            run_c += c
+            run_n += n
+            curve.append({'date': d, 'correct': c, 'n': n, 'cum_acc': round(run_c / run_n, 4)})
+        return {'total': total, 'hit': hits, 'by_source': by_source, 'curve': curve[-90:],
                 'pct': round(hits / total, 4) if total else None,
                 'by_key': by_key, 'by_conf': by_conf}
 

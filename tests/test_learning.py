@@ -322,3 +322,22 @@ class TestTuningIgnoresImpossibleProjections(unittest.TestCase):
             self.assertIn('hits', tuned)
             self.assertEqual(tuned['hits']['n'], 40)
             self.assertAlmostEqual(tuned['hits']['raw_bias'], 1.0, places=3)
+
+
+class TestPropsCurve(unittest.TestCase):
+    def test_scorecard_carries_a_daily_series(self):
+        import tempfile
+        from sportspred.learn import PropsLedger
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = PropsLedger('mlb', history_dir=tmp)
+            base = {'key': 'hits', 'label': 'Hits', 'stat': 'hits_pg', 'dist': 'binomial', 'line': 0.5,
+                    'proj': 1.0, 'season': 1.0, 'over': 0.6, 'pick': 'over', 'conf': 'med'}
+            for day, hits in (('2026-09-14', '1'), ('2026-09-14', '0'), ('2026-09-15', '1')):
+                for i in range(2):
+                    ledger.record({'game_id': 'g' + day + str(i), 'date': day}, 'home', {'id': f'p{i}'}, base)
+            rows = list(ledger.rows.values())
+            for r in rows:
+                r.update(graded='1', played='1', actual='1', push='0', hit='1' if r['game_date'] == '2026-09-15' else '0')
+            card = ledger.scorecard()
+            self.assertEqual([c['date'] for c in card['curve']], ['2026-09-14', '2026-09-15'])
+            self.assertEqual(card['curve'][-1]['cum_acc'], round(2 / 4, 4))

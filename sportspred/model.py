@@ -367,8 +367,8 @@ def edge_drivers(record, trained, top_n=3):
 
 
 FEATURE_LABELS = {
-    'elo_diff': 'Elo rating edge',
-    'pyth_diff': 'Run/goal differential quality',
+    'elo_diff': 'Team strength edge',
+    'pyth_diff': 'Season scoring margin',
     'form_diff': 'Recent form',
     'margin_diff': 'Recent scoring margin',
     'venue_diff': 'Home/road split',

@@ -15,7 +15,7 @@ import os
 from . import config
 from .config import LEAGUE_ORDER, LEAGUES, SITE_NAME
 
-TAGLINE = 'Model-driven game predictions and player prop projections'
+TAGLINE = 'Game picks and player props for MLB, NFL, NBA and NHL, with a public track record'
 
 
 def asset_version():

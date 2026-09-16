@@ -18,7 +18,7 @@
     ['upcoming', 'Upcoming', 'Next', '⏭'],
     ['props', 'Player Props', 'Props', '👤'],
     ['results', 'Results', 'Results', '✓'],
-    ['model', 'Model', 'Model', '📈']
+    ['record', 'Track Record', 'Record', '🏆']
   ];
 
   var state = { league: null, view: 'today', filters: {}, filtersOpen: false,
@@ -133,8 +133,7 @@
     if (sub) {
       if (d) {
         var a = d.accuracy || {}, v = a.verified || {};
-        var tail = v.total ? ' · ' + pct(v.pct, 1) + ' on ' + v.total + ' verified picks'
-          : (a.backtest && a.backtest.pct != null ? ' · ' + pct(a.backtest.pct, 1) + ' in backtest' : '');
+        var tail = v.total ? ' · ' + v.correct + ' of ' + v.total + ' game picks correct' : '';
         sub.textContent = d.name + ' ' + d.season + tail;
       } else {
         sub.textContent = 'All sports · every game and prop, one scroll';
@@ -191,7 +190,7 @@
       : (propCount ? '<span class="tag props">' + propCount + ' PROPS</span>'
         : (pendingCount ? '<span class="tag low" title="Waiting on sportsbook lines">PROPS · NO LINES YET</span>' : ''));
     var flag = g.preseason ? '<span class="tag low">PRESEASON</span>'
-      : (g.final && !g.counted && state.showCountBadge ? '<span class="tag low">NOT COUNTED</span>' : '');
+      : (g.final && !g.counted && state.showCountBadge ? '<span class="tag low" title="This pick was made after the game had started, so it does not count toward the record">LATE PICK</span>' : '');
     var lock = g.locked ? '<span class="lock" title="Locked at first pitch">🔒</span>' : '';
     var lg = isAll() ? '<span class="lg-chip">' + EMOJI[league] + '</span>' : '';
 
@@ -210,7 +209,7 @@
           '<span class="metarow">' + lock +
             '<span class="pick">' + (homePick ? '→' : '←') + ' <b>' +
               nameSpans(g.favored, homePick ? (g.home_s || g.home) : (g.away_s || g.away)) + '</b> ' + pct(g.pick_prob) + '</span>' +
-            '<span class="tag ' + g.conf + '">' + g.conf.toUpperCase() + '</span>' + flag +
+            '<span class="tag ' + g.conf + '" title="' + confWord(g.conf) + ' confidence">' + g.conf.toUpperCase() + '</span>' + flag +
             propTag + result +
           '</span></span>' +
         '<span class="chev" aria-hidden="true">▾</span>' +
@@ -239,20 +238,20 @@
   function matchupPanel(g, d) {
     var c = g.components || {};
     var out = '<div class="cards">' +
-      card('Model pick', nameSpans(g.favored, g.favored === g.home ? (g.home_s || g.home) : (g.away_s || g.away)),
-           pct(g.pick_prob, 1) + ' · ' + g.conf + ' confidence' + (g.locked ? ' · locked' : '')) +
-      card('Elo', pct(c.elo, 1), 'home win probability') +
-      (c.model != null ? card('Learned model', pct(c.model, 1), 'form + rest + Elo') : '') +
-      (c.standings != null ? card('Season stats', pct(c.standings, 1), 'standings model') : '') + '</div>';
+      card('Our pick', nameSpans(g.favored, g.favored === g.home ? (g.home_s || g.home) : (g.away_s || g.away)),
+           pct(g.pick_prob, 1) + ' chance · ' + confWord(g.conf) + ' confidence' + (g.locked ? ' · locked' : '')) +
+      card('Team strength', pct(c.elo, 1), 'home win chance by ratings') +
+      (c.model != null ? card('Recent form', pct(c.model, 1), 'home win chance by form and rest') : '') +
+      (c.standings != null ? card('Standings', pct(c.standings, 1), 'home win chance by season record') : '') + '</div>';
 
     if (g.locked) {
-      out += '<div class="note">🔒 This forecast was frozen at first pitch' +
-        (g.correct != null ? ' and graded ' + (g.correct ? '<b>correct</b>' : '<b>incorrect</b>') : '') + '.</div>';
+      out += '<div class="note">🔒 This pick was locked when the game started' +
+        (g.correct != null ? ' and it was <b>' + (g.correct ? 'correct' : 'incorrect') + '</b>' : '') + '.</div>';
     }
     if (g.drivers && g.drivers.length) {
       var labels = (d || {}).feature_labels || {};
       var max = Math.max.apply(null, g.drivers.map(function (x) { return Math.abs(x[1]); })) || 1;
-      out += '<div><div class="section-title">What is driving this pick</div><div class="drivers">' +
+      out += '<div><div class="section-title">Why this pick</div><div class="drivers">' +
         g.drivers.map(function (x) {
           var w = Math.min(Math.abs(x[1]) / max, 1) * 50;
           var side = x[1] >= 0 ? { full: g.home, short: g.home_s || g.home } : { full: g.away, short: g.away_s || g.away };
@@ -276,14 +275,13 @@
         inj('away', g.away, g.away_s) + inj('home', g.home, g.home_s) + '</div></div>';
     }
     if (g.starter_edge) {
-      out += '<div class="note">Probable starters shift the standings model by ' + (g.starter_edge > 0 ? '+' : '') +
-        g.starter_edge.toFixed(2) + ' log-odds, favouring ' +
+      out += '<div class="note">The probable starting pitchers tilt this game toward ' +
         esc(g.starter_edge > 0 ? (g.home_s || g.home) : (g.away_s || g.away)) + '.</div>';
     }
     var ctx = g.context || {};
     out += '<div><div class="section-title">Form &amp; situation</div><div class="scroll-x"><table class="grid">' +
       '<thead><tr><th class="num">' + nameSpans(g.away, g.away_s) + '</th><th class="mid">&nbsp;</th><th>' + nameSpans(g.home, g.home_s) + '</th></tr></thead><tbody>' +
-      ctxRow('Elo rating', ctx.away_elo, ctx.home_elo, false) +
+      ctxRow('Strength rating', ctx.away_elo, ctx.home_elo, false) +
       ctxRow('Recent record', ctx.away_last10, ctx.home_last10, false) +
       ctxRow('Recent margin', ctx.away_margin10, ctx.home_margin10, false) +
       ctxRow('Scored (recent)', ctx.away_scored10, ctx.home_scored10, false) +
@@ -372,7 +370,7 @@
   function edgeText(p) {
     if (p.edge_pts != null) return (p.edge_pts > 0 ? '+' : '') + p.edge_pts.toFixed(1) + ' pts';
     if (p.edge == null) return '—';
-    return (p.edge > 0 ? '+' : '') + p.edge.toFixed(2) + 'σ';
+    return Math.abs(p.edge) < 0.05 ? 'about usual' : (p.edge > 0 ? 'above usual' : 'below usual');
   }
   function edgeClass(p) {
     var v = p.edge_pts != null ? p.edge_pts : (p.edge || 0) * 10;
@@ -384,7 +382,7 @@
       var who = p.book || 'book';
       return '<span class="src book" title="Sportsbook consensus line' + (p.books > 1 ? ' (median of ' + p.books + ' books)' : '') + '">' + esc(who) + '</span>';
     }
-    if (p.line_source === 'model') return '<span class="src model" title="No sportsbook feed: line derived from the season baseline">model line</span>';
+    if (p.line_source === 'model') return '<span class="src model" title="No sportsbook line was available, so this line is based on the player\'s season average">our line</span>';
     return '';
   }
 
@@ -393,7 +391,7 @@
     if (p.push) return '<span class="prop-live low">PUSH · ' + p.actual + unit + '</span>';
     if (p.hit != null) return '<span class="prop-live ' + (p.hit ? 'ok' : 'no') + '">' +
       (p.hit ? '✓ CORRECT' : '✗ INCORRECT') + ' · ' + p.actual + unit + '</span>';
-    if (p.played === false) return '<span class="prop-live low">DNP</span>';
+    if (p.played === false) return '<span class="prop-live low">DID NOT PLAY</span>';
     return '';
   }
 
@@ -409,8 +407,8 @@
     if (p.pending) {
       return '<div class="prop pending" data-stat="' + esc(boxKey) + '">' +
         '<span class="prop-name">' + esc(p.label) + '<span class="prop-live" hidden></span>' + sub + '</span>' +
-        '<span class="prop-nums"><span class="prop-num"><span class="lbl">Line</span><span class="blank" title="No sportsbook line posted yet">—</span></span>' +
-          '<span class="prop-num"><span class="lbl">Proj</span>' + p.proj + '</span></span>' +
+        '<span class="prop-nums"><span class="prop-num"><span class="lbl">Book line</span><span class="blank" title="No sportsbook line posted yet">—</span></span>' +
+          '<span class="prop-num"><span class="lbl">Our number</span>' + p.proj + '</span></span>' +
         '<span class="prop-range" title="Likely range ' + lo + '–' + hi + '">' +
           '<i style="left:' + toPct(lo).toFixed(1) + '%;width:' + (toPct(hi) - toPct(lo)).toFixed(1) + '%"></i></span>' +
         '<span class="prop-pick"><span class="tag low">NO LINE YET</span></span></div>';
@@ -420,8 +418,8 @@
     return '<div class="prop' + (p.hit != null ? (p.hit ? ' right' : ' wrong') : '') + '" data-stat="' + esc(boxKey) + '" data-line="' + p.line +
       '" data-pick="' + p.pick + '" data-lo="' + lo + '" data-hi="' + hi + '">' +
       '<span class="prop-name">' + esc(p.label) + (outcome || '<span class="prop-live" hidden></span>') + sub + '</span>' +
-      '<span class="prop-nums"><span class="prop-num"><span class="lbl">Line</span>' + p.line + lineSource(p) + '</span>' +
-        '<span class="prop-num"><span class="lbl">Proj</span>' + p.proj + '</span></span>' +
+      '<span class="prop-nums"><span class="prop-num"><span class="lbl">' + (p.line_source === 'book' ? 'Book line' : 'Line') + '</span>' + p.line + lineSource(p) + '</span>' +
+        '<span class="prop-num"><span class="lbl">Our number</span>' + p.proj + '</span></span>' +
       '<span class="prop-range" title="Likely range ' + lo + '–' + hi + '">' +
         '<i style="left:' + toPct(lo).toFixed(1) + '%;width:' + (toPct(hi) - toPct(lo)).toFixed(1) + '%"></i>' +
         '<u style="left:' + toPct(p.line).toFixed(1) + '%"></u>' + dot + '</span>' +
@@ -554,29 +552,30 @@
     leagues.forEach(function (k) {
       var a = (DATA[k] || {}).accuracy || {}, v = a.verified || {}, bt = a.backtest;
       total += v.total || 0; backfilled += a.backfilled || 0;
-      var label = isAll() ? EMOJI[k] + ' ' + LABEL[k] : 'Verified record';
+      var label = isAll() ? EMOJI[k] + ' ' + LABEL[k] + ' game picks' : 'Game picks';
       cards += v.total
-        ? card(label, pct(v.pct, 1), v.correct + ' of ' + v.total + ' verified picks')
-        : card(label, bt && bt.pct != null ? pct(bt.pct, 1) + ' backtest' : '—', 'no verified picks yet');
+        ? card(label, pct(v.pct, 1), v.correct + ' of ' + v.total + ' correct')
+        : card(label, '—', 'no games graded yet');
     });
     var pn = 0, ph = 0;
     leagues.forEach(function (k) { var pr = (DATA[k] || {}).props_record || {}; pn += pr.total || 0; ph += pr.hit || 0; });
-    if (pn) cards += card('Player props', pct(ph / pn, 1), ph + ' of ' + pn + ' graded props correct');
+    if (pn) cards += card('Player props', pct(ph / pn, 1), ph + ' of ' + pn + ' correct');
     var played = filteredGames('results').length;
     if (!total && !backfilled && !played) {
       return '<div class="empty"><span class="icon">' + (EMOJI[state.league] || '🏟') + '</span>No completed games yet. Results appear once games have been played.</div>';
     }
     var head = '<div class="cards">' + cards + '</div>';
     if (!isAll() && !total) {
-      head += '<details class="explain"><summary>Why is the record empty?</summary><p>Only games forecast <b>before</b> first pitch count. ' +
-        (backfilled ? backfilled + ' completed game' + (backfilled === 1 ? ' was' : 's were') + ' first seen after the final whistle, so ' +
-        'their picks were made with standings that already contained the result. ' : '') +
-        'The backtest figure is the honest alternative: the model run over history using only what was known at the time.</p></details>';
+      head += '<details class="explain"><summary>Why is the record empty?</summary><p>Only picks made <b>before</b> a game starts count. ' +
+        (backfilled ? backfilled + ' finished game' + (backfilled === 1 ? ' was' : 's were') + ' added to the site after the fact, ' +
+        'so there was no pick to grade. ' : '') +
+        'The record fills in as games are played.</p></details>';
     }
     var scoped = filteredGames('results');
     state.showCountBadge = scoped.some(function (x) { return x.g.counted; }) && scoped.some(function (x) { return !x.g.counted; });
     var list = gamesView('results');
-    return head + '<div class="section-title">Completed games</div>' + list;
+    return head + '<div class="note">See the <a href="#' + state.league + '/record">Track Record</a> page for the full breakdown by confidence, sport and prop type.</div>' +
+      '<div class="section-title">Completed games</div>' + list;
   }
 
   // ── props board ──────────────────────────────────────────────────────────
@@ -659,8 +658,8 @@
 
     var graded = list.some(function (r) { return r.prop.hit != null || r.prop.push; });
     var body = '<div class="scroll-x"><table class="grid"><thead><tr>' +
-      '<th>Player</th><th>Prop</th><th class="num">Line</th><th class="num">Proj</th>' +
-      '<th class="num">Edge</th><th>Lean</th><th class="num">Prob</th>' + (graded ? '<th>Result</th>' : '') + '<th>Game</th></tr></thead><tbody>' +
+      '<th>Player</th><th>Prop</th><th class="num">Book line</th><th class="num">Our number</th>' +
+      '<th class="num">Edge</th><th>Our pick</th><th class="num">Chance</th>' + (graded ? '<th>Result</th>' : '') + '<th>Game</th></tr></thead><tbody>' +
       list.map(function (r) {
         var p = r.prop;
         var res = p.push ? '<span class="tag low">PUSH</span>'
@@ -670,7 +669,7 @@
           '<td>' + (isAll() ? '<span class="lg-chip">' + EMOJI[r.league] + '</span> ' : '') + esc(p.label) + '</td>' +
           '<td class="num">' + p.line + '<br>' + lineSource(p) + '</td>' +
           '<td class="num">' + p.proj + '</td>' +
-          '<td class="num ' + edgeClass(p) + '"' + (p.book_p != null ? ' title="Book implies ' + pct(p.pick === 'over' ? p.book_p : 1 - p.book_p) + ' for this side"' : '') + '>' +
+          '<td class="num ' + edgeClass(p) + '"' + (p.book_p != null ? ' title="The book\'s own price says ' + pct(p.pick === 'over' ? p.book_p : 1 - p.book_p) + ' for this side"' : '') + '>' +
             edgeText(p) + '</td>' +
           '<td><span class="pickdir ' + p.pick + '">' + p.pick.toUpperCase() + '</span></td>' +
           '<td class="num"><span class="tag ' + p.conf + '">' + pct(p.pick_prob) + '</span></td>' +
@@ -681,157 +680,169 @@
 
     var bookMode = leaguesInView().some(function (k) { return ((DATA[k] || {}).lines_status || {}).mode === 'book'; });
     var note = bookMode
-      ? '<div class="note"><b>Line</b> is the sportsbook consensus (the median where several books post the market). ' +
-        '<b>Proj</b> is this site\'s own projection: the player\'s season rate adjusted for the opponent, expected game ' +
-        'script, home/away and injuries, corrected by what the graded ledger has learned. The lean and probability are ' +
-        'where that projection lands against the book\'s line. <b>Edge</b> is our probability for that side minus ' +
-        'what the book\'s own price implies (vig removed), in points: +6 pts means we think the lean is six points ' +
-        'likelier than the market does. A market with no line yet stays blank and fills in once a book posts one.</div>'
-      : '<div class="note">No sportsbook feed is connected, so <b>Line</b> is derived from each player\'s season baseline ' +
-        'and marked <i>model line</i>. <b>Proj</b> is the site\'s matchup-adjusted projection; <b>Edge</b> is how far ' +
-        'the matchup moves a player off their baseline, in standard deviations. Add an ODDS_API_KEY secret to price ' +
-        'against real market lines.</div>';
+      ? '<div class="note"><b>Book line</b> is the sportsbooks\' number. <b>Our number</b> is what this site expects ' +
+        'the player to do tonight, based on his season, last season, tonight\'s opponent and the injury report. ' +
+        '<b>Our pick</b> is the side our number lands on, <b>Chance</b> is how likely we think that side is, and ' +
+        '<b>Edge</b> is how much likelier we think it is than the book does, in percentage points. ' +
+        'A prop with no book line yet stays blank until a book posts one.</div>'
+      : '<div class="note">No sportsbook lines are connected, so the <b>Line</b> shown is based on each player\'s ' +
+        'season average and <b>Our number</b> is what we expect tonight given the matchup.</div>';
     return note + bar + body;
   }
 
 
   // ── model view ───────────────────────────────────────────────────────────
-  function modelView() {
-    if (isAll()) {
-      return '<div class="cards">' + leaguesInView().map(function (k) {
-        var m = (DATA[k] || {}).model || {}, v = m.validation || {};
-        return card(EMOJI[k] + ' ' + LABEL[k], m.stage === 'trained' ? pct(v.acc, 1) : 'Warming up',
-          (m.n_train || 0) + ' games · ' + ((m.ledger || {}).graded || 0) + ' graded forecasts');
-      }).join('') + '</div><div class="note">Pick a single sport for its calibration, feature weights and training log.</div>';
+  function confWord(c) { return c === 'high' ? 'high' : (c === 'med' ? 'medium' : 'low'); }
+
+  // Sum a daily series over the last N days.
+  function windowOf(curve, days) {
+    var cutoff = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
+    var c = 0, n = 0;
+    (curve || []).forEach(function (p) { if (p.date >= cutoff) { c += p.correct; n += p.n; } });
+    return { correct: c, n: n, pct: n ? c / n : null };
+  }
+  function recordCard(label, correct, n, note) {
+    return card(label, n ? pct(correct / n, 1) : '—', n ? correct + ' of ' + n + ' correct' + (note ? ' · ' + note : '') : (note || 'nothing graded yet'));
+  }
+  function tierRows(tiers, unit) {
+    return '<div class="scroll-x"><table class="grid"><thead><tr><th>When we said</th><th class="num">' + unit + '</th>' +
+      '<th class="num">Correct</th><th class="num">Hit rate</th></tr></thead><tbody>' +
+      [['high', 'High confidence'], ['med', 'Medium confidence'], ['low', 'Low confidence']].map(function (t) {
+        var b = tiers[t[0]] || {}; var n = b.n || 0, ok = b.ok != null ? b.ok : (b.hit || 0);
+        return '<tr><td>' + t[1] + '</td><td class="num">' + n + '</td><td class="num">' + ok + '</td>' +
+          '<td class="num ' + (n && ok / n >= 0.55 ? 'better' : '') + '">' + (n ? pct(ok / n, 1) : '—') + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
+  function recordView() {
+    var leagues = leaguesInView();
+    var out = '<div class="note"><b>How this page works.</b> Every pick is locked the moment a game starts and graded ' +
+      'when it ends. A game pick is correct when the team we chose wins. A player prop is correct when the player\'s ' +
+      'final number lands on the side we picked; landing exactly on the line is a push and is not counted. ' +
+      'Picks made after a game had already started never count. 50% is a coin flip.</div>';
+
+    // ── games ──
+    var gC = 0, gN = 0, gTiers = { high: { n: 0, ok: 0 }, med: { n: 0, ok: 0 }, low: { n: 0, ok: 0 } }, gCurve = [];
+    var perLeague = '';
+    leagues.forEach(function (k) {
+      var d = DATA[k] || {}, v = (d.accuracy || {}).verified || {}, b = v.buckets || {};
+      gC += v.correct || 0; gN += v.total || 0;
+      ['high', 'med', 'low'].forEach(function (t) { gTiers[t].n += (b[t] || {}).n || 0; gTiers[t].ok += (b[t] || {}).ok || 0; });
+      gCurve = gCurve.concat(((d.model || {}).curve) || []);
+      if (isAll()) perLeague += recordCard(EMOJI[k] + ' ' + LABEL[k], v.correct || 0, v.total || 0);
+    });
+    var w7 = windowOf(gCurve, 7), w30 = windowOf(gCurve, 30);
+    out += '<div class="section-title">Game picks</div><div class="cards">' +
+      recordCard('All time', gC, gN) + recordCard('Last 7 days', w7.correct, w7.n) + recordCard('Last 30 days', w30.correct, w30.n) +
+      '</div>' + (perLeague ? '<div class="cards">' + perLeague + '</div>' : '') +
+      (gN ? tierRows(gTiers, 'Games') : '');
+    if (!isAll()) {
+      var m = (cur() || {}).model || {};
+      if (m.curve && m.curve.length > 3) out += curveSvg(m.curve, 'Game picks over time');
     }
-    var d = cur();
-    var m = d.model || {};
-    var v = m.validation || {};
-    var led = m.ledger || {};
-    var trained = m.stage === 'trained';
-    var out = '<div class="cards">' +
-      (trained
-        ? card('Validated accuracy', pct(v.acc, 1), 'walk-forward, ' + (v.n || 0) + ' games')
-        : card('Validated accuracy', 'Warming up', 'needs ' + (m.min_train || 110) + ' games')) +
-      (trained
-        ? card('Brier score', v.brier != null ? v.brier.toFixed(4) : '—', 'lower is better') +
-          card('Log loss', v.logloss != null ? v.logloss.toFixed(4) : '—', 'lower is better')
-        : '') +
-      card('Training games', m.n_train || 0, (m.archive || 0) + ' in archive') +
-      card('Model trust', m.trust != null ? pct(m.trust) : 'scheduled', m.trust_source || '') +
-      card('Graded forecasts', led.graded || 0, 'recorded before kickoff') +
+
+    // ── props ──
+    var pC = 0, pN = 0, pTiers = { high: { n: 0, hit: 0 }, med: { n: 0, hit: 0 }, low: { n: 0, hit: 0 } }, pCurve = [], perLeagueP = '';
+    var byType = {};
+    leagues.forEach(function (k) {
+      var pr = (DATA[k] || {}).props_record || {}, bc = pr.by_conf || {};
+      pC += pr.hit || 0; pN += pr.total || 0;
+      ['high', 'med', 'low'].forEach(function (t) { pTiers[t].n += (bc[t] || {}).n || 0; pTiers[t].hit += (bc[t] || {}).hit || 0; });
+      pCurve = pCurve.concat(pr.curve || []);
+      Object.keys(pr.by_key || {}).forEach(function (key) {
+        var r = pr.by_key[key], name = LABEL[k] + ' · ' + (r.label || key);
+        var slot = byType[name] || (byType[name] = { n: 0, hit: 0, league: k });
+        slot.n += r.n; slot.hit += r.hit;
+      });
+      if (isAll()) perLeagueP += recordCard(EMOJI[k] + ' ' + LABEL[k], pr.hit || 0, pr.total || 0);
+    });
+    var p7 = windowOf(pCurve, 7), p30 = windowOf(pCurve, 30);
+    out += '<div class="section-title">Player props</div><div class="cards">' +
+      recordCard('All time', pC, pN) + recordCard('Last 7 days', p7.correct, p7.n) + recordCard('Last 30 days', p30.correct, p30.n) +
+      '</div>' + (perLeagueP ? '<div class="cards">' + perLeagueP + '</div>' : '') +
+      (pN ? tierRows(pTiers, 'Props') : '');
+    var types = Object.keys(byType).sort(function (a, b) { return byType[b].n - byType[a].n; });
+    if (types.length) {
+      out += '<div><div class="section-title">By prop type</div><div class="scroll-x"><table class="grid"><thead><tr>' +
+        '<th>Prop</th><th class="num">Graded</th><th class="num">Correct</th><th class="num">Hit rate</th></tr></thead><tbody>' +
+        types.map(function (t) {
+          var r = byType[t];
+          return '<tr><td>' + (isAll() ? esc(t) : esc(t.split(' · ').slice(1).join(' · '))) + '</td><td class="num">' + r.n + '</td>' +
+            '<td class="num">' + r.hit + '</td><td class="num ' + (r.n >= 10 && r.hit / r.n >= 0.55 ? 'better' : (r.n >= 10 && r.hit / r.n < 0.48 ? 'worse' : '')) + '">' +
+            pct(r.hit / r.n, 1) + '</td></tr>';
+        }).join('') + '</tbody></table></div></div>';
+    }
+    if (!isAll()) {
+      var prc = ((cur() || {}).props_record || {}).curve || [];
+      if (prc.length > 3) out += curveSvg(prc, 'Player props over time');
+    }
+    if (!gN && !pN) out += '<div class="empty"><span class="icon">🏆</span>Nothing has been graded yet. The record starts with the first finished game.</div>';
+
+    // ── the technical part, tucked away ──
+    if (!isAll()) out += technicalDetails(cur());
+    return out;
+  }
+
+  function technicalDetails(d) {
+    var m = d.model || {}, v = m.validation || {}, led = m.ledger || {}, trained = m.stage === 'trained';
+    var out = '<details class="explain"><summary>Under the hood (for the curious)</summary><div class="row-gap" style="padding-bottom:12px">' +
+      '<p>Game picks blend three views of each matchup: a strength rating that updates after every game, a recent-form model ' +
+      'that also weighs rest and home/road splits, and the season standings. Each hour the site refits on every game it has ' +
+      'seen and keeps the new settings only if they would have predicted past games better. Player props start from a ' +
+      'player\'s season and last-season rates, adjust for the opponent, expected score, home/away and injuries, and are ' +
+      'checked against the sportsbook line. Every graded prop feeds back a correction for its prop type.</p>' +
+      '<div class="cards">' +
+      (trained ? card('Historical test accuracy', pct(v.acc, 1), 'model replayed over ' + (v.n || 0) + ' past games')
+               : card('Historical test accuracy', 'Warming up', 'needs ' + (m.min_train || 110) + ' games')) +
+      card('Games learned from', m.n_train || 0, (m.archive || 0) + ' in the archive') +
+      card('Picks graded', led.graded || 0, 'made before game time') +
       '</div>';
-
-    if (!trained) {
-      out += '<div class="note">This league has <b>' + (m.n_train || 0) + '</b> completed games ' +
-        'on record — too few for walk-forward validation to mean anything, so no accuracy figure is ' +
-        'published yet. Until then predictions lean on the season-standings model, and the archive ' +
-        'grows with every refresh.</div>';
-    }
-
-    out += '<div class="note"><b>Predictions are frozen at kickoff.</b> The first forecast ' +
-      'published for a game is written to a ledger and is what the site shows from then on. ' +
-      'Without that, refitting hourly against updated standings lets a finished game drift — ' +
-      'and once the result is in the standings, the model can end up naming the winner as the ' +
-      'team it favoured all along.</div>';
-
-    out += '<div class="note"><b>How this improves itself.</b> Every run appends completed games to a ' +
-      'permanent archive, so the ratings keep a longer memory than the fetch window. Every prediction is ' +
-      'written to a ledger <i>before</i> the game starts and graded afterwards, which is the only ' +
-      'measurement here that cannot be flattered by hindsight. New parameters are adopted only when they ' +
-      'beat the incumbent on validation.</div>';
-
-    if (m.curve && m.curve.length > 3) out += curveSvg(m.curve);
-
-
-    if (m.importance && m.importance.length) {
-      var max = Math.max.apply(null, m.importance.map(function (i) { return i.weight; })) || 1;
-      out += '<div><div class="section-title">What the model weighs</div><div class="drivers">' +
-        m.importance.map(function (i) {
-          return '<div class="driver"><span class="dname">' + esc(i.label) + '</span>' +
-            '<span class="dbar"><i class="pos" style="left:0;width:' +
-            ((i.weight / max) * 100).toFixed(1) + '%"></i></span></div>';
-        }).join('') + '</div></div>';
-    }
-
     if (m.reliability && m.reliability.length) {
-      out += '<div><div class="section-title">Calibration</div><div class="scroll-x"><table class="grid">' +
-        '<thead><tr><th>Confidence band</th><th class="num">Games</th><th class="num">Predicted</th>' +
-        '<th class="num">Actual</th></tr></thead><tbody>' +
+      out += '<div class="section-title">Does a 70% pick win 70% of the time?</div><div class="scroll-x"><table class="grid">' +
+        '<thead><tr><th>We said</th><th class="num">Games</th><th class="num">Average said</th><th class="num">Actually won</th></tr></thead><tbody>' +
         m.reliability.map(function (b) {
           var gap = b.actual != null && b.pred != null ? Math.abs(b.actual - b.pred) : null;
           var cls = gap == null ? '' : (gap < 0.04 ? 'better' : (gap > 0.1 ? 'worse' : ''));
-          return '<tr><td>' + pct(b.lo) + '–' + pct(Math.min(b.hi, 1)) + '</td>' +
-            '<td class="num">' + b.n + '</td><td class="num">' + pct(b.pred, 1) + '</td>' +
-            '<td class="num ' + cls + '">' + pct(b.actual, 1) + '</td></tr>';
-        }).join('') + '</tbody></table></div></div>';
+          return '<tr><td>' + pct(b.lo) + '–' + pct(Math.min(b.hi, 1)) + '</td><td class="num">' + b.n + '</td>' +
+            '<td class="num">' + pct(b.pred, 1) + '</td><td class="num ' + cls + '">' + pct(b.actual, 1) + '</td></tr>';
+        }).join('') + '</tbody></table></div>';
     }
-
-    if (led.components && Object.keys(led.components).length) {
-      out += '<div><div class="section-title">Component scorecard (pre-game ledger)</div><div class="scroll-x">' +
-        '<table class="grid"><thead><tr><th>Source</th><th class="num">Games</th><th class="num">Accuracy</th>' +
-        '<th class="num">Log loss</th></tr></thead><tbody>' +
-        Object.keys(led.components).map(function (k) {
-          var c = led.components[k];
-          return '<tr><td>' + esc(k) + '</td><td class="num">' + c.n + '</td>' +
-            '<td class="num">' + pct(c.acc, 1) + '</td><td class="num">' + c.logloss + '</td></tr>';
-        }).join('') + '</tbody></table></div></div>';
+    if (m.importance && m.importance.length) {
+      var max = Math.max.apply(null, m.importance.map(function (i) { return i.weight; })) || 1;
+      out += '<div class="section-title">What matters most in game picks</div><div class="drivers">' +
+        m.importance.map(function (i) {
+          return '<div class="driver"><span class="dname">' + esc(i.label) + '</span><span class="dbar"><i class="pos" style="left:0;width:' +
+            ((i.weight / max) * 100).toFixed(1) + '%"></i></span></div>';
+        }).join('') + '</div>';
     }
-
-    var pr = d.props_record || {};
-    if (pr.total) {
-      var bc = pr.by_conf || {};
-      out += '<div><div class="section-title">Player prop record (graded against box scores)</div>' +
-        '<div class="cards">' +
-        card('All props', pct(pr.pct, 1), pr.total + ' graded') +
-        card('High confidence', pct(bc.high && bc.high.pct, 1), (bc.high ? bc.high.n : 0) + ' props') +
-        card('Medium', pct(bc.med && bc.med.pct, 1), (bc.med ? bc.med.n : 0) + ' props') +
-        card('Low', pct(bc.low && bc.low.pct, 1), (bc.low ? bc.low.n : 0) + ' props') +
-        (pr.by_source && pr.by_source.book ? card('vs sportsbook lines', pct(pr.by_source.book.pct, 1), pr.by_source.book.n + ' props') : '') +
-        '</div>';
-      var keys = Object.keys(pr.by_key || {}).sort(function (a, b) {
-        return pr.by_key[b].n - pr.by_key[a].n;
-      });
-      if (keys.length) {
-        var tuning = d.props_tuning || {};
-        out += '<div class="scroll-x"><table class="grid"><thead><tr><th>Market</th>' +
-          '<th class="num">Graded</th><th class="num">Hit rate</th>' +
-          '<th class="num">Bias fix</th><th class="num">Spread fix</th></tr></thead><tbody>' +
-          keys.map(function (k) {
-            var r = pr.by_key[k], t = tuning[k];
-            return '<tr><td>' + esc(r.label || k) + '</td><td class="num">' + r.n + '</td>' +
-              '<td class="num ' + (r.pct >= 0.55 ? 'better' : (r.pct < 0.48 ? 'worse' : '')) + '">' +
-              pct(r.pct, 1) + '</td>' +
-              '<td class="num">' + (t ? '×' + t.bias.toFixed(2) : '—') + '</td>' +
-              '<td class="num">' + (t ? '×' + t.spread.toFixed(2) : '—') + '</td></tr>';
-          }).join('') + '</tbody></table></div>' +
-          '<div class="note">Once a market has 30 graded props, the ledger starts correcting its ' +
-          'projections: a bias multiplier when players systematically beat or miss the projection, ' +
-          'and a spread multiplier when outcomes scatter more or less than the distribution assumed. ' +
-          'Both phase in with sample size.</div></div>';
-      }
+    var tuning = d.props_tuning || {};
+    var keys = Object.keys(tuning);
+    if (keys.length) {
+      out += '<div class="section-title">Prop corrections learned so far</div><div class="scroll-x"><table class="grid">' +
+        '<thead><tr><th>Prop</th><th class="num">Graded</th><th class="num">Our numbers scaled by</th></tr></thead><tbody>' +
+        keys.map(function (k) {
+          var t = tuning[k], label = ((d.props_record || {}).by_key || {})[k];
+          return '<tr><td>' + esc(label ? label.label : k) + '</td><td class="num">' + t.n + '</td><td class="num">×' + t.bias.toFixed(2) + '</td></tr>';
+        }).join('') + '</tbody></table></div>' +
+        '<p style="color:var(--muted)">Once a prop type has 30 graded results, its projections are nudged up or down by how far players ' +
+        'actually landed from them. The nudge grows with the sample and is capped.</p>';
     }
-
     if (m.runs && m.runs.length) {
-      out += '<div><div class="section-title">Recent training runs</div><div class="scroll-x"><table class="grid">' +
-        '<thead><tr><th>When</th><th>Adopted</th><th>Why</th></tr></thead><tbody>' +
-        m.runs.slice().reverse().map(function (r) {
+      out += '<div class="section-title">Recent refits</div><div class="scroll-x"><table class="grid">' +
+        '<thead><tr><th>When</th><th>Kept new settings?</th><th>Why</th></tr></thead><tbody>' +
+        m.runs.slice().reverse().slice(0, 6).map(function (r) {
           return '<tr><td>' + esc((r.at || '').replace('T', ' ').replace('Z', '')) + '</td>' +
             '<td class="' + (r.adopted ? 'better' : 'worse') + '">' + (r.adopted ? 'yes' : 'no') + '</td>' +
             '<td style="color:var(--muted)">' + esc(r.reason || '') + '</td></tr>';
-        }).join('') + '</tbody></table></div></div>';
+        }).join('') + '</tbody></table></div>';
     }
-
-    out += '<div class="note">Elo parameters in use: K ' + fmtNum(m.elo && m.elo.k) +
-      ', home advantage ' + fmtNum(m.elo && m.elo.hfa) + ' points, margin weight ' +
-      fmtNum(m.elo && m.elo.mov) + ', season regression ' + fmtNum(m.elo && m.elo.regress) +
-      '. Generated ' + esc(d.generated) + '.</div>';
+    out += '<p style="color:var(--faint)">Data refreshed ' + esc(d.generated) + '.</p></div></details>';
     return out;
   }
 
   function fmtNum(v) { return v == null ? '—' : (Math.round(v * 100) / 100); }
 
-  function curveSvg(points) {
+  function curveSvg(points, title) {
     var w = 640, h = 132, pad = 26;
     var xs = points.length - 1 || 1;
     var vals = points.map(function (p) { return p.cum_acc; });
@@ -844,7 +855,7 @@
       return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
     }).join(' ');
     var halfY = h - pad - ((0.5 - lo) / span) * (h - pad - 12);
-    return '<div><div class="section-title">Cumulative accuracy of graded pre-game picks</div>' +
+    return '<div><div class="section-title">' + esc(title || 'Accuracy over time') + '</div>' +
       '<svg class="curve" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" role="img" ' +
       'aria-label="Cumulative accuracy over time">' +
       '<line class="axis" x1="' + pad + '" y1="' + (h - pad) + '" x2="' + w + '" y2="' + (h - pad) + '"/>' +
@@ -852,8 +863,8 @@
         '" x2="' + w + '" y2="' + halfY.toFixed(1) + '"/>' : '') +
       '<path class="line" d="' + path + '"/></svg>' +
       '<div class="legend"><span>' + points.length + ' days graded</span>' +
-      '<span>latest ' + pct(points[points.length - 1].cum_acc, 1) + '</span>' +
-      '<span>dashed line = coin flip</span></div></div>';
+      '<span>running hit rate ' + pct(points[points.length - 1].cum_acc, 1) + '</span>' +
+      '<span>dashed line = coin flip (50%)</span></div></div>';
   }
 
 
@@ -878,7 +889,7 @@
     var html;
     if (state.view === 'results') html = resultsView();
     else if (state.view === 'props') html = propsView();
-    else if (state.view === 'model') html = modelView();
+    else if (state.view === 'record' || state.view === 'model') html = recordView();
     else if (state.view === 'today' && isAll()) html = bestPicks() + gamesView('today');
     else html = gamesView(state.view);
     root.innerHTML = html;
