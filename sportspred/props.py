@@ -386,13 +386,14 @@ def prior_role(sport, group, rates):
 
 
 def group_priors(pool, sport):
-    """Typical per-game rate of each prop stat across the pool, per prior
-    role, weighted by games played so regulars define the norm rather than
-    the long tail of bench players."""
+    """Typical per-game rate of each prop stat for a *starter* in each prior
+    role: the games-weighted mean of the upper half of qualifying players.
+    Boards feature starters, so shrinking one toward a roster average that
+    is mostly backups would pull every projection down."""
     key = (id(pool), sport)
     if key in _PRIOR_CACHE:
         return _PRIOR_CACHE[key]
-    sums = {}
+    samples = {}
     min_gp = PRIOR_MIN_GP.get(sport, 10)
     for roster in (pool or {}).values():
         for player in roster or []:
@@ -408,14 +409,16 @@ def group_priors(pool, sport):
                 v = num(rates.get(spec['stat']))
                 if v is None:
                     continue
-                acc = sums.setdefault((role, spec['stat']), [0.0, 0.0, 0])
-                acc[0] += v * gp
-                acc[1] += gp
-                acc[2] += 1
+                samples.setdefault((role, spec['stat']), []).append((v, gp))
     out = {}
-    for (role, stat), (total, weight, n) in sums.items():
-        if n >= 5 and weight > 0:
-            out.setdefault(role, {})[stat] = total / weight
+    for (role, stat), pairs in samples.items():
+        if len(pairs) < 5:
+            continue
+        pairs.sort(key=lambda x: -x[0])
+        upper = pairs[:max(3, len(pairs) // 2)]
+        weight = sum(gp for _, gp in upper)
+        if weight > 0:
+            out.setdefault(role, {})[stat] = sum(v * gp for v, gp in upper) / weight
     _PRIOR_CACHE.clear()
     _PRIOR_CACHE[key] = out
     return out

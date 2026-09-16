@@ -668,3 +668,34 @@ class TestPriorSeasonAttachment(unittest.TestCase):
                 self.assertEqual(calls, [])
             finally:
                 config.DATA_DIR = old
+
+
+class TestPriorSeasonSanity(unittest.TestCase):
+    def test_an_exhibition_slate_is_rejected_as_a_prior(self):
+        import tempfile
+        from sportspred import config, pipeline
+        calls = []
+        class H:
+            last_headers = {}
+            errors = {}
+            def get_json(self, url, cache=True):
+                calls.append(url)
+                if 'season=2025' in url:
+                    self_names = ['gamesPlayed', 'passingYards']
+                    return {'categories': [{'name': 'passing', 'names': self_names}],
+                            'athletes': [{'athlete': {'id': str(i), 'displayName': f'P{i}', 'teamName': 'Bills',
+                                                      'position': {'abbreviation': 'QB'}},
+                                          'categories': [{'name': 'passing', 'totals': ['3', '500']}]} for i in range(40)]}
+                return None
+        pool = {'bills': [{'id': '1', 'name': 'P1', 'pos': 'QB', 'stats': {'gp': 1, 'pass_yds': 300}}]}
+        with tempfile.TemporaryDirectory() as tmp:
+            old = config.DATA_DIR
+            config.DATA_DIR = tmp
+            try:
+                n = pipeline.attach_prior_season('nfl', config.LEAGUES['nfl'], pool, H(), today=date(2026, 9, 16))
+                self.assertEqual(n, 0)
+                self.assertNotIn('prev', pool['bills'][0])
+                self.assertTrue(any('seasontype=2' in u for u in calls))
+                self.assertFalse(os.path.exists(os.path.join(tmp, 'nfl_players_prev.json')))
+            finally:
+                config.DATA_DIR = old
