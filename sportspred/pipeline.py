@@ -244,6 +244,8 @@ def load_pool(league_key, cfg, http):
 # player has fewer games than this, and cached for a few days.
 PRIOR_SEASON_UNTIL_GP = {'football': 8, 'baseball': 30, 'basketball': 20, 'hockey': 20}
 PRIOR_SEASON_CACHE_DAYS = 3
+# The 25 busiest players of a real previous season all played at least this.
+FULL_SEASON_MIN_GP = {'football': 12, 'baseball': 100, 'basketball': 55, 'hockey': 60}
 
 
 def prev_season(league_key, today=None):
@@ -282,6 +284,14 @@ def attach_prior_season(league_key, cfg, pool, http, today=None):
             for p in roster:
                 if p.get('id') and p.get('stats'):
                     by_id[str(p['id'])] = p['stats']
+        # A previous season should look like one. If the busiest players in
+        # it played only a handful of games we were handed an exhibition
+        # slate or a partial year, and that is worse than no prior at all.
+        gp_top = sorted((num(v.get('gp')) or num(v.get('p_gp')) or 0 for v in by_id.values()), reverse=True)[:25]
+        if not gp_top or gp_top[-1] < FULL_SEASON_MIN_GP.get(sport, 20):
+            print(f'  [{cfg["name"]}] previous season ({season}) feed rejected: '
+                  f'{len(by_id)} players, busiest played {gp_top[-1] if gp_top else 0:.0f} games')
+            by_id = {}
         if by_id:
             write_json(cache_path, {'updated': now_iso(), 'season': season, 'players': by_id}, indent=None)
     n = 0

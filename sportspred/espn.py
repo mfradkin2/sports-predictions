@@ -198,7 +198,9 @@ def fetch_athlete_stats(http, sport, league, season=None, pages=BULK_PAGES):
             if category:
                 url += f'&category={category}'
             if season:
-                url += f'&season={season}'
+                # A past season must say which part of it: without seasontype
+                # ESPN answers with that year's preseason.
+                url += f'&season={season}&seasontype=2'
             sort = SORT_KEYS.get(sport)
             if sort and not category:
                 url += f'&sort={sort}'

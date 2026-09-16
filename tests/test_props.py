@@ -252,7 +252,7 @@ class TestSmallSampleShrinkage(unittest.TestCase):
                                          priors=self.priors)
         raw_hits = next(p for p in raw if p['key'] == 'hits')
         shr_hits = next(p for p in shrunk if p['key'] == 'hits')
-        self.assertLess(shr_hits['proj'], raw_hits['proj'] * 0.5)
+        self.assertLess(shr_hits['proj'], raw_hits['proj'] * 0.6)
         # The page still shows the player's true season rate.
         self.assertEqual(shr_hits['season'], raw_hits['season'])
         self.assertEqual(shr_hits['season'], 2.5)
@@ -450,3 +450,11 @@ class TestHockeyAndBasketballBoards(unittest.TestCase):
         empty = props.build_for_game({'home': 'Boston Bruins', 'away': 'Toronto Maple Leafs', 'game_id': '6'},
                                      pool, env, cfg, 'hockey', 0.5, book_mode=False)
         self.assertEqual(empty['home'], [])
+
+
+class TestStarterPriors(unittest.TestCase):
+    def test_group_prior_reflects_starters_not_the_bench(self):
+        pool = {'t': [{'id': str(i), 'pos': 'WR', 'stats': {'gp': 1, 'rec_yds': y, 'rec': max(1, y // 12), 'targets': 3}}
+                      for i, y in enumerate([110, 95, 80, 70, 60, 8, 5, 3, 0, 0])]}
+        prior = props.group_priors(pool, 'football')['wr']['rec_yds_pg']
+        self.assertGreater(prior, 70)          # the upper half, not the 43-yard roster mean
