@@ -17,8 +17,11 @@ RECENT_DAYS = 21        # how far back the Results view can reach
 LIVE_RECENT_DAYS = 4    # finished games kept in the first-paint payload
 UPCOMING_DAYS = 14
 GRADE_CAP = 40          # box scores fetched per run to grade finished props
-PROPS_AHEAD_DAYS = 2    # price props only this close to kickoff: further out the
-                        # lineups are guesses and the payload balloons
+# Price props only this close to kickoff: further out the lineups are guesses
+# and the payload balloons. Football plays once a week with lineups known days
+# ahead, so it gets the whole week.
+PROPS_AHEAD_DAYS = {'nfl': 6}
+PROPS_AHEAD_DEFAULT = 2
 STARTER_COEF = 0.12     # log-odds per run of ERA between probable starters
 STARTER_MIN_STARTS = 5
 STARTER_CAP = 0.35
@@ -352,7 +355,7 @@ def price_props(league_key, cfg, records, pool, injuries, tuning, http, boards=N
     today = today_utc()
     now = datetime.now(timezone.utc)
     horizon = today + timedelta(days=UPCOMING_DAYS)
-    near = today + timedelta(days=PROPS_AHEAD_DAYS)
+    near = today + timedelta(days=PROPS_AHEAD_DAYS.get(league_key, PROPS_AHEAD_DEFAULT))
     targets = [r for r in records
                if not r['game']['final']
                and not started(r['game'], now)
