@@ -10,7 +10,7 @@ from .config import LEAGUES
 from .glm import score
 from .learn import MODEL_VERSION, FrozenBoards, LeagueMemory, PropsLedger
 from .model import FEATURE_LABELS
-from .util import (Http, clamp, format_eastern, now_iso, num, parse_iso, read_csv,
+from .util import (Http, clamp, format_eastern, now_iso, num, parse_date, parse_iso, read_csv,
                    read_json, short_name, today_utc, write_json)
 
 RECENT_DAYS = 21        # how far back the Results view can reach
@@ -25,6 +25,44 @@ PROPS_AHEAD_DEFAULT = 2
 STARTER_COEF = 0.12     # log-odds per run of ERA between probable starters
 STARTER_MIN_STARTS = 5
 STARTER_CAP = 0.35
+
+
+def replay_picks(league_key, cfg, rows, memory, start, end):
+    """Replay the model over finished games in [start, end] as it stood
+    before each of them, and write the picks to the ledger as replays.
+
+    Leak-free by construction: the model is fitted only on games that ended
+    before ``start``; each game's features (ratings, form, rest) come from
+    the walk-forward pass, which only ever looks backward; and the standings
+    prior is left out, since the standings on file are today's. Games that
+    already hold a real pre-game pick are untouched.
+    """
+    start_d, end_d = parse_date(str(start)), parse_date(str(end))
+    if start_d is None or end_d is None:
+        return 0
+    before = [r for r in rows if (parse_date(r.get('game_date')) or end_d) < start_d]
+    finals_before = sum(1 for r in before if (r.get('status') or '') == 'Final')
+    if finals_before < 20:
+        print(f'  replay skipped: only {finals_before} finished games before {start}')
+        return 0
+    prior_fit = model.train(league_key, before, cfg, tune=False)
+    full = model.train(league_key, rows, cfg, elo_params=prior_fit['elo_params'], tune=False)
+    written = 0
+    for rec in full['records']:
+        g = rec['game']
+        if not g['final'] or not g['winner'] or g.get('preseason'):
+            continue
+        if not (start_d <= g['date'] <= end_d) or not g['game_id']:
+            continue
+        stored = memory.entry_for(g)
+        if stored and stored.get('pregame') == '1' and stored.get('replay') != '1':
+            continue
+        prob = model.core_probability(rec, prior_fit)
+        parts = {'prob': prob, 'elo_prob': rec['elo_prob'],
+                 'glm_prob': prior_fit['model'].predict_proba(rec['vector']) if prior_fit.get('model') else None}
+        favored = g['home'] if prob >= 0.5 else g['away']
+        written += int(memory.replay(g, parts, favored))
+    return written
 
 
 def started(game, now=None):
@@ -60,7 +98,7 @@ def merge_sources(csv_rows, archive_rows):
     return merged
 
 
-def run(league_key, fetch_props=True, http=None, tune=True):
+def run(league_key, fetch_props=True, http=None, tune=True, replay=None):
     cfg = LEAGUES[league_key]
     csv_path = os.path.join(os.path.dirname(config.DATA_DIR), cfg['csv_file'])
     csv_rows = read_csv(csv_path)
@@ -68,6 +106,10 @@ def run(league_key, fetch_props=True, http=None, tune=True):
     memory = LeagueMemory(league_key)
     added = memory.merge_archive(csv_rows, league_key)
     rows = merge_sources(csv_rows, memory.archive_rows())
+
+    if replay:
+        n = replay_picks(league_key, cfg, rows, memory, replay[0], replay[1])
+        print(f'  replayed {n} picks for {replay[0]}..{replay[1]}')
 
     # ── learn ───────────────────────────────────────────────────────────────
     prev = memory.previous_best()
@@ -141,6 +183,7 @@ def run(league_key, fetch_props=True, http=None, tune=True):
             rec['favored'] = favored
             rec['locked'] = True
             rec['pregame'] = stored.get('pregame') == '1'
+            rec['replay'] = stored.get('replay') == '1'
             rec['locked_at'] = stored.get('predicted_at', '')
         else:
             favored = game['home'] if live['prob'] >= 0.5 else game['away']
@@ -705,6 +748,7 @@ def game_json(rec, cfg, league_key, props, trained, injuries=None, props_tally=N
         'preseason': bool(g.get('preseason')),
         'locked': bool(rec.get('locked')),
         'pregame': bool(rec.get('pregame')),
+        'replay': bool(rec.get('replay')),
         'counted': bool(rec.get('pregame')) and not g.get('preseason'),
         'time': format_eastern(row.get('game_start_utc') or row.get('game_time'),
                                str(g['date'])),

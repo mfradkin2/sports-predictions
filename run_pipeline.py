@@ -13,6 +13,7 @@ the previous CSV, so a feed outage degrades to stale data rather than no site.
 """
 from __future__ import annotations
 
+import os
 import sys
 import traceback
 
@@ -24,7 +25,16 @@ from sportspred.util import Http
 def main(argv):
     args = [a for a in argv if not a.startswith('--')]
     flags = {a for a in argv if a.startswith('--')}
-    leagues = [a.lower() for a in args if a.lower() in LEAGUES] or list(LEAGUE_ORDER)
+    env_leagues = [x.lower() for x in os.environ.get('SP_LEAGUES', '').split() if x.lower() in LEAGUES]
+    leagues = [a.lower() for a in args if a.lower() in LEAGUES] or env_leagues or list(LEAGUE_ORDER)
+    # --replay nfl:2026-09-10:2026-09-15 (or SP_REPLAY): replay finished games
+    # in that window as the model stood before them and record the picks.
+    replay_spec = next((f.split('=', 1)[1] for f in flags if f.startswith('--replay=')), os.environ.get('SP_REPLAY', ''))
+    replay = {}
+    if replay_spec:
+        parts = replay_spec.replace(' ', ':').split(':')
+        if len(parts) == 3 and parts[0].lower() in LEAGUES:
+            replay[parts[0].lower()] = (parts[1], parts[2])
     fetch_props = '--no-props' not in flags
     do_ingest = '--no-ingest' not in flags
     tune = '--no-tune' not in flags
@@ -45,7 +55,7 @@ def main(argv):
                 traceback.print_exc(limit=2)
         try:
             payload, trained, memory = pipeline.run(
-                key, fetch_props=fetch_props, http=http, tune=tune)
+                key, fetch_props=fetch_props, http=http, tune=tune, replay=replay.get(key))
         except Exception as exc:                     # noqa: BLE001
             failures.append(key)
             print(f'  FAILED: {type(exc).__name__}: {exc}')

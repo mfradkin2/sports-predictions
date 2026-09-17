@@ -315,3 +315,39 @@ class TestPreseasonPropsAreSkipped(unittest.TestCase):
         boards = pipeline.price_props('mlb', cfg, records, player_pool(['Team A', 'Team B']), {}, {}, None)
         self.assertIn('reg', boards)
         self.assertNotIn('pre', boards)
+
+
+class TestReplayedPicks(unittest.TestCase):
+    def test_replay_fills_only_unpicked_games_and_counts_them(self):
+        import tempfile
+        from datetime import date
+        from sportspred import config, pipeline
+        from sportspred.learn import LeagueMemory
+        from tests.helpers import synthetic_rows
+        rows = synthetic_rows(n_days=90, seed=7)
+        rows.sort(key=lambda r: r['game_date'])
+        dates = sorted({r['game_date'][:10] for r in rows if r.get('status') == 'Final'})
+        start, end = dates[-6], dates[-4]
+        with tempfile.TemporaryDirectory() as tmp:
+            os.makedirs(os.path.join(tmp, 'h')); os.makedirs(os.path.join(tmp, 's'))
+            memory = LeagueMemory('mlb', history_dir=os.path.join(tmp, 'h'), state_dir=os.path.join(tmp, 's'))
+            memory.merge_archive(rows, 'mlb')
+            # One game in the window already has a genuine pre-game pick.
+            target = next(r for r in rows if r['game_date'][:10] == start)
+            game = {'game_id': target['game_id'], 'date': date.fromisoformat(start),
+                    'away': target['away_team'], 'home': target['home_team']}
+            memory.record(game, {'prob': 0.61, 'elo_prob': 0.6, 'glm_prob': 0.62, 'prior_prob': 0.6},
+                          target['home_team'], pregame=True)
+            n = pipeline.replay_picks('mlb', config.LEAGUES['mlb'], rows, memory, start, end)
+            in_window = [r for r in rows if start <= r['game_date'][:10] <= end and r.get('status') == 'Final']
+            self.assertEqual(n, len(in_window) - 1)
+            kept = memory.entry_for(game)
+            self.assertEqual(kept['p_final'], 0.61)              # the real pick survived
+            self.assertNotEqual(kept.get('replay'), '1')
+            replayed = [e for e in memory.ledger.values() if e.get('replay') == '1']
+            self.assertEqual(len(replayed), n)
+            self.assertTrue(all(e['pregame'] == '1' and e['p_prior'] == '' for e in replayed))
+            memory.grade()
+            self.assertTrue(all(e['graded'] == '1' and e['correct'] in ('0', '1') for e in replayed))
+            # A second replay changes nothing.
+            self.assertEqual(pipeline.replay_picks('mlb', config.LEAGUES['mlb'], rows, memory, start, end), n)

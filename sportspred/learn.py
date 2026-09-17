@@ -35,7 +35,7 @@ LEDGER_MATURITY = 150      # graded pre-game predictions before the ledger rules
 ARCHIVE_FIELDS = ['game_id', 'game_date', 'away_team', 'home_team',
                   'away_score', 'home_score', 'winner', 'first_seen']
 LEDGER_FIELDS = ['game_id', 'game_date', 'away_team', 'home_team', 'predicted_at',
-                 'model_version', 'pregame', 'preseason',
+                 'model_version', 'pregame', 'preseason', 'replay',
                  'p_final', 'p_elo', 'p_glm', 'p_prior', 'starter_edge',
                  'favored_team', 'away_score', 'home_score', 'winner',
                  'graded', 'correct']
@@ -209,6 +209,36 @@ class LeagueMemory:
         if pregame_only:
             rows = [e for e in rows if e.get('pregame') == '1']
         return rows
+
+    def replay(self, game, parts, favored):
+        """Write a replayed pick: the model as it stood before this game,
+        run after the fact. It counts toward the record and is marked so
+        the page can say it was a replay. A pick actually made before the
+        game is never overwritten."""
+        k = self._key_for(game)
+        existing = self.ledger.get(k)
+        if existing and existing.get('pregame') == '1' and existing.get('replay') != '1':
+            return False
+        self.ledger[k] = {
+            'game_id': game['game_id'],
+            'game_date': str(game['date']),
+            'away_team': game['away'],
+            'home_team': game['home'],
+            'predicted_at': f"{game['date']}T00:00:00Z",
+            'model_version': MODEL_VERSION,
+            'pregame': '1',
+            'preseason': '0',
+            'replay': '1',
+            'p_final': round(parts['prob'], 4),
+            'p_elo': round(parts.get('elo_prob', 0.5), 4),
+            'p_glm': round(parts['glm_prob'], 4) if parts.get('glm_prob') is not None else '',
+            'p_prior': '',
+            'starter_edge': '',
+            'favored_team': favored,
+            'away_score': '', 'home_score': '', 'winner': '',
+            'graded': '0', 'correct': '',
+        }
+        return True
 
     def save_ledger(self):
         rows = sorted(self.ledger.values(),

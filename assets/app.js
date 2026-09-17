@@ -216,7 +216,9 @@
       : (propCount ? '<span class="tag props">' + propCount + ' PROPS</span>'
         : (pendingCount ? '<span class="tag low" title="Waiting on sportsbook lines">PROPS · NO LINES YET</span>' : ''));
     var flag = g.preseason ? '<span class="tag low">PRESEASON</span>'
-      : (g.final && !g.counted && state.showCountBadge ? '<span class="tag low" title="This pick was made after the game had started, so it does not count toward the record">LATE PICK</span>' : '');
+      : (g.replay ? '<span class="tag low" title="Replayed: this pick was generated after the fact from the model as it stood before kickoff, using only earlier results">REPLAY</span>' : '')
+      || (g.preseason ? '<span class="tag low">PRESEASON</span>'
+      : (g.final && !g.counted && state.showCountBadge ? '<span class="tag low" title="This pick was made after the game had started, so it does not count toward the record">LATE PICK</span>' : ''));
     var lock = g.locked ? '<span class="lock" title="Locked at first pitch">🔒</span>' : '';
     var lg = isAll() ? '<span class="lg-chip">' + EMOJI[league] + '</span>' : '';
 
@@ -270,7 +272,11 @@
       (c.model != null ? card('Recent form', pct(c.model, 1), 'home win chance by form and rest') : '') +
       (c.standings != null ? card('Standings', pct(c.standings, 1), 'home win chance by season record') : '') + '</div>';
 
-    if (g.locked) {
+    if (g.replay) {
+      out += '<div class="note">↺ <b>Replayed pick.</b> This game finished before the site was watching, so the pick was generated afterwards ' +
+        'from the model exactly as it stood before kickoff: last season\'s results and ratings only, nothing from after the game.' +
+        (g.correct != null ? ' It was <b>' + (g.correct ? 'correct' : 'incorrect') + '</b>.' : '') + '</div>';
+    } else if (g.locked) {
       out += '<div class="note">🔒 This pick was locked when the game started' +
         (g.correct != null ? ' and it was <b>' + (g.correct ? 'correct' : 'incorrect') + '</b>' : '') + '.</div>';
     }
@@ -980,12 +986,19 @@
     return { n: n, ok: ok, best: best };
   }
 
+  function replayNote() {
+    var n = 0;
+    allGames('results').forEach(function (x) { if (x.g.replay && x.g.final && x.g.counted) n++; });
+    return n ? ' <b>' + n + '</b> pick' + (n === 1 ? '' : 's') + ' marked ↺ were replayed: games that finished before the site was ' +
+      'watching, predicted afterwards by the model as it stood before kickoff, using only earlier results.' : '';
+  }
+
   function recordView() {
     var leagues = leaguesInView();
     var out = lookupBox() + lookupPanel() + '<div class="note"><b>How this page works.</b> Every pick is locked the moment a game starts and graded ' +
       'when it ends. A game pick is correct when the team we chose wins. A player prop is correct when the player\'s ' +
       'final number lands on the side we picked; landing exactly on the line is a push and is not counted. ' +
-      'Picks made after a game had already started never count. 50% is a coin flip.</div>';
+      'Picks made after a game had already started never count. 50% is a coin flip.' + replayNote() + '</div>';
 
     // ── games ──
     var gC = 0, gN = 0, gTiers = { high: { n: 0, ok: 0 }, med: { n: 0, ok: 0 }, low: { n: 0, ok: 0 } }, gCurve = [];

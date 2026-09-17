@@ -288,6 +288,18 @@ def train(league_key, rows, cfg, elo_params=None, tune=True):
 # ─────────────────────────────────────────────────────────────────────────────
 #  Prediction
 # ─────────────────────────────────────────────────────────────────────────────
+def core_probability(record, trained):
+    """The learned part of a prediction only: the calibrated blend of the
+    rating and the form model, with no standings prior. What a replay uses,
+    since the standings on file are today's, not the day's."""
+    elo_p = record['elo_prob']
+    model = trained.get('model')
+    glm_p = model.predict_proba(record['vector']) if model else None
+    w = trained.get('blend_w', 0.0)
+    core = logistic(w * logit(glm_p) + (1 - w) * logit(elo_p)) if glm_p is not None else elo_p
+    return clamp(PlattCalibrator.from_dict(trained.get('calibration')).apply(core), 0.02, 0.98)
+
+
 def predict(record, trained, cfg, league_key, trust_override=None, prior_shift=0.0):
     """Final home win probability for one game, with its components.
 

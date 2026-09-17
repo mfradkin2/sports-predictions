@@ -21,6 +21,14 @@ on:
         type: boolean
         required: false
         default: false
+      leagues:
+        description: 'Only these leagues, space-separated (e.g. "nfl"); blank for all'
+        required: false
+        default: ''
+      replay:
+        description: 'Replay picks: league start end (e.g. "nfl 2026-09-10 2026-09-15")'
+        required: false
+        default: ''
 
 # Never let two refreshes race each other onto the same branch.
 concurrency:
@@ -52,6 +60,8 @@ jobs:
       - name: Ingest, train, project props and rebuild the site
         env:
           SP_LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days }}
+          SP_LEAGUES: ${{ github.event.inputs.leagues }}
+          SP_REPLAY: ${{ github.event.inputs.replay }}
           # Sportsbook lines for player props (https://the-odds-api.com). Add
           # the key as a repository secret; without it lines are model-derived.
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
