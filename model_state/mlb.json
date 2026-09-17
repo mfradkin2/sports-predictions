@@ -165,7 +165,7 @@
  "props": {
   "graded_this_run": 635,
   "lines": {
-   "games": 11,
+   "games": 12,
    "mode": "book",
    "status": "live"
   },
@@ -1186,7 +1186,32 @@
    "model_version": 3,
    "notes": "829 completed games",
    "reason": "kept incumbent (challenger 0.6876 vs 0.6862)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-17T15:49:39Z",
+   "metrics": {
+    "acc": 0.5521,
+    "brier": 0.2472,
+    "elo_only": {
+     "acc": 0.5399,
+     "brier": 0.2474,
+     "logloss": 0.6879,
+     "n": 739
+    },
+    "glm_only": {
+     "acc": 0.548,
+     "brier": 0.253,
+     "logloss": 0.7001,
+     "n": 739
+    },
+    "logloss": 0.6876,
+    "n": 739
+   },
+   "model_version": 3,
+   "notes": "829 completed games",
+   "reason": "kept incumbent (challenger 0.6876 vs 0.6862)"
   }
  ],
- "updated": "2026-09-17T13:34:51Z"
+ "updated": "2026-09-17T15:50:02Z"
 }
