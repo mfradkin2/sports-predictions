@@ -1,118 +1,146 @@
 {
- "archive_size": 16,
+ "archive_size": 302,
  "best": {
-  "adopted_at": "2026-09-16T00:14:39Z",
+  "adopted_at": "2026-09-17T01:52:14Z",
   "metrics": {
-   "acc": 0.625,
-   "brier": 0.2376,
-   "logloss": 0.6681,
-   "n": 16
+   "acc": 0.6635,
+   "brier": 0.216,
+   "elo_only": {
+    "acc": 0.6682,
+    "brier": 0.2162,
+    "logloss": 0.6192,
+    "n": 211
+   },
+   "glm_only": {
+    "acc": 0.6209,
+    "brier": 0.2312,
+    "logloss": 0.652,
+    "n": 211
+   },
+   "logloss": 0.6186,
+   "n": 211
   },
   "params": {
    "blend_w": 0.0,
    "calibration": {
-    "a": 1.0,
-    "b": 0.0,
-    "n": 0
+    "a": 1.078422432107721,
+    "b": -0.067576168966864,
+    "n": 211
    },
    "elo_params": {
-    "hfa": 48.0,
-    "k": 20.0,
+    "hfa": 28.799999999999997,
+    "k": 28.0,
     "mov": 1.0,
-    "regress": 0.33,
+    "regress": 0.4,
     "scale": 400.0
    },
-   "l2": null
+   "l2": 0.5
   },
-  "reason": "log loss 0.6750 -> 0.6681"
+  "reason": "log loss 0.6681 -> 0.6186"
  },
  "elo": {
   "games_seen": {
-   "Arizona Cardinals": 1,
-   "Atlanta Falcons": 1,
-   "Baltimore Ravens": 1,
-   "Buffalo Bills": 1,
-   "Carolina Panthers": 1,
-   "Chicago Bears": 1,
-   "Cincinnati Bengals": 1,
-   "Cleveland Browns": 1,
-   "Dallas Cowboys": 1,
-   "Denver Broncos": 1,
-   "Detroit Lions": 1,
-   "Green Bay Packers": 1,
-   "Houston Texans": 1,
-   "Indianapolis Colts": 1,
-   "Jacksonville Jaguars": 1,
-   "Kansas City Chiefs": 1,
-   "Las Vegas Raiders": 1,
-   "Los Angeles Chargers": 1,
-   "Los Angeles Rams": 1,
-   "Miami Dolphins": 1,
-   "Minnesota Vikings": 1,
-   "New England Patriots": 1,
-   "New Orleans Saints": 1,
-   "New York Giants": 1,
-   "New York Jets": 1,
-   "Philadelphia Eagles": 1,
-   "Pittsburgh Steelers": 1,
-   "San Francisco 49ers": 1,
-   "Seattle Seahawks": 1,
-   "Tampa Bay Buccaneers": 1,
-   "Tennessee Titans": 1,
-   "Washington Commanders": 1
+   "AFC": 0,
+   "Arizona Cardinals": 5,
+   "Atlanta Falcons": 5,
+   "Baltimore Ravens": 5,
+   "Buffalo Bills": 5,
+   "Carolina Panthers": 5,
+   "Chicago Bears": 5,
+   "Cincinnati Bengals": 5,
+   "Cleveland Browns": 5,
+   "Dallas Cowboys": 5,
+   "Denver Broncos": 5,
+   "Detroit Lions": 5,
+   "Green Bay Packers": 5,
+   "Houston Texans": 5,
+   "Indianapolis Colts": 5,
+   "Jacksonville Jaguars": 5,
+   "Kansas City Chiefs": 5,
+   "Las Vegas Raiders": 5,
+   "Los Angeles Chargers": 5,
+   "Los Angeles Rams": 6,
+   "Miami Dolphins": 5,
+   "Minnesota Vikings": 5,
+   "NFC": 0,
+   "New England Patriots": 6,
+   "New Orleans Saints": 5,
+   "New York Giants": 5,
+   "New York Jets": 5,
+   "Philadelphia Eagles": 5,
+   "Pittsburgh Steelers": 5,
+   "San Francisco 49ers": 5,
+   "Seattle Seahawks": 6,
+   "Tampa Bay Buccaneers": 5,
+   "Tennessee Titans": 5,
+   "Washington Commanders": 5
   },
   "params": {
-   "hfa": 48.0,
-   "k": 20.0,
+   "hfa": 28.799999999999997,
+   "k": 28.0,
    "mov": 1.0,
-   "regress": 0.33,
+   "regress": 0.4,
    "scale": 400.0
   },
   "ratings": {
-   "Arizona Cardinals": 1529.82,
-   "Atlanta Falcons": 1482.44,
-   "Baltimore Ravens": 1534.23,
-   "Buffalo Bills": 1520.83,
-   "Carolina Panthers": 1463.55,
-   "Chicago Bears": 1536.45,
-   "Cincinnati Bengals": 1516.43,
-   "Cleveland Browns": 1472.82,
-   "Dallas Cowboys": 1481.45,
-   "Denver Broncos": 1473.9,
-   "Detroit Lions": 1505.85,
-   "Green Bay Packers": 1475.6,
-   "Houston Texans": 1479.17,
-   "Indianapolis Colts": 1465.77,
-   "Jacksonville Jaguars": 1527.18,
-   "Kansas City Chiefs": 1526.1,
-   "Las Vegas Raiders": 1522.86,
-   "Los Angeles Chargers": 1470.18,
-   "Los Angeles Rams": 1464.6,
-   "Miami Dolphins": 1477.14,
-   "Minnesota Vikings": 1524.4,
-   "New England Patriots": 1488.3,
-   "New Orleans Saints": 1494.15,
-   "New York Giants": 1518.55,
-   "New York Jets": 1530.68,
-   "Philadelphia Eagles": 1509.28,
-   "Pittsburgh Steelers": 1517.56,
-   "San Francisco 49ers": 1535.4,
-   "Seattle Seahawks": 1511.7,
-   "Tampa Bay Buccaneers": 1483.57,
-   "Tennessee Titans": 1469.32,
-   "Washington Commanders": 1490.72
+   "AFC": 1475.04,
+   "Arizona Cardinals": 1444.55,
+   "Atlanta Falcons": 1467.42,
+   "Baltimore Ravens": 1554.58,
+   "Buffalo Bills": 1614.74,
+   "Carolina Panthers": 1417.41,
+   "Chicago Bears": 1572.37,
+   "Cincinnati Bengals": 1489.7,
+   "Cleveland Browns": 1422.81,
+   "Dallas Cowboys": 1415.96,
+   "Denver Broncos": 1543.91,
+   "Detroit Lions": 1520.86,
+   "Green Bay Packers": 1458.33,
+   "Houston Texans": 1578.53,
+   "Indianapolis Colts": 1435.87,
+   "Jacksonville Jaguars": 1622.03,
+   "Kansas City Chiefs": 1508.45,
+   "Las Vegas Raiders": 1402.3,
+   "Los Angeles Chargers": 1464.64,
+   "Los Angeles Rams": 1551.33,
+   "Miami Dolphins": 1403.82,
+   "Minnesota Vikings": 1569.51,
+   "NFC": 1524.96,
+   "New England Patriots": 1613.39,
+   "New Orleans Saints": 1462.08,
+   "New York Giants": 1468.55,
+   "New York Jets": 1412.89,
+   "Philadelphia Eagles": 1514.72,
+   "Pittsburgh Steelers": 1526.61,
+   "San Francisco 49ers": 1621.52,
+   "Seattle Seahawks": 1712.6,
+   "Tampa Bay Buccaneers": 1433.42,
+   "Tennessee Titans": 1351.65,
+   "Washington Commanders": 1423.47
   }
  },
  "last_metrics": {
-  "acc": 0.625,
-  "brier": 0.2376,
-  "logloss": 0.6681,
-  "n": 16
+  "acc": 0.6635,
+  "brier": 0.216,
+  "elo_only": {
+   "acc": 0.6682,
+   "brier": 0.2162,
+   "logloss": 0.6192,
+   "n": 211
+  },
+  "glm_only": {
+   "acc": 0.6209,
+   "brier": 0.2312,
+   "logloss": 0.652,
+   "n": 211
+  },
+  "logloss": 0.6186,
+  "n": 211
  },
  "league": "nfl",
  "ledger": {
   "components": {},
-  "graded": 0,
+  "graded": 15,
   "trust": null
  },
  "model_version": 3,
@@ -525,7 +553,157 @@
    "model_version": 3,
    "notes": "16 completed games",
    "reason": "kept incumbent (challenger 0.6681 vs 0.6681)"
+  },
+  {
+   "adopted": true,
+   "at": "2026-09-17T01:52:14Z",
+   "metrics": {
+    "acc": 0.6635,
+    "brier": 0.216,
+    "elo_only": {
+     "acc": 0.6682,
+     "brier": 0.2162,
+     "logloss": 0.6192,
+     "n": 211
+    },
+    "glm_only": {
+     "acc": 0.6209,
+     "brier": 0.2312,
+     "logloss": 0.652,
+     "n": 211
+    },
+    "logloss": 0.6186,
+    "n": 211
+   },
+   "model_version": 3,
+   "notes": "301 completed games",
+   "reason": "log loss 0.6681 -> 0.6186"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-17T06:42:03Z",
+   "metrics": {
+    "acc": 0.6635,
+    "brier": 0.216,
+    "elo_only": {
+     "acc": 0.6682,
+     "brier": 0.2162,
+     "logloss": 0.6192,
+     "n": 211
+    },
+    "glm_only": {
+     "acc": 0.6209,
+     "brier": 0.2312,
+     "logloss": 0.652,
+     "n": 211
+    },
+    "logloss": 0.6186,
+    "n": 211
+   },
+   "model_version": 3,
+   "notes": "301 completed games",
+   "reason": "kept incumbent (challenger 0.6186 vs 0.6186)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-17T07:47:58Z",
+   "metrics": {
+    "acc": 0.6635,
+    "brier": 0.216,
+    "elo_only": {
+     "acc": 0.6682,
+     "brier": 0.2162,
+     "logloss": 0.6192,
+     "n": 211
+    },
+    "glm_only": {
+     "acc": 0.6209,
+     "brier": 0.2312,
+     "logloss": 0.652,
+     "n": 211
+    },
+    "logloss": 0.6186,
+    "n": 211
+   },
+   "model_version": 3,
+   "notes": "301 completed games",
+   "reason": "kept incumbent (challenger 0.6186 vs 0.6186)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-17T12:06:57Z",
+   "metrics": {
+    "acc": 0.6635,
+    "brier": 0.216,
+    "elo_only": {
+     "acc": 0.6682,
+     "brier": 0.2162,
+     "logloss": 0.6192,
+     "n": 211
+    },
+    "glm_only": {
+     "acc": 0.6209,
+     "brier": 0.2312,
+     "logloss": 0.652,
+     "n": 211
+    },
+    "logloss": 0.6186,
+    "n": 211
+   },
+   "model_version": 3,
+   "notes": "301 completed games",
+   "reason": "kept incumbent (challenger 0.6186 vs 0.6186)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-17T13:35:58Z",
+   "metrics": {
+    "acc": 0.6635,
+    "brier": 0.216,
+    "elo_only": {
+     "acc": 0.6682,
+     "brier": 0.2162,
+     "logloss": 0.6192,
+     "n": 211
+    },
+    "glm_only": {
+     "acc": 0.6209,
+     "brier": 0.2312,
+     "logloss": 0.652,
+     "n": 211
+    },
+    "logloss": 0.6186,
+    "n": 211
+   },
+   "model_version": 3,
+   "notes": "301 completed games",
+   "reason": "kept incumbent (challenger 0.6186 vs 0.6186)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-17T15:51:27Z",
+   "metrics": {
+    "acc": 0.6635,
+    "brier": 0.216,
+    "elo_only": {
+     "acc": 0.6682,
+     "brier": 0.2162,
+     "logloss": 0.6192,
+     "n": 211
+    },
+    "glm_only": {
+     "acc": 0.6209,
+     "brier": 0.2312,
+     "logloss": 0.652,
+     "n": 211
+    },
+    "logloss": 0.6186,
+    "n": 211
+   },
+   "model_version": 3,
+   "notes": "301 completed games",
+   "reason": "kept incumbent (challenger 0.6186 vs 0.6186)"
   }
  ],
- "updated": "2026-09-17T01:33:00Z"
+ "updated": "2026-09-17T15:51:31Z"
 }

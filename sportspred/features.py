@@ -33,6 +33,10 @@ EXTRA_FEATURES = ['wpct_diff', 'off_diff', 'def_diff', 'sos_diff', 'exp_diff']
 RECENT_N = 20
 FORM_DECAY = 0.90          # weight of each additional game back
 
+# The optimiser (``optimize.py``) may move the window, the decay and the
+# feature set per league; these are the defaults it starts from.
+DEFAULT_FORM = {'n': RECENT_N, 'decay': FORM_DECAY}
+
 
 # ESPN season types: 1 preseason, 2 regular season, 3 postseason.
 ESPN_PRESEASON = 1
@@ -119,21 +123,22 @@ def season_of(d, league_key):
 
 
 class TeamState:
-    __slots__ = ('rs', 'ra', 'w', 'l', 't', 'gp', 'recent', 'margins',
+    __slots__ = ('rs', 'ra', 'w', 'l', 't', 'gp', 'decay', 'recent', 'margins',
                  'scored', 'allowed', 'opp_elo', 'last_date',
                  'home_w', 'home_gp', 'away_w', 'away_gp')
 
-    def __init__(self):
+    def __init__(self, recent_n=RECENT_N, decay=FORM_DECAY):
         self.rs = 0.0
         self.ra = 0.0
         self.w = 0
         self.l = 0
         self.t = 0
         self.gp = 0
-        self.recent = deque(maxlen=RECENT_N)   # 1 win / 0.5 tie / 0 loss
-        self.margins = deque(maxlen=RECENT_N)
-        self.scored = deque(maxlen=RECENT_N)
-        self.allowed = deque(maxlen=RECENT_N)
+        self.decay = decay
+        self.recent = deque(maxlen=recent_n)   # 1 win / 0.5 tie / 0 loss
+        self.margins = deque(maxlen=recent_n)
+        self.scored = deque(maxlen=recent_n)
+        self.allowed = deque(maxlen=recent_n)
         self.opp_elo = deque(maxlen=40)
         self.last_date = None
         self.home_w = 0.0
@@ -165,30 +170,24 @@ class TeamState:
     def form(self):
         if not self.recent:
             return 0.5
-        vals = list(self.recent)[::-1]        # newest first
-        wsum = tot = 0.0
-        for i, v in enumerate(vals):
-            w = FORM_DECAY ** i
-            wsum += w * v
-            tot += w
-        return wsum / tot if tot else 0.5
+        return _decayed(self.recent, 0.5, self.decay)
 
     def margin_form(self):
-        return _decayed(self.margins, 0.0)
+        return _decayed(self.margins, 0.0, self.decay)
 
     def scoring_form(self, default):
-        return _decayed(self.scored, default)
+        return _decayed(self.scored, default, self.decay)
 
     def allowed_form(self, default):
-        return _decayed(self.allowed, default)
+        return _decayed(self.allowed, default, self.decay)
 
 
-def _decayed(values, default):
+def _decayed(values, default, decay=FORM_DECAY):
     if not values:
         return default
     wsum = tot = 0.0
     for i, v in enumerate(list(values)[::-1]):
-        w = FORM_DECAY ** i
+        w = decay ** i
         wsum += w * v
         tot += w
     return wsum / tot if tot else default
@@ -197,22 +196,28 @@ def _decayed(values, default):
 PYTH_EXPONENT = {'mlb': 1.83, 'nba': 14.0, 'nfl': 2.37, 'nhl': 2.05}
 
 
-def build(games, league_key, elo_records, score_sigma=10.0):
+def build(games, league_key, elo_records, score_sigma=10.0, form=None, feature_names=None):
     """Attach a leak-free feature vector to every game in the log.
 
     ``elo_records`` comes from ``EloEngine.replay`` and is index-aligned with
-    ``games``.
+    ``games``. ``form`` is ``{'n': window, 'decay': per-game weight}`` and
+    ``feature_names`` the columns that go into the vector; both default to
+    the module constants and are what the optimiser searches over.
     """
+    form = dict(DEFAULT_FORM, **(form or {}))
+    names = list(feature_names or FEATURE_NAMES)
+    recent_n, decay = int(form['n']), float(form['decay'])
     exponent = PYTH_EXPONENT.get(league_key, 2.0)
     team_avg = score_sigma * 2.0     # rough per-team scoring level, only a prior
-    state = defaultdict(TeamState)
+    fresh = lambda: TeamState(recent_n, decay)      # noqa: E731
+    state = defaultdict(fresh)
     h2h = defaultdict(lambda: [0, 0])       # (a,b) sorted key -> [a_wins, b_wins]
     season = None
     out = []
 
     for idx, g in enumerate(games):
         if season is not None and g['season'] != season:
-            state = defaultdict(TeamState)
+            state = defaultdict(fresh)
             h2h = defaultdict(lambda: [0, 0])
         season = g['season']
 
@@ -249,7 +254,8 @@ def build(games, league_key, elo_records, score_sigma=10.0):
             'index': idx,
             'game': g,
             'features': feats,
-            'vector': [feats[n] for n in FEATURE_NAMES],
+            'vector': [feats[n] for n in names],
+            'feature_names': names,
             'elo_prob': elo.get('elo_home_prob', 0.5),
             'min_gp': min(hs_t.gp, as_t.gp),
             'context': {

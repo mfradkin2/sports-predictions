@@ -4,7 +4,7 @@ from __future__ import annotations
 import os
 from datetime import date, datetime, timedelta, timezone
 
-from . import espn, model, odds, props as props_mod
+from . import espn, model, odds, optimize, props as props_mod
 from . import config
 from .config import LEAGUES
 from .glm import score
@@ -112,23 +112,40 @@ def run(league_key, fetch_props=True, http=None, tune=True, replay=None):
         print(f'  replayed {n} picks for {replay[0]}..{replay[1]}')
 
     # ── learn ───────────────────────────────────────────────────────────────
+    # The optimiser walks the neighbourhood of the incumbent settings (form
+    # window, decay, feature set, rating speed) and hands back the best
+    # validating candidate; ``adopt`` then judges it against the incumbent
+    # with the same evidence bar as before. With ``tune`` off the incumbent
+    # is simply refit on the new data.
     prev = memory.previous_best()
-    prev_elo = (prev.get('params') or {}).get('elo_params')
-    trained = model.train(league_key, rows, cfg,
-                          elo_params=prev_elo if not tune else None, tune=tune)
+    incumbent = optimize.incumbent_settings(prev.get('params'), cfg)
+    search_report = None
+    if tune:
+        seed = f'{league_key}-{datetime.now(timezone.utc):%Y-%m-%d-%H}'
+        settings, trained, search_report = optimize.search(league_key, rows, cfg,
+                                                           prev.get('params'), seed=seed)
+    else:
+        settings = incumbent
+        trained = model.train(league_key, rows, cfg, elo_params=settings['elo_params'],
+                              tune=False, form=settings['form'], features=settings['features'])
 
     candidate = {'elo_params': trained['elo_params'], 'l2': trained['l2'],
-                 'blend_w': trained['blend_w'], 'calibration': trained['calibration']}
+                 'blend_w': trained['blend_w'], 'calibration': trained['calibration'],
+                 'form': trained['form'], 'features': trained['features']}
+    moves = [m['move'] for m in (search_report or {}).get('moves') or []]
     adopted, reason = memory.adopt(candidate, trained.get('metrics') or {},
-                                   notes=f'{trained["n_final"]} completed games')
+                                   notes=f'{trained["n_final"]} completed games'
+                                         + (f'; changed: {", ".join(moves)}' if moves else ''))
     if not adopted and prev.get('params'):
         # Roll back to the incumbent, then rebuild with its parameters.
         keep = prev['params']
-        trained = model.train(league_key, rows, cfg,
-                              elo_params=keep.get('elo_params'), tune=False)
+        trained = model.train(league_key, rows, cfg, elo_params=incumbent['elo_params'],
+                              tune=False, form=incumbent['form'], features=incumbent['features'])
         trained['l2'] = keep.get('l2', trained['l2'])
         trained['blend_w'] = keep.get('blend_w', trained['blend_w'])
         trained['calibration'] = keep.get('calibration', trained['calibration'])
+    if search_report is not None:
+        memory.note_search(search_report, adopted)
 
     # ── leak-free re-weighting from the prediction ledger ───────────────────
     memory.grade()
@@ -210,14 +227,14 @@ def run(league_key, fetch_props=True, http=None, tune=True, replay=None):
     graded_props = 0
     if fetch_props and http is not None:
         graded_props = grade_props(league_key, cfg, props_ledger, records, http)
-        props_tuning = props_ledger.tune()
+        props_tuning = props_ledger.corrections(props_mod.MARKET_BLEND_GAMES.get(cfg['sport'], 10))
         if pool:
             prop_board = price_props(league_key, cfg, records, pool,
                                      injuries, props_tuning, http, boards,
                                      lines_status=lines_status)
             record_props(props_ledger, records, prop_board, boards)
     else:
-        props_tuning = props_ledger.tune()
+        props_tuning = props_ledger.corrections(props_mod.MARKET_BLEND_GAMES.get(cfg['sport'], 10))
     # Started games keep the board they went in with, whether or not the
     # feed was reachable this run; finished ones carry their outcomes.
     prop_board = frozen_boards_for(records, boards, props_ledger, prop_board)
@@ -681,6 +698,10 @@ def build_payload(league_key, cfg, trained, memory, components, n_graded,
             ],
             'ledger': {'graded': n_graded, 'components': components},
             'runs': (memory.state.get('runs') or [])[-12:],
+            'settings': optimize.describe({'elo_params': trained['elo_params'],
+                                           'form': trained.get('form'),
+                                           'features': trained.get('features')}),
+            'optimizer': memory.optimizer_summary(),
             'curve': memory.learning_curve()[-90:],
         },
         'stats': cfg['stats'],
