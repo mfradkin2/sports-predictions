@@ -192,6 +192,30 @@ class TestPricingAgainstBookLines(unittest.TestCase):
         # Against a market line the edge is the gap to that line.
         self.assertAlmostEqual(p['edge'], p['line_gap'], delta=0.006)
 
+    def test_pick_follows_the_projection_not_the_coin_flip(self):
+        # A 0.6-touchdown average still scores in under half of games, but a
+        # projection above the line reads as an over; the probability shown
+        # is ours for that side, and confidence stays low below a half.
+        spec = next(s for s in props_for('football', 'wr') if s['key'] == 'anytd')
+        p = props._price(spec, 0.6, 0.6)
+        self.assertGreater(p['proj'], p['line'])
+        self.assertLess(p['over'], 0.5)
+        self.assertEqual(p['pick'], 'over')
+        self.assertAlmostEqual(p['pick_prob'], p['over'], places=4)
+        self.assertEqual(p['conf'], 'low')
+        # And a projection under the line is an under even when the market
+        # blend drags our probability of the over across a half.
+        spec = next(s for s in props_for('football', 'qb') if s['key'] == 'pass_att')
+        book = {'line': 35.5, 'books': 4, 'book': '4 books', 'over': -200, 'under': 160}
+        q = props._price(spec, 35.4, 35.4, book, sample=1, sport='football')
+        self.assertLess(q['proj'], q['line'])
+        self.assertGreater(q['over'], 0.5)
+        self.assertEqual(q['pick'], 'under')
+        self.assertAlmostEqual(q['pick_prob'], 1 - q['over'], places=4)
+        # Every side the page shows agrees with the projection.
+        for r in (p, q):
+            self.assertEqual(r['pick'], 'over' if r['proj'] > r['line'] else 'under')
+
     def test_a_book_without_a_line_is_ignored(self):
         p = props._price(self._spec('hits'), 1.1, 1.3, {'line': None})
         self.assertEqual(p['line_source'], 'model')

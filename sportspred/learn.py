@@ -458,11 +458,12 @@ class PropsLedger:
                                'gp': 0, 'headshot': '', 'props': []}
                 board[side].append(players[pk])
             over = num(r.get('over'), 0.5)
+            pick = r.get('pick', 'over')
             prop = {'key': r.get('key', ''), 'label': r.get('label', r.get('key', '')),
                     'unit': '', 'line': num(r.get('line')), 'proj': num(r.get('proj')),
                     'season': num(r.get('season')), 'over': round(over, 4),
-                    'under': round(1 - over, 4), 'pick': r.get('pick', 'over'),
-                    'pick_prob': round(max(over, 1 - over), 4), 'conf': r.get('conf', 'low'),
+                    'under': round(1 - over, 4), 'pick': pick,
+                    'pick_prob': round(over if pick == 'over' else 1 - over, 4), 'conf': r.get('conf', 'low'),
                     'stat': r.get('stat', ''), 'dist': r.get('dist', ''),
                     'line_source': r.get('line_source') or 'model', 'rank': 99}
             if r.get('book'):

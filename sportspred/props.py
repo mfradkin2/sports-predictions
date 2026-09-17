@@ -680,20 +680,34 @@ def _price(spec, baseline, projection, book=None, season=None, sample=None, spor
     # priced the player's talent into its number, so what is left is our
     # disagreement with the market.
     edge = line_gap if book is not None else ((projection - baseline) / sd if sd > 0 else 0.0)
+    # The pick is the side our projection sits on. A count stat's average can
+    # sit above a 0.5 line while the player still clears it less than half
+    # the time (a 0.6-touchdown average scores in ~45% of games), and the
+    # market blend can nudge the probability across a half; in both cases
+    # the page still has to read consistently: a projection above the line
+    # is an over, and the probability shown is ours for that side.
+    shown_proj = round(projection, 2)
+    if shown_proj > line:
+        pick = 'over'
+    elif shown_proj < line:
+        pick = 'under'
+    else:
+        pick = 'over' if p_over >= 0.5 else 'under'
+    pick_prob = p_over if pick == 'over' else 1 - p_over
     out = {
         'key': spec['key'],
         'label': spec['label'],
         'unit': spec.get('unit', ''),
         'line': round(line, 1),
-        'proj': round(projection, 2),
+        'proj': shown_proj,
         'season': round(season, 2),
         'delta': round(projection - season, 2),
         'range': likely_range(spec, projection),
         'over': round(p_over, 4),
         'under': round(1 - p_over, 4),
-        'pick': 'over' if p_over >= 0.5 else 'under',
-        'pick_prob': round(max(p_over, 1 - p_over), 4),
-        'conf': confidence(p_over),
+        'pick': pick,
+        'pick_prob': round(pick_prob, 4),
+        'conf': confidence(pick_prob) if pick_prob >= 0.5 else 'low',
         'edge': round(edge, 3),
         'line_gap': round(line_gap, 2),
         'rank': spec.get('rank', 99),
