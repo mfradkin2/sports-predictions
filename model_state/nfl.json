@@ -144,13 +144,13 @@
   "trust": null
  },
  "model_version": 3,
- "new_games_this_run": 286,
+ "new_games_this_run": 0,
  "props": {
   "graded_this_run": 0,
   "lines": {
    "games": 1,
    "mode": "book",
-   "status": "cached"
+   "status": "live"
   },
   "record": {
    "by_conf": {},
@@ -578,7 +578,32 @@
    "model_version": 3,
    "notes": "301 completed games",
    "reason": "log loss 0.6681 -> 0.6186"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-17T06:42:03Z",
+   "metrics": {
+    "acc": 0.6635,
+    "brier": 0.216,
+    "elo_only": {
+     "acc": 0.6682,
+     "brier": 0.2162,
+     "logloss": 0.6192,
+     "n": 211
+    },
+    "glm_only": {
+     "acc": 0.6209,
+     "brier": 0.2312,
+     "logloss": 0.652,
+     "n": 211
+    },
+    "logloss": 0.6186,
+    "n": 211
+   },
+   "model_version": 3,
+   "notes": "301 completed games",
+   "reason": "kept incumbent (challenger 0.6186 vs 0.6186)"
   }
  ],
- "updated": "2026-09-17T01:52:18Z"
+ "updated": "2026-09-17T06:42:09Z"
 }
