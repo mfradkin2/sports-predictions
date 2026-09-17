@@ -514,8 +514,11 @@
     if (scope === 'results') d.days = '14';
     return d;
   }
+  function propDefaults() {
+    return { conf: 'all', pick: 'all', cat: 'all', sort: 'edge', when: 'all', team: 'all', game: 'all', pos: 'all', edge: 'all', status: 'all' };
+  }
   function activeFilterCount() {
-    var f = state.filters[state.view] || {}, base = defaults(state.view), n = 0;
+    var f = state.filters[state.view] || {}, base = state.view === 'props' ? propDefaults() : defaults(state.view), n = 0;
     Object.keys(f).forEach(function (k) { if (f[k] !== (base[k] === undefined ? 'all' : base[k])) n++; });
     if (state.search.trim()) n++;
     return n;
@@ -718,33 +721,57 @@
           : 'No upcoming games with player projections right now.');
       return '<div class="empty"><span class="icon">👤</span>' + esc(why) + '</div>';
     }
-    var f = state.filters.props ||
-      (state.filters.props = { conf: 'all', pick: 'all', cat: 'all', sort: 'edge' });
-    if (!f.sort) f.sort = 'edge';
-    var cats = {};
-    rows.forEach(function (r) { cats[r.prop.label] = 1; });
-    var catOpts = ['<option value="all">All props</option>'].concat(
-      Object.keys(cats).sort().map(function (c) {
-        return '<option value="' + esc(c) + '"' + (f.cat === c ? ' selected' : '') + '>' + esc(c) + '</option>';
-      })).join('');
+    var f = state.filters.props || (state.filters.props = propDefaults());
+    Object.keys(propDefaults()).forEach(function (k) { if (f[k] === undefined) f[k] = propDefaults()[k]; });
+    var t = today(), tomorrow = addDays(t, 1);
+    var selectOpts = function (name, label, values, current, fmt) {
+      return '<select class="search" data-select-filter="' + name + '" aria-label="' + esc(label) + '">' +
+        '<option value="all">' + esc(label) + '</option>' + values.map(function (v) {
+          return '<option value="' + esc(v[0]) + '"' + (current === v[0] ? ' selected' : '') + '>' + esc(v[1]) + '</option>';
+        }).join('') + '</select>';
+    };
+    var cats = {}, teams = {}, games = {}, groups = {};
+    rows.forEach(function (r) {
+      cats[r.prop.label] = 1; teams[r.g.away] = 1; teams[r.g.home] = 1;
+      games[r.g.id] = r.g; if (r.player.group) groups[r.player.group] = 1;
+    });
+    var gameList = Object.keys(games).map(function (id) { return games[id]; })
+      .sort(function (a, b) { return (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')); });
+    var GROUP_LABEL = { pitcher: 'Pitchers', batter: 'Hitters', qb: 'Quarterbacks', rb: 'Running backs', wr: 'Receivers & tight ends', goalie: 'Goalies', skater: 'Skaters' };
+    var statusOf = function (r) {
+      if (r.prop.hit != null || r.prop.push || r.prop.played === false) return 'graded';
+      return r.g.props_locked ? 'live' : 'upcoming';
+    };
 
     var q = state.search.trim().toLowerCase();
     // One row per player and prop: a player on a three-game series would
-    // otherwise fill the board with the same read three times over.
-    var seen = {};
+    // otherwise fill the board with the same read three times over, unless
+    // a date or game is chosen.
+    var seen = {}, dedupe = f.when === 'all' && f.game === 'all';
     var list = rows.filter(function (r) {
       if (f.conf !== 'all' && r.prop.conf !== f.conf) return false;
       if (f.pick !== 'all' && r.prop.pick !== f.pick) return false;
       if (f.cat !== 'all' && r.prop.label !== f.cat) return false;
+      if (f.when === 'today' && r.g.date !== t) return false;
+      if (f.when === 'tomorrow' && r.g.date !== tomorrow) return false;
+      if (f.team !== 'all' && r.g.away !== f.team && r.g.home !== f.team) return false;
+      if (f.game !== 'all' && r.g.id !== f.game) return false;
+      if (f.pos !== 'all' && r.player.group !== f.pos) return false;
+      if (f.edge !== 'all' && !(r.prop.edge_pts != null && r.prop.edge_pts >= +f.edge)) return false;
+      if (f.status !== 'all' && statusOf(r) !== f.status) return false;
       if (q && (r.player.name + ' ' + r.g.away + ' ' + r.g.home).toLowerCase().indexOf(q) < 0) return false;
-      var key = r.player.id + '|' + r.player.name + '|' + r.prop.key;
-      if (seen[key] && seen[key] <= r.g.date) return false;
-      seen[key] = r.g.date;
+      if (dedupe) {
+        var key = r.player.id + '|' + r.player.name + '|' + r.prop.key;
+        if (seen[key] && seen[key] <= r.g.date) return false;
+        seen[key] = r.g.date;
+      }
       return true;
     }).sort(function (a, b) {
       if (f.sort === 'conf') return b.prop.pick_prob - a.prop.pick_prob;
       return edgeScore(b.prop) - edgeScore(a.prop);
-    }).slice(0, 250);
+    });
+    var totalMatched = list.length;
+    list = list.slice(0, 250);
 
     var bar = filterShell(
       '<div class="fgroup"><span class="flabel">Confidence</span>' +
@@ -757,15 +784,33 @@
           return '<button class="chip" data-filter="pick" data-value="' + v + '" aria-pressed="' +
             (f.pick === v) + '">' + (v === 'all' ? 'All' : v.toUpperCase()) + '</button>';
         }).join('') + '</div>' +
+      '<div class="fgroup"><span class="flabel">When</span>' +
+        [['all', 'All'], ['today', 'Today'], ['tomorrow', 'Tomorrow']].map(function (v) {
+          return '<button class="chip" data-filter="when" data-value="' + v[0] + '" aria-pressed="' + (f.when === v[0]) + '">' + v[1] + '</button>';
+        }).join('') + '</div>' +
+      '<div class="fgroup"><span class="flabel">Status</span>' +
+        [['all', 'All'], ['upcoming', 'Upcoming'], ['live', 'In progress'], ['graded', 'Graded']].map(function (v) {
+          return '<button class="chip" data-filter="status" data-value="' + v[0] + '" aria-pressed="' + (f.status === v[0]) + '">' + v[1] + '</button>';
+        }).join('') + '</div>' +
+      '<div class="fgroup"><span class="flabel">Edge</span>' +
+        [['all', 'Any'], ['3', '3+ pts'], ['5', '5+ pts'], ['10', '10+ pts']].map(function (v) {
+          return '<button class="chip" data-filter="edge" data-value="' + v[0] + '" aria-pressed="' + (f.edge === v[0]) + '">' + v[1] + '</button>';
+        }).join('') + '</div>' +
       '<div class="fgroup"><span class="flabel">Sort</span>' +
         [['edge', 'Edge vs book'], ['conf', 'Confidence']].map(function (v) {
           return '<button class="chip" data-filter="sort" data-value="' + v[0] + '" aria-pressed="' +
             (f.sort === v[0]) + '">' + v[1] + '</button>';
         }).join('') + '</div>' +
-      '<div class="fgroup"><select class="search" id="cat-filter" aria-label="Prop type">' + catOpts + '</select></div>' +
+      '<div class="fgroup">' +
+        selectOpts('cat', 'All props', Object.keys(cats).sort().map(function (c) { return [c, c]; }), f.cat) +
+        selectOpts('pos', 'All positions', Object.keys(groups).sort().map(function (g) { return [g, GROUP_LABEL[g] || g]; }), f.pos) +
+        selectOpts('team', 'All teams', Object.keys(teams).sort().map(function (x) { return [x, x]; }), f.team) +
+        selectOpts('game', 'All games', gameList.map(function (g) { return [g.id, shortDate(g.date) + ' · ' + (g.away_s || g.away) + ' @ ' + (g.home_s || g.home)]; }), f.game) +
+      '</div>' +
       '<div class="fgroup"><input class="search" id="search" type="search" placeholder="Player or team…" value="' +
-        esc(state.search) + '" aria-label="Filter players"></div>',
-      list.length + ' props');
+        esc(state.search) + '" aria-label="Filter players">' +
+        (activeFilterCount() ? '<button class="chip" data-clear-filters>✕ Clear filters</button>' : '') + '</div>',
+      (totalMatched > list.length ? 'top ' + list.length + ' of ' + totalMatched : totalMatched) + ' props');
 
     var graded = list.some(function (r) { return r.prop.hit != null || r.prop.push; });
     var body = '<div class="scroll-x"><table class="grid"><thead><tr>' +
@@ -1217,6 +1262,10 @@
       toggle.setAttribute('aria-expanded', String(state.filtersOpen));
       return;
     }
+    if (ev.target.closest('[data-clear-filters]')) {
+      state.filters[state.view] = state.view === 'props' ? propDefaults() : defaults(state.view);
+      state.search = ''; render(); return;
+    }
     var chip = ev.target.closest('.chip');
     if (chip) {
       var scope = state.view;
@@ -1276,9 +1325,10 @@
     }
   });
   document.addEventListener('change', function (ev) {
-    if (ev.target.id === 'cat-filter') {
-      state.filters.props = state.filters.props || { conf: 'all', pick: 'all', cat: 'all', sort: 'edge' };
-      state.filters.props.cat = ev.target.value; render();
+    var name = ev.target.dataset && ev.target.dataset.selectFilter;
+    if (name) {
+      state.filters.props = state.filters.props || propDefaults();
+      state.filters.props[name] = ev.target.value; render();
     }
   });
   window.addEventListener('popstate', function () { fromHash(true); });
