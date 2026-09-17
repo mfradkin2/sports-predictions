@@ -124,6 +124,36 @@ class TestPredictionsAreFrozen(PipelineHarness):
         again = next(g for g in payload2['games'] if g['id'] == future['id'])
         self.assertNotEqual(again['home_prob'], future['home_prob'])
 
+    def test_new_model_settings_never_touch_a_locked_pick(self):
+        """The optimiser may change the form window, the signals or the
+        rating speed from one hour to the next. A game that has started is
+        held to the number written before kickoff regardless."""
+        self.run_pipeline()                      # writes every forecast down
+        payload, _, mem = self.run_pipeline()    # started games now read from the ledger
+        locked_before = {g['id']: (g['home_prob'], g['favored'])
+                         for g in payload['games'] if g['locked']}
+        open_before = {g['id']: g['home_prob'] for g in payload['games'] if not g['locked']}
+        self.assertTrue(locked_before and open_before)
+        # Plant very different settings as the incumbent, as a search win would.
+        best = mem.state['best']
+        best['params'].update({'form': {'n': 8, 'decay': 0.8},
+                               'features': ['elo_diff', 'pyth_diff', 'wpct_diff', 'sos_diff'],
+                               'elo_params': dict(best['params']['elo_params'], k=12.0, hfa=5.0)})
+        mem.save_state()
+        payload2, _, _ = self.run_pipeline()
+        after = {g['id']: (g['home_prob'], g['favored']) for g in payload2['games'] + payload2['history']}
+        for gid, was in locked_before.items():
+            self.assertEqual(after.get(gid), was, f'locked game {gid} moved with the settings')
+        # The settings really did take: an unlocked game's live number moved.
+        moved = [gid for gid, p in open_before.items() if gid in after and after[gid][0] != p]
+        self.assertTrue(moved)
+        self.assertEqual(payload2['model']['settings']['form_window'], 8)
+        # And the full hourly search, with tuning on, obeys the same rule.
+        payload3, _, _ = pipeline.run('mlb', fetch_props=False, tune=True)
+        after3 = {g['id']: (g['home_prob'], g['favored']) for g in payload3['games'] + payload3['history']}
+        for gid, was in locked_before.items():
+            self.assertEqual(after3.get(gid), was)
+
     def test_verified_record_counts_only_pre_game_forecasts(self):
         self.run_pipeline()
         self.play_out()
