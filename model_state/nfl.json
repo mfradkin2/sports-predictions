@@ -1,10 +1,10 @@
 {
  "archive_size": 302,
  "best": {
-  "adopted_at": "2026-09-17T20:48:53Z",
+  "adopted_at": "2026-09-17T22:17:24Z",
   "metrics": {
-   "acc": 0.6919,
-   "brier": 0.211,
+   "acc": 0.7014,
+   "brier": 0.2064,
    "elo_only": {
     "acc": 0.6682,
     "brier": 0.2162,
@@ -12,19 +12,19 @@
     "n": 211
    },
    "glm_only": {
-    "acc": 0.6682,
-    "brier": 0.2173,
-    "logloss": 0.6256,
+    "acc": 0.6635,
+    "brier": 0.2149,
+    "logloss": 0.6203,
     "n": 211
    },
-   "logloss": 0.6076,
+   "logloss": 0.5975,
    "n": 211
   },
   "params": {
-   "blend_w": 0.4,
+   "blend_w": 0.5,
    "calibration": {
-    "a": 1.338547883708164,
-    "b": -0.158965924569786,
+    "a": 1.5957979444874237,
+    "b": -0.21505100245636918,
     "n": 211
    },
    "elo_params": {
@@ -36,20 +36,17 @@
    },
    "features": [
     "form_diff",
-    "margin_diff",
-    "venue_diff",
-    "rest_diff",
     "b2b_diff",
     "h2h_diff",
     "sos_diff"
    ],
    "form": {
     "decay": 0.8,
-    "n": 20
+    "n": 16
    },
    "l2": 0.5
   },
-  "reason": "log loss 0.6186 -> 0.6076"
+  "reason": "log loss 0.6076 -> 0.5975"
  },
  "elo": {
   "games_seen": {
@@ -133,8 +130,8 @@
   }
  },
  "last_metrics": {
-  "acc": 0.6919,
-  "brier": 0.211,
+  "acc": 0.7014,
+  "brier": 0.2064,
   "elo_only": {
    "acc": 0.6682,
    "brier": 0.2162,
@@ -142,12 +139,12 @@
    "n": 211
   },
   "glm_only": {
-   "acc": 0.6682,
-   "brier": 0.2173,
-   "logloss": 0.6256,
+   "acc": 0.6635,
+   "brier": 0.2149,
+   "logloss": 0.6203,
    "n": 211
   },
-  "logloss": 0.6076,
+  "logloss": 0.5975,
   "n": 211
  },
  "league": "nfl",
@@ -212,6 +209,52 @@
     "won": false
    },
    "start": 0.6186
+  },
+  {
+   "adopted": true,
+   "at": "2026-09-17T22:17:24Z",
+   "end": 0.5975,
+   "evals": 37,
+   "moves": [
+    {
+     "from": 0.6076,
+     "move": "without venue_diff",
+     "to": 0.6048
+    },
+    {
+     "from": 0.6048,
+     "move": "without margin_diff",
+     "to": 0.6044
+    },
+    {
+     "from": 0.6044,
+     "move": "without rest_diff",
+     "to": 0.5989
+    },
+    {
+     "from": 0.5989,
+     "move": "form window",
+     "to": 0.5975
+    }
+   ],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "margin_diff",
+     "b2b_diff",
+     "off_diff",
+     "def_diff",
+     "exp_diff"
+    ],
+    "form": {
+     "decay": 0.85,
+     "n": 12
+    },
+    "logloss": 0.6183,
+    "won": false
+   },
+   "start": 0.6076
   }
  ],
  "props": {
@@ -219,7 +262,7 @@
   "lines": {
    "games": 1,
    "mode": "book",
-   "status": "cached"
+   "status": "live"
   },
   "record": {
    "by_conf": {},
@@ -872,7 +915,32 @@
    "model_version": 3,
    "notes": "301 completed games; changed: with sos_diff, without elo_diff, form decay, without pyth_diff, form decay",
    "reason": "log loss 0.6186 -> 0.6076"
+  },
+  {
+   "adopted": true,
+   "at": "2026-09-17T22:17:24Z",
+   "metrics": {
+    "acc": 0.7014,
+    "brier": 0.2064,
+    "elo_only": {
+     "acc": 0.6682,
+     "brier": 0.2162,
+     "logloss": 0.6192,
+     "n": 211
+    },
+    "glm_only": {
+     "acc": 0.6635,
+     "brier": 0.2149,
+     "logloss": 0.6203,
+     "n": 211
+    },
+    "logloss": 0.5975,
+    "n": 211
+   },
+   "model_version": 3,
+   "notes": "301 completed games; changed: without venue_diff, without margin_diff, without rest_diff, form window",
+   "reason": "log loss 0.6076 -> 0.5975"
   }
  ],
- "updated": "2026-09-17T20:48:57Z"
+ "updated": "2026-09-17T22:17:27Z"
 }
