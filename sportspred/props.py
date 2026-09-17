@@ -20,7 +20,7 @@ from collections import defaultdict
 from .config import props_for, quota_for
 from .espn import find_team, norm_team
 from .odds import line_for
-from .util import binom_sf, clamp, negbin_sf, norm_sf, num, poisson_sf
+from .util import binom_sf, clamp, logistic, logit, negbin_sf, norm_sf, num, poisson_sf
 
 # Ceiling on any per-game rate we will believe out of the raw feed; anything
 # above it means we were handed a season total rather than an average.
@@ -561,7 +561,8 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
         projection = base * factor * bias
         if projection < spec.get('min_proj', 0.0):
             continue
-        priced = _price(spec, base, projection, season=season, sample=gp, sport=sport)
+        priced = _price(spec, base, projection, season=season, sample=gp, sport=sport,
+                        tuning=tuning)
         priced['_base'] = base
         priced['_gp'] = gp
         if from_prev:
@@ -645,7 +646,8 @@ def apply_tuning(spec, tuning):
 MARKET_BLEND_GAMES = {'baseball': 12, 'basketball': 8, 'hockey': 10, 'football': 3}
 
 
-def _price(spec, baseline, projection, book=None, season=None, sample=None, sport=None):
+def _price(spec, baseline, projection, book=None, season=None, sample=None, sport=None,
+           tuning=None):
     """Assemble the published record for one prop.
 
     ``baseline`` is the (shrunk) rate the projection grew from; ``season``
@@ -662,11 +664,22 @@ def _price(spec, baseline, projection, book=None, season=None, sample=None, spor
     if book is not None:
         spec = dict(spec, line=float(book['line']))
     line, p_over = over_probability(spec, projection, baseline)
+    model_over = p_over                    # ours alone, before the market has a say
     market = implied_over(book.get('over'), book.get('under')) if book is not None else None
+    tuning = tuning or {}
     if market is not None and sample is not None:
-        k = MARKET_BLEND_GAMES.get(sport or '', 10)
+        # The ledger can override the blend speed once it has seen enough
+        # graded props with both numbers on file (``PropsLedger.market_k``).
+        k = num((tuning.get('_market') or {}).get('k'))
+        if k is None:
+            k = MARKET_BLEND_GAMES.get(sport or '', 10)
         w = float(sample) / (float(sample) + k)
         p_over = clamp(w * p_over + (1 - w) * market, 0.01, 0.99)
+    raw_over = p_over                      # what the calibration below is fitted on
+    cal = tuning.get('_calibration')
+    if cal and num(cal.get('a')) is not None:
+        p_over = clamp(logistic(float(cal['a']) * logit(p_over) + float(cal.get('b', 0.0))),
+                       0.01, 0.99)
     sd = _spread(spec, projection)
     # Edge is how far this matchup moves the player off their own season
     # baseline, in standard deviations — not the gap to the line. On a fixed
@@ -705,6 +718,8 @@ def _price(spec, baseline, projection, book=None, season=None, sample=None, spor
         'range': likely_range(spec, projection),
         'over': round(p_over, 4),
         'under': round(1 - p_over, 4),
+        'model_over': round(model_over, 4),
+        'raw_over': round(raw_over, 4),
         'pick': pick,
         'pick_prob': round(pick_prob, 4),
         'conf': confidence(pick_prob) if pick_prob >= 0.5 else 'low',
@@ -859,12 +874,13 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                 book = line_for(lines, player.get('name', ''), p['key'])
                 if book:
                     priced.append(_price(spec, base, projection, book, season=p['season'],
-                                         sample=p.get('_gp', gp), sport=sport))
+                                         sample=p.get('_gp', gp), sport=sport, tuning=tuning))
                     n_book += 1
                 elif book_mode:
                     priced.append(pending_prop(spec, base, projection, season=p['season']))
                 else:
-                    priced.append(_price(spec, base, projection, season=p['season']))
+                    priced.append(_price(spec, base, projection, season=p['season'],
+                                         tuning=tuning))
                 if p.get('season_prev'):
                     priced[-1]['season_prev'] = True
             priced = select_props(priced, book_mode, 5)

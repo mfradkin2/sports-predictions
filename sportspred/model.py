@@ -21,12 +21,13 @@ L2_GRID = (0.5, 1.5, 4.0, 10.0, 25.0)
 # ─────────────────────────────────────────────────────────────────────────────
 #  Dataset
 # ─────────────────────────────────────────────────────────────────────────────
-def build_dataset(league_key, rows, cfg, elo_params):
+def build_dataset(league_key, rows, cfg, elo_params, form=None, features=None):
     games = feat.normalize_games(rows, league_key)
     engine = EloEngine(**elo_params)
     elo_records = engine.replay(games)
     records = feat.build(games, league_key, elo_records,
-                         score_sigma=cfg.get('score_sigma', 10.0))
+                         score_sigma=cfg.get('score_sigma', 10.0),
+                         form=form, feature_names=features)
     return games, records, engine
 
 
@@ -124,6 +125,7 @@ def walk_forward(records, outcomes, l2, min_train=MIN_TRAIN, n_folds=N_FOLDS):
     Returns index-aligned lists of out-of-sample GLM probabilities and Elo
     probabilities, plus the outcomes, for the graded portion of the log.
     """
+    names = _names_of(records)
     played = [i for i, o in enumerate(outcomes) if o is not None]
     if len(played) < min_train + 20:
         return [], [], [], []
@@ -142,13 +144,20 @@ def walk_forward(records, outcomes, l2, min_train=MIN_TRAIN, n_folds=N_FOLDS):
             continue
         X = [records[i]['vector'] for i in train_idx]
         y = [outcomes[i] for i in train_idx]
-        model = LogisticModel(feat.FEATURE_NAMES, l2=l2).fit(X, y)
+        model = LogisticModel(names, l2=l2).fit(X, y)
         for i in block:
             oos_glm.append(model.predict_proba(records[i]['vector']))
             oos_elo.append(records[i]['elo_prob'])
             ys.append(outcomes[i])
             idxs.append(i)
     return oos_glm, oos_elo, ys, idxs
+
+
+def _names_of(records):
+    for r in records:
+        if r.get('feature_names'):
+            return list(r['feature_names'])
+    return list(feat.FEATURE_NAMES)
 
 
 def best_blend(p_a, p_b, ys, steps=21):
@@ -171,18 +180,23 @@ def blend_probs(p_a, p_b, w):
 # ─────────────────────────────────────────────────────────────────────────────
 #  Full training run
 # ─────────────────────────────────────────────────────────────────────────────
-def train(league_key, rows, cfg, elo_params=None, tune=True):
+def train(league_key, rows, cfg, elo_params=None, tune=True, form=None, features=None):
     """Fit everything and report honest out-of-sample metrics.
 
     Returns a dict holding the production model, the tuned parameters and the
     validation scores — the payload the learning loop stores and compares.
+    ``form`` and ``features`` are the settings the optimiser searches; left
+    out, the defaults in ``features.py`` apply.
     """
     elo_params = dict(elo_params or cfg['elo'])
     elo_metric = None
     if tune:
         elo_params, elo_metric = tune_elo(league_key, rows, cfg)
+    form = dict(feat.DEFAULT_FORM, **(form or {}))
+    features = list(features or feat.FEATURE_NAMES)
 
-    games, records, engine = build_dataset(league_key, rows, cfg, elo_params)
+    games, records, engine = build_dataset(league_key, rows, cfg, elo_params,
+                                           form=form, features=features)
     outcomes = outcomes_of(records)
     n_final = sum(1 for o in outcomes if o is not None)
 
@@ -194,6 +208,8 @@ def train(league_key, rows, cfg, elo_params=None, tune=True):
         # 'trained' validated out of sample
         'stage': 'empty',
         'elo_params': elo_params,
+        'form': form,
+        'features': features,
         'elo_only': elo_metric,
         'n_final': n_final,
         'n_games': len(games),
@@ -278,7 +294,7 @@ def train(league_key, rows, cfg, elo_params=None, tune=True):
     played = [i for i, o in enumerate(outcomes) if o is not None]
     X = [records[i]['vector'] for i in played]
     y = [outcomes[i] for i in played]
-    prod = LogisticModel(feat.FEATURE_NAMES, l2=best['l2']).fit(X, y)
+    prod = LogisticModel(features, l2=best['l2']).fit(X, y)
     result['model'] = prod
     result['importance'] = [{'feature': n, 'coef': round(c, 4), 'weight': round(w, 4)}
                             for n, c, w in prod.importance()]

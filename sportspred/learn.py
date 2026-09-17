@@ -343,6 +343,31 @@ class LeagueMemory:
         self.state['runs'] = log[-60:]          # keep the trail bounded
         return adopted, reason
 
+    def note_search(self, report, adopted):
+        """Keep a short trail of what the optimiser tried, for the page."""
+        log = self.state.setdefault('optimizer', [])
+        log.append({'at': now_iso(), 'evals': report.get('evals', 0),
+                    'start': report.get('start'), 'end': report.get('end'),
+                    'moves': report.get('moves') or [], 'probe': report.get('probe'),
+                    'adopted': bool(adopted)})
+        self.state['optimizer'] = log[-48:]
+
+    def optimizer_summary(self):
+        """Totals across the trail: how many settings were tried, how many
+        runs found something, and the last change that was kept."""
+        log = self.state.get('optimizer') or []
+        tried = sum(int(e.get('evals') or 0) for e in log)
+        found = sum(1 for e in log if e.get('moves'))
+        kept = [e for e in log if e.get('adopted') and e.get('moves')]
+        last = kept[-1] if kept else None
+        probes = [e.get('probe') for e in log if e.get('probe')]
+        return {
+            'runs': len(log), 'tried': tried, 'runs_with_a_find': found,
+            'probes': len(probes), 'probe_wins': sum(1 for p in probes if p.get('won')),
+            'last_change': ({'at': last['at'], 'moves': last['moves'],
+                             'from': last.get('start'), 'to': last.get('end')} if last else None),
+        }
+
     def save_state(self, extra=None):
         self.state['league'] = self.league
         self.state['updated'] = now_iso()
@@ -379,9 +404,16 @@ class LeagueMemory:
 # ─────────────────────────────────────────────────────────────────────────────
 PROP_FIELDS = ['game_id', 'game_date', 'athlete_id', 'player', 'side', 'key', 'label',
                'stat', 'dist', 'line', 'line_source', 'book', 'proj', 'season', 'over',
-               'pick', 'conf', 'recorded_at', 'actual', 'played', 'graded', 'hit', 'push']
+               'pick', 'conf', 'recorded_at', 'actual', 'played', 'graded', 'hit', 'push',
+               # what went into ``over``: ours alone, the book's vig-free
+               # price, the blend before calibration, and the player's games
+               # played at the time — the optimiser's raw material
+               'model_p', 'book_p', 'raw_p', 'gp']
 PROP_TUNING_MIN = 30       # graded props of one kind before its parameters move
 PROP_TUNING_FULL = 200     # ... and the sample size at which they move fully
+PROP_CAL_MIN = 150         # graded props before the ledger recalibrates them
+PROP_CAL_GAIN = 0.002      # log loss a recalibration must save on held-out props
+MARKET_K_GRID = (1, 2, 3, 5, 8, 12, 20, 40, 80)
 
 
 class PropsLedger:
@@ -429,6 +461,8 @@ class PropsLedger:
             'season': prop['season'], 'over': prop['over'], 'pick': prop['pick'],
             'conf': prop['conf'], 'recorded_at': now_iso(),
             'actual': '', 'played': '', 'graded': '0', 'hit': '', 'push': '',
+            'model_p': prop.get('model_over', ''), 'book_p': prop.get('book_p', ''),
+            'raw_p': prop.get('raw_over', ''), 'gp': player.get('gp', ''),
         }
         k = self._key(row)
         if k in self.rows:
@@ -648,6 +682,87 @@ class PropsLedger:
             tuned[key] = {'bias': round(bias, 4), 'spread': round(spread, 4), 'n': n,
                           'raw_bias': round(raw_bias, 4)}
         return tuned
+
+    # ── the optimiser's half: learned from outcomes, kept only if they help ──
+    def _outcome_rows(self):
+        """Graded, played, non-push rows in date order with the probability
+        of the over as it stood before any recalibration."""
+        out = []
+        for r in self.graded():
+            if r.get('played') == '0' or r.get('push') == '1' or r.get('hit') not in ('0', '1'):
+                continue
+            p = num(r.get('raw_p'))
+            if p is None:
+                p = num(r.get('over'))
+            if p is None:
+                continue
+            went_over = (r['hit'] == '1') == (r.get('pick') == 'over')
+            out.append((r.get('game_date', ''), p, 1 if went_over else 0, r))
+        out.sort(key=lambda t: t[0])
+        return out
+
+    def calibration(self):
+        """A logistic recalibration of prop probabilities, if it earns it.
+
+        Fitted on the older three quarters of graded props and judged on the
+        newest quarter; adopted only when it lowers held-out log loss by
+        ``PROP_CAL_GAIN``. Then refit on everything for use."""
+        rows = self._outcome_rows()
+        if len(rows) < PROP_CAL_MIN:
+            return None
+        cut = int(len(rows) * 0.75)
+        fit_p = [p for _, p, _, _ in rows[:cut]]
+        fit_y = [y for _, _, y, _ in rows[:cut]]
+        hold_p = [p for _, p, _, _ in rows[cut:]]
+        hold_y = [y for _, _, y, _ in rows[cut:]]
+        cal = PlattCalibrator().fit(fit_p, fit_y)
+        before = score(hold_p, hold_y)['logloss']
+        after = score([cal.apply(p) for p in hold_p], hold_y)['logloss']
+        if before is None or after is None or after > before - PROP_CAL_GAIN:
+            return None
+        full = PlattCalibrator().fit([p for _, p, _, _ in rows], [y for _, _, y, _ in rows])
+        return {'a': round(full.a, 4), 'b': round(full.b, 4), 'n': len(rows),
+                'holdout_before': round(before, 4), 'holdout_after': round(after, 4)}
+
+    def market_k(self, default_k):
+        """How fast to trust our own number over the book's, learned from
+        graded props that recorded both: the games-played count at which
+        each gets half the weight. Kept at the default unless the ledger's
+        choice is clearly better."""
+        rows = [(num(r.get('model_p')), num(r.get('book_p')), num(r.get('gp')), y)
+                for _, _, y, r in self._outcome_rows()]
+        rows = [t for t in rows if None not in t[:3]]
+        if len(rows) < PROP_CAL_MIN:
+            return None
+        def loss(k):
+            probs = []
+            for m, b, gp, _ in rows:
+                w = gp / (gp + float(k))
+                probs.append(clamp(w * m + (1 - w) * b, 0.01, 0.99))
+            return score(probs, [y for *_, y in rows])['logloss']
+        base = loss(default_k)
+        best_k, best_ll = default_k, base
+        for k in MARKET_K_GRID:
+            ll = loss(k)
+            if ll is not None and ll < best_ll - PROP_CAL_GAIN:
+                best_k, best_ll = k, ll
+        if best_k == default_k:
+            return None
+        return {'k': best_k, 'default': default_k, 'n': len(rows),
+                'logloss_default': round(base, 4), 'logloss': round(best_ll, 4)}
+
+    def corrections(self, default_k=None):
+        """Everything ``props.py`` applies: per-market bias and spread, plus
+        the ledger's calibration and blend speed under keys no market uses."""
+        out = self.tune()
+        cal = self.calibration()
+        if cal:
+            out['_calibration'] = cal
+        if default_k is not None:
+            mk = self.market_k(default_k)
+            if mk:
+                out['_market'] = mk
+        return out
 
     def save(self):
         rows = sorted(self.rows.values(),

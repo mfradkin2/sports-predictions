@@ -129,6 +129,18 @@ what the last one learned:
   penalty and the blend weight, but new parameters are adopted only if they
   beat the incumbent on validation. A noisy hour cannot make the model worse.
   The Model tab lists what was adopted and why.
+- **The optimiser** (`sportspred/optimize.py`). Every run walks the
+  neighbourhood of the settings in use — the form window and how fast older
+  games fade, which signals feed the form model (each core one can be
+  dropped, each extra one added), and the rating engine's speed — scoring
+  each candidate by walk-forward log loss, plus one random combination seeded
+  by the hour so a season of runs explores settings coordinate descent would
+  never reach. The winner is the challenger the rule above judges. On the
+  props side, once 150 graded props are on file the ledger fits a
+  recalibration of prop probabilities and a blend speed against the
+  sportsbook (how many games a player needs before our number outweighs the
+  book's), each adopted only when it lowers held-out log loss. The Track
+  Record page's "Under the hood" panel shows what has been tried and kept.
 - **The props ledger.** Every published prop is recorded in
   `history/<league>_props.csv` and graded against the final box score. Once a
   market has thirty graded props, its projections are corrected for

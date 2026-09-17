@@ -52,6 +52,34 @@
     if (spec === '.1f') return n.toFixed(1);
     return n.toFixed(2);
   }
+  // What the optimiser has been doing, in words: the settings in use, how
+  // many alternatives it has tried, and the last change it kept.
+  function selfTuning(d, tuning) {
+    var m = d.model || {}, st = m.settings || {}, o = m.optimizer || {};
+    var out = '<div class="section-title">How the model tunes itself</div><div class="cards">';
+    var lastMoves = o.last_change && o.last_change.moves ? o.last_change.moves.map(function (x) { return x.move; }).join(', ') : '';
+    out += card('Settings tried', o.tried || 0, 'over ' + (o.runs || 0) + ' hourly checks');
+    out += card('Changes kept', o.runs_with_a_find || 0,
+      o.last_change ? 'last: ' + esc((o.last_change.at || '').slice(0, 10)) + ' · ' + esc(lastMoves) : 'none yet');
+    out += card('Random probes', o.probes || 0, (o.probe_wins || 0) + ' beat the current settings');
+    out += '</div>';
+    if (st.form_window) {
+      out += '<p style="color:var(--muted)">Game picks currently weigh a team\'s last <b>' + st.form_window + '</b> games, each one back counting ' +
+        '<b>' + Math.round((st.form_decay || 1) * 100) + '%</b> as much as the one after it, using ' +
+        '<b>' + ((st.signals || []).length) + '</b> signals: ' + esc((st.signals || []).join(', ')) + '. ' +
+        'Every hour the site tries nearby settings (a shorter or longer memory, one signal more or fewer, a faster or slower ' +
+        'rating) plus one random combination, replays the season with each, and keeps a change only when it would have ' +
+        'predicted past games better.</p>';
+    }
+    var cal = tuning._calibration, mk = tuning._market;
+    var bits = [];
+    if (cal) bits.push('Prop probabilities are recalibrated on ' + cal.n + ' graded props (held-out error ' + cal.holdout_before.toFixed(3) + ' → ' + cal.holdout_after.toFixed(3) + ').');
+    else bits.push('Prop probabilities will be recalibrated once 150 props with outcomes are on file and the recalibration proves itself on held-out results.');
+    if (mk) bits.push('Our own number now gets half the weight against the sportsbook once a player has ' + mk.k + ' games (learned from ' + mk.n + ' graded props; the default was ' + mk.default + ').');
+    out += '<p style="color:var(--muted)">' + bits.join(' ') + '</p>';
+    return out;
+  }
+
   function fmtNum(v) { return v == null ? '—' : (Math.round(v * 100) / 100); }
   function nameSpans(full, short) {
     return '<span class="t-full">' + esc(full) + '</span><span class="t-short">' + esc(short || full) + '</span>';
@@ -1140,7 +1168,8 @@
         }).join('') + '</div>';
     }
     var tuning = d.props_tuning || {};
-    var keys = Object.keys(tuning);
+    var keys = Object.keys(tuning).filter(function (k) { return k.charAt(0) !== '_'; });
+    out += selfTuning(d, tuning);
     if (keys.length) {
       out += '<div class="section-title">Prop corrections learned so far</div><div class="scroll-x"><table class="grid">' +
         '<thead><tr><th>Prop</th><th class="num">Graded</th><th class="num">Our numbers scaled by</th></tr></thead><tbody>' +
