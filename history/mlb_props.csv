@@ -3782,337 +3782,554 @@ game_id,game_date,athlete_id,player,side,key,label,stat,dist,line,line_source,bo
 401816981,2026-09-17,5197476,Walbert Urena,home,k,Strikeouts,p_so_pg,negbin,4.5,book,5 books,5.3,4.85,0.5808,over,low,2026-09-17T23:07:47Z,9.0,1,1,1,0,0.5838,0.574,0.5808,27
 401816981,2026-09-17,5197476,Walbert Urena,home,outs,Outs Recorded,outs_pg,normal,17.5,book,6 books,14.86,15.23,0.3411,under,med,2026-09-17T23:07:47Z,21,1,1,0,0,0.2837,0.4702,0.3411,27
 401816981,2026-09-17,5197476,Walbert Urena,home,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,4 books,4.6,3.81,0.4648,over,low,2026-09-17T23:07:47Z,4.0,1,1,0,0,0.4716,0.4494,0.4648,27
-401816982,2026-09-18,32801,Jose Ramirez,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.09,0.86,0.62,over,med,2026-09-18T05:19:12Z,,,0,,,0.7218,0.6696,0.7006,117
-401816982,2026-09-18,32801,Jose Ramirez,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.09,0.1452,under,high,2026-09-18T05:19:12Z,,,0,,,0.1076,0.1572,0.1277,117
-401816982,2026-09-18,32801,Jose Ramirez,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.55,1.37,0.406,over,low,2026-09-18T05:19:12Z,,,0,,,0.4558,0.4323,0.4463,117
-401816982,2026-09-18,33842,Jonah Heim,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.63,0.7,0.4699,over,low,2026-09-18T05:19:12Z,,,0,,,0.5004,0.5567,0.5257,98
-401816982,2026-09-18,33842,Jonah Heim,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.13,0.1224,under,high,2026-09-18T05:19:12Z,,,0,,,0.1062,0.0993,0.1031,98
-401816982,2026-09-18,33900,Jeff McNeil,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.83,0.89,0.5501,over,low,2026-09-18T05:19:12Z,,,0,,,0.6129,0.6368,0.6218,135
-401816982,2026-09-18,33900,Jeff McNeil,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.05,1.23,0.3091,under,high,2026-09-18T05:19:12Z,,,0,,,0.2978,0.3685,0.3241,135
-401816982,2026-09-18,40538,Nathaniel Lowe,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.0,0.78,0.584,over,med,2026-09-18T05:19:12Z,,,0,,,0.7026,0.5982,0.6606,119
-401816982,2026-09-18,40538,Nathaniel Lowe,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.16,0.14,0.1605,under,high,2026-09-18T05:19:12Z,,,0,,,0.1481,0.1398,0.1447,119
-401816982,2026-09-18,40854,Jo Adell,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.14,0.91,0.6204,over,med,2026-09-18T05:19:12Z,,,0,,,0.7389,0.6301,0.7011,150
-401816982,2026-09-18,40854,Jo Adell,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.16,0.15,0.1701,under,high,2026-09-18T05:19:12Z,,,0,,,0.1511,0.1641,0.1556,150
-401816982,2026-09-18,40854,Jo Adell,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.7,1.53,0.4112,over,low,2026-09-18T05:19:12Z,,,0,,,0.4728,0.4154,0.4528,150
-401816982,2026-09-18,41217,Brayan Rocchio,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.09,0.86,0.6003,over,med,2026-09-18T05:19:12Z,,,0,,,0.7249,0.5951,0.6789,146
-401816982,2026-09-18,41217,Brayan Rocchio,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.09,0.1171,under,high,2026-09-18T05:19:12Z,,,0,,,0.1018,0.0898,0.0976,146
-401816982,2026-09-18,41996,Steven Kwan,home,hits,Hits,hits_pg,binomial,1.5,book,DraftKings,1.23,0.99,0.3297,under,high,2026-09-18T05:19:12Z,,,0,,,0.3598,0.3325,0.35,143
-401816982,2026-09-18,41996,Steven Kwan,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.41,1.22,0.4031,under,med,2026-09-18T05:19:12Z,,,0,,,0.4468,0.4354,0.4427,143
-401816982,2026-09-18,42438,Daniel Espino,home,er,Earned Runs,p_er_pg,negbin,0.5,book,Fanatics,1.96,1.57,0.3492,over,low,2026-09-18T05:19:12Z,,,0,,,0.7815,0.3188,0.3747,11
-401816982,2026-09-18,42598,Shea Langeliers,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.97,1.06,0.5719,over,med,2026-09-18T05:19:12Z,,,0,,,0.6693,0.6196,0.6468,97
-401816982,2026-09-18,42598,Shea Langeliers,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.18,0.24,0.1742,under,high,2026-09-18T05:19:12Z,,,0,,,0.168,0.1509,0.1603,97
-401816982,2026-09-18,42598,Shea Langeliers,away,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,1.57,1.97,0.5768,over,med,2026-09-18T05:19:12Z,,,0,,,0.6823,0.6161,0.6524,97
-401816982,2026-09-18,4345843,Patrick Bailey,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.71,0.57,0.4988,over,low,2026-09-18T05:19:12Z,,,0,,,0.5579,0.5646,0.5608,105
-401816982,2026-09-18,4345843,Patrick Bailey,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.08,0.08,0.1067,under,high,2026-09-18T05:19:12Z,,,0,,,0.0773,0.0993,0.0868,105
-401816982,2026-09-18,4414531,Zack Gelof,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.82,0.87,0.515,over,low,2026-09-18T05:19:12Z,,,0,,,0.6033,0.5511,0.5803,102
-401816982,2026-09-18,4414531,Zack Gelof,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.18,0.1487,under,high,2026-09-18T05:19:12Z,,,0,,,0.1328,0.1301,0.1316,102
-401816982,2026-09-18,4424289,Alika Williams,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.56,0.61,0.4428,over,low,2026-09-18T05:19:12Z,,,0,,,0.4682,0.5171,0.4922,83
-401816982,2026-09-18,4619649,Chase DeLauter,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.21,1.07,0.6485,over,med,2026-09-18T05:19:12Z,,,0,,,0.7656,0.6776,0.7313,125
-401816982,2026-09-18,4619649,Chase DeLauter,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.7,1.68,0.433,over,low,2026-09-18T05:19:12Z,,,0,,,0.5079,0.4367,0.4801,125
-401816982,2026-09-18,4620704,Mason Barnett,away,k,Strikeouts,p_so_pg,negbin,2.5,book,2 books,4.0,4.48,0.5026,over,low,2026-09-18T05:19:12Z,,,0,,,0.7225,0.5302,0.5655,18
-401816982,2026-09-18,4620704,Mason Barnett,away,outs,Outs Recorded,outs_pg,normal,12.5,book,4 books,13.85,14.21,0.4567,over,low,2026-09-18T05:19:12Z,,,0,,,0.613,0.4862,0.5095,18
-401816982,2026-09-18,4620704,Mason Barnett,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,4.46,4.95,0.4075,under,med,2026-09-18T05:19:12Z,,,0,,,0.4471,0.4484,0.4482,18
-401816982,2026-09-18,4917919,Lawrence Butler,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.63,0.7,0.4779,over,low,2026-09-18T05:19:12Z,,,0,,,0.5083,0.5846,0.5355,145
-401816982,2026-09-18,4917919,Lawrence Butler,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.12,0.13,under,high,2026-09-18T05:19:12Z,,,0,,,0.0955,0.1398,0.1112,145
-401816982,2026-09-18,4917919,Lawrence Butler,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.37,0.41,0.2995,under,high,2026-09-18T05:19:12Z,,,0,,,0.3084,0.3188,0.3121,145
-401816982,2026-09-18,5007707,Travis Bazzana,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.14,0.9,0.6096,over,med,2026-09-18T05:19:12Z,,,0,,,0.7399,0.6165,0.6892,115
-401816982,2026-09-18,5007707,Travis Bazzana,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.12,0.1514,under,high,2026-09-18T05:19:12Z,,,0,,,0.1309,0.1398,0.1345,115
-401816982,2026-09-18,5080756,Henry Bolte,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.88,0.95,0.5543,over,low,2026-09-18T05:19:12Z,,,0,,,0.6329,0.6178,0.6266,110
-401816982,2026-09-18,5080756,Henry Bolte,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.1,0.1157,under,high,2026-09-18T05:19:12Z,,,0,,,0.0853,0.111,0.0961,110
-401816982,2026-09-18,5204351,Angel Genao,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.01,0.74,0.5772,over,med,2026-09-18T05:19:12Z,,,0,,,0.6955,0.6343,0.6529,35
-401816982,2026-09-18,5204351,Angel Genao,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.06,0.1006,under,high,2026-09-18T05:19:12Z,,,0,,,0.0595,0.0898,0.0806,35
-401816983,2026-09-18,33481,Yandy Diaz,home,hits,Hits,hits_pg,binomial,1.5,book,DraftKings,1.11,1.18,0.314,under,high,2026-09-18T05:19:12Z,,,0,,,0.3094,0.3686,0.3302,147
-401816983,2026-09-18,33481,Yandy Diaz,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.13,0.15,0.1507,under,high,2026-09-18T05:19:12Z,,,0,,,0.1209,0.1572,0.1337,147
-401816983,2026-09-18,33481,Yandy Diaz,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.53,1.81,0.4133,over,low,2026-09-18T05:19:12Z,,,0,,,0.4416,0.4808,0.4554,147
-401816983,2026-09-18,39817,Ranger Suarez,away,k,Strikeouts,p_so_pg,negbin,4.5,book,2 books,5.27,5.0,0.4545,over,low,2026-09-18T05:19:12Z,,,0,,,0.579,0.4833,0.5068,26
-401816983,2026-09-18,39817,Ranger Suarez,away,outs,Outs Recorded,outs_pg,normal,17.5,book,4 books,16.05,15.83,0.4175,under,med,2026-09-18T05:19:12Z,,,0,,,0.379,0.4872,0.4606,26
-401816983,2026-09-18,39817,Ranger Suarez,away,p_hits,Hits Allowed,p_h_pg,negbin,5.5,book,Fanatics,5.18,4.77,0.4313,under,low,2026-09-18T05:19:12Z,,,0,,,0.4099,0.5,0.4779,26
-401816983,2026-09-18,40576,Taylor Walls,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.62,0.65,0.4598,over,low,2026-09-18T05:19:12Z,,,0,,,0.5,0.5331,0.5133,118
-401816983,2026-09-18,40810,Jonathan Aranda,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.0,1.05,0.585,over,med,2026-09-18T05:19:12Z,,,0,,,0.6847,0.6196,0.6618,147
-401816983,2026-09-18,40810,Jonathan Aranda,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.14,0.1292,under,high,2026-09-18T05:19:12Z,,,0,,,0.1164,0.0993,0.1104,147
-401816983,2026-09-18,40960,Ryan Vilade,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.61,0.65,0.4848,over,low,2026-09-18T05:19:12Z,,,0,,,0.4989,0.5935,0.5439,88
-401816983,2026-09-18,40960,Ryan Vilade,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.12,0.1303,under,high,2026-09-18T05:19:12Z,,,0,,,0.1056,0.1179,0.1115,88
-401816983,2026-09-18,40960,Ryan Vilade,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.42,0.45,0.3051,under,high,2026-09-18T05:19:12Z,,,0,,,0.346,0.2894,0.3191,88
-401816983,2026-09-18,41359,Richie Palacios,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.62,0.65,0.4658,over,low,2026-09-18T05:19:12Z,,,0,,,0.499,0.5523,0.5206,117
-401816983,2026-09-18,41674,Nick Fortes,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.74,0.73,0.5117,over,low,2026-09-18T05:19:12Z,,,0,,,0.5733,0.5802,0.5764,101
-401816983,2026-09-18,41674,Nick Fortes,home,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,0.87,1.04,0.5081,over,low,2026-09-18T05:19:12Z,,,0,,,0.563,0.5835,0.5721,101
-401816983,2026-09-18,4669425,Ian Seymour,home,er,Earned Runs,p_er_pg,negbin,1.5,book,Fanatics,2.13,2.25,0.4977,over,low,2026-09-18T05:19:12Z,,,0,,,0.5575,0.5607,0.5596,44
-401816983,2026-09-18,4669425,Ian Seymour,home,k,Strikeouts,p_so_pg,negbin,5.5,book,DraftKings,5.68,5.82,0.4742,over,low,2026-09-18T05:19:12Z,,,0,,,0.487,0.5551,0.5309,44
-401816983,2026-09-18,4669425,Ian Seymour,home,outs,Outs Recorded,outs_pg,normal,15.5,book,3 books,13.68,14.21,0.3815,under,med,2026-09-18T05:19:12Z,,,0,,,0.3489,0.452,0.4154,44
-401816983,2026-09-18,4679983,Chandler Simpson,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.11,1.17,0.6286,over,med,2026-09-18T05:19:12Z,,,0,,,0.7275,0.6786,0.71,144
-401816983,2026-09-18,4679983,Chandler Simpson,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.2,1.37,0.3519,under,med,2026-09-18T05:19:12Z,,,0,,,0.3797,0.375,0.378,144
-401816983,2026-09-18,4905921,Junior Caminero,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.01,1.06,0.6018,over,med,2026-09-18T05:19:12Z,,,0,,,0.6887,0.6651,0.6806,152
-401816983,2026-09-18,4905921,Junior Caminero,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.22,0.27,0.1925,under,high,2026-09-18T05:19:12Z,,,0,,,0.1977,0.1509,0.1816,152
-401816983,2026-09-18,4905921,Junior Caminero,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.7,2.03,0.3963,over,low,2026-09-18T05:19:12Z,,,0,,,0.4476,0.4085,0.4341,152
-401816983,2026-09-18,5005912,Jonny DeLuca,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.81,0.81,0.5446,over,low,2026-09-18T05:19:12Z,,,0,,,0.6054,0.628,0.6153,102
-401816984,2026-09-18,32827,Clay Holmes,away,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,1.99,1.81,0.3764,under,med,2026-09-18T05:19:12Z,,,0,,,0.316,0.4276,0.409,16
-401816984,2026-09-18,32827,Clay Holmes,away,k,Strikeouts,p_so_pg,negbin,4.5,book,2 books,4.16,4.44,0.4161,under,med,2026-09-18T05:19:12Z,,,0,,,0.3982,0.4711,0.4589,16
-401816984,2026-09-18,32827,Clay Holmes,away,outs,Outs Recorded,outs_pg,normal,15.5,book,Fanatics,17.12,17.1,0.4737,over,low,2026-09-18T05:19:12Z,,,0,,,0.635,0.5095,0.5304,16
-401816984,2026-09-18,4142424,Seiya Suzuki,away,tb,Total Bases,tb_pg,negbin,1.5,book,Fanatics,1.98,1.78,0.446,over,low,2026-09-18T05:19:12Z,,,0,,,0.5543,0.3983,0.4962,135
-401816984,2026-09-18,42410,JJ Bleday,home,hits,Hits,hits_pg,binomial,0.5,book,Fanatics,0.72,0.75,0.5105,over,low,2026-09-18T05:19:12Z,,,0,,,0.5528,0.6091,0.5749,124
-401816984,2026-09-18,42410,JJ Bleday,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.41,0.45,0.33,under,high,2026-09-18T05:19:12Z,,,0,,,0.334,0.376,0.3504,124
-401816984,2026-09-18,4927516,Chase Burns,home,k,Strikeouts,p_so_pg,negbin,4.5,book,FanDuel,5.91,6.46,0.4444,over,low,2026-09-18T05:19:12Z,,,0,,,0.6685,0.4333,0.4943,28
-401816984,2026-09-18,4927516,Chase Burns,home,p_hits,Hits Allowed,p_h_pg,negbin,2.5,book,Fanatics,3.37,4.29,0.4737,over,low,2026-09-18T05:19:12Z,,,0,,,0.6171,0.5,0.5304,28
-401816985,2026-09-18,35183,Ryan O'Hearn,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.59,0.71,0.3722,over,low,2026-09-18T05:19:12Z,,,0,,,0.4475,0.3484,0.4037,101
-401816985,2026-09-18,35183,Ryan O'Hearn,home,tb,Total Bases,tb_pg,negbin,1.5,book,Fanatics,1.36,1.68,0.3511,under,med,2026-09-18T05:19:12Z,,,0,,,0.3717,0.3839,0.3771,101
-401816985,2026-09-18,42214,Randy Dobnak,away,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,1.94,1.62,0.414,under,med,2026-09-18T05:19:12Z,,,0,,,0.3048,0.481,0.4564,13
-401816985,2026-09-18,42214,Randy Dobnak,away,k,Strikeouts,p_so_pg,negbin,2.5,book,2 books,3.84,3.62,0.551,over,low,2026-09-18T05:19:12Z,,,0,,,0.6982,0.6106,0.6228,13
-401816985,2026-09-18,42214,Randy Dobnak,away,outs,Outs Recorded,outs_pg,normal,15.5,book,Fanatics,16.78,15.95,0.4112,over,low,2026-09-18T05:19:12Z,,,0,,,0.6079,0.4276,0.4528,13
-401816985,2026-09-18,42214,Randy Dobnak,away,p_hits,Hits Allowed,p_h_pg,negbin,5.5,book,Fanatics,5.61,5.0,0.433,over,low,2026-09-18T05:19:12Z,,,0,,,0.4747,0.481,0.4801,13
-401816985,2026-09-18,4719507,Paul Skenes,home,k,Strikeouts,p_so_pg,negbin,5.5,book,3 books,6.06,6.17,0.4725,over,low,2026-09-18T05:19:12Z,,,0,,,0.5424,0.5239,0.5289,30
-401816985,2026-09-18,5218285,Konnor Griffin,home,hits,Hits,hits_pg,binomial,1.5,book,Fanatics,0.92,1.01,0.2751,under,high,2026-09-18T05:19:12Z,,,0,,,0.2278,0.3294,0.2816,71
-401816986,2026-09-18,40937,Dustin May,away,er,Earned Runs,p_er_pg,negbin,1.5,book,Fanatics,2.74,2.46,0.5188,over,low,2026-09-18T05:19:12Z,,,0,,,0.6799,0.5516,0.5848,28
-401816986,2026-09-18,40937,Dustin May,away,outs,Outs Recorded,outs_pg,normal,15.5,book,Fanatics,14.38,14.8,0.3936,under,med,2026-09-18T05:19:12Z,,,0,,,0.406,0.4393,0.4307,28
-401816986,2026-09-18,40937,Dustin May,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,4.81,4.71,0.4194,over,low,2026-09-18T05:19:12Z,,,0,,,0.505,0.4484,0.4631,28
-401816988,2026-09-18,33783,Ozzie Albies,away,hits,Hits,hits_pg,binomial,0.5,book,Fanatics,0.87,0.93,0.5485,over,low,2026-09-18T05:19:12Z,,,0,,,0.6256,0.6091,0.6199,153
-401816988,2026-09-18,34973,Tyler Mahle,away,k,Strikeouts,p_so_pg,negbin,4.5,book,2 books,5.42,5.08,0.4448,over,low,2026-09-18T05:19:12Z,,,0,,,0.6007,0.4616,0.4947,25
-401816988,2026-09-18,39898,Peter Lambert,home,k,Strikeouts,p_so_pg,negbin,4.5,book,3 books,5.59,5.42,0.5187,over,low,2026-09-18T05:19:12Z,,,0,,,0.6253,0.5715,0.5847,26
-401816988,2026-09-18,40963,Daulton Varsho,home,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,1.03,1.23,0.4982,over,low,2026-09-18T05:19:12Z,,,0,,,0.5513,0.5752,0.5601,137
-401816988,2026-09-18,4781491,Yainer Diaz,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.39,0.43,0.3076,under,high,2026-09-18T05:19:12Z,,,0,,,0.3201,0.3247,0.3223,88
-401816989,2026-09-18,31208,Tommy Pham,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.37,0.09,0.5194,under,low,2026-09-18T05:19:12Z,,,0,,,0.3376,0.6196,0.5855,11
-401816989,2026-09-18,31208,Tommy Pham,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.09,0.1445,under,high,2026-09-18T05:19:12Z,,,0,,,0.104,0.1301,0.127,11
-401816989,2026-09-18,31399,Randal Grichuk,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.6,0.64,0.4868,over,low,2026-09-18T05:19:12Z,,,0,,,0.4993,0.6099,0.5464,108
-401816989,2026-09-18,31399,Randal Grichuk,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.12,0.1513,under,high,2026-09-18T05:19:12Z,,,0,,,0.1009,0.1797,0.1344,108
-401816989,2026-09-18,31399,Randal Grichuk,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.1,1.25,0.3339,under,high,2026-09-18T05:19:12Z,,,0,,,0.3282,0.3919,0.3553,108
-401816989,2026-09-18,38420,Zach McKinstry,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.61,0.61,0.4834,over,low,2026-09-18T05:19:12Z,,,0,,,0.4974,0.6099,0.5422,121
-401816989,2026-09-18,39900,Jake Rogers,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.42,0.4,0.4268,under,med,2026-09-18T05:19:12Z,,,0,,,0.3691,0.5458,0.4723,57
-401816989,2026-09-18,39900,Jake Rogers,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.07,0.1329,under,high,2026-09-18T05:19:12Z,,,0,,,0.0541,0.1572,0.1143,57
-401816989,2026-09-18,42179,Riley Greene,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.04,1.04,0.5953,over,med,2026-09-18T05:19:12Z,,,0,,,0.7026,0.6254,0.6733,131
-401816989,2026-09-18,42179,Riley Greene,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.15,0.1582,under,high,2026-09-18T05:19:12Z,,,0,,,0.1287,0.1641,0.1421,131
-401816989,2026-09-18,42179,Riley Greene,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.56,1.76,0.3961,over,low,2026-09-18T05:19:12Z,,,0,,,0.4527,0.4028,0.4338,131
-401816989,2026-09-18,42411,Luisangel Acuna,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.47,0.47,0.4338,under,low,2026-09-18T05:19:12Z,,,0,,,0.4102,0.567,0.4811,97
-401816989,2026-09-18,42453,Miguel Vargas,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.89,0.93,0.5648,over,low,2026-09-18T05:19:12Z,,,0,,,0.634,0.6478,0.6388,150
-401816989,2026-09-18,42453,Miguel Vargas,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.17,0.21,0.1779,under,high,2026-09-18T05:19:12Z,,,0,,,0.1564,0.1797,0.1645,150
-401816989,2026-09-18,42453,Miguel Vargas,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.47,1.76,0.3814,under,med,2026-09-18T05:19:12Z,,,0,,,0.4059,0.433,0.4153,150
-401816989,2026-09-18,42462,Brenton Doyle,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.5,0.51,0.4487,under,low,2026-09-18T05:19:12Z,,,0,,,0.4261,0.5711,0.4995,78
-401816989,2026-09-18,4345620,Dillon Dingler,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.94,0.92,0.5752,over,med,2026-09-18T05:19:12Z,,,0,,,0.6568,0.6401,0.6507,138
-401816989,2026-09-18,4345620,Dillon Dingler,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.17,0.2,0.1662,under,high,2026-09-18T05:19:12Z,,,0,,,0.1578,0.1398,0.1512,138
-401816989,2026-09-18,4345620,Dillon Dingler,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.53,1.72,0.378,over,low,2026-09-18T05:19:12Z,,,0,,,0.4185,0.3983,0.4111,138
-401816989,2026-09-18,4424286,Spencer Torkelson,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.79,0.76,0.5091,over,low,2026-09-18T05:19:12Z,,,0,,,0.5916,0.5391,0.5733,149
-401816989,2026-09-18,4424286,Spencer Torkelson,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.16,0.1531,under,high,2026-09-18T05:19:12Z,,,0,,,0.1346,0.1398,0.1364,149
-401816989,2026-09-18,4683384,Colt Keith,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.71,0.72,0.5052,over,low,2026-09-18T05:19:12Z,,,0,,,0.5549,0.592,0.5686,137
-401816989,2026-09-18,4683384,Colt Keith,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.07,0.0997,under,high,2026-09-18T05:19:12Z,,,0,,,0.0616,0.111,0.0798,137
-401816989,2026-09-18,4683384,Colt Keith,away,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,0.99,1.12,0.5151,over,low,2026-09-18T05:19:12Z,,,0,,,0.574,0.5915,0.5805,137
-401816989,2026-09-18,4872685,Colson Montgomery,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.68,0.76,0.4943,over,low,2026-09-18T05:19:12Z,,,0,,,0.5286,0.6037,0.5554,144
-401816989,2026-09-18,4872685,Colson Montgomery,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.22,1.56,0.3314,under,high,2026-09-18T05:19:12Z,,,0,,,0.3262,0.3988,0.3521,144
-401816989,2026-09-18,4960696,David Sandlin,home,k,Strikeouts,p_so_pg,negbin,4.5,book,2 books,5.47,4.83,0.4018,over,low,2026-09-18T05:19:12Z,,,0,,,0.6075,0.4285,0.441,6
-401816989,2026-09-18,4960696,David Sandlin,home,outs,Outs Recorded,outs_pg,normal,14.5,book,3 books,13.85,15.05,0.4423,under,low,2026-09-18T05:19:12Z,,,0,,,0.4447,0.4951,0.4916,6
-401816989,2026-09-18,4960696,David Sandlin,home,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,4.02,4.0,0.4035,under,med,2026-09-18T05:19:12Z,,,0,,,0.3732,0.4484,0.4432,6
-401816989,2026-09-18,5085893,Tristan Peters,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.76,0.78,0.5093,over,low,2026-09-18T05:19:12Z,,,0,,,0.5837,0.5548,0.5735,147
-401816989,2026-09-18,5085893,Tristan Peters,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.07,0.08,0.0965,under,high,2026-09-18T05:19:12Z,,,0,,,0.0642,0.0993,0.0766,147
-401816989,2026-09-18,5124113,Hao-Yu Lee,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.69,0.7,0.5163,over,low,2026-09-18T05:19:12Z,,,0,,,0.5463,0.6284,0.5818,105
-401816989,2026-09-18,5124113,Hao-Yu Lee,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.09,0.1227,under,high,2026-09-18T05:19:12Z,,,0,,,0.0832,0.1301,0.1035,105
-401816989,2026-09-18,5124113,Hao-Yu Lee,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.09,1.14,0.3156,under,high,2026-09-18T05:19:12Z,,,0,,,0.293,0.3839,0.3323,105
-401816989,2026-09-18,5136929,Chase Meidroth,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.95,1.0,0.5879,over,med,2026-09-18T05:19:12Z,,,0,,,0.6626,0.6696,0.6651,146
-401816989,2026-09-18,5136929,Chase Meidroth,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.1,0.1153,under,high,2026-09-18T05:19:12Z,,,0,,,0.0834,0.1179,0.0956,146
-401816989,2026-09-18,5136929,Chase Meidroth,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.27,1.49,0.3569,under,med,2026-09-18T05:19:12Z,,,0,,,0.3721,0.4069,0.3844,146
-401816989,2026-09-18,5140040,Andrew Sears,away,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,2.79,2.5,0.3932,over,low,2026-09-18T05:19:12Z,,,0,,,0.4831,0.4276,0.4302,4
-401816989,2026-09-18,5140040,Andrew Sears,away,outs,Outs Recorded,outs_pg,normal,14.5,book,Fanatics,13.48,12.15,0.4755,under,low,2026-09-18T05:19:12Z,,,0,,,0.4141,0.5385,0.5325,4
-401816989,2026-09-18,5148964,Max Clark,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.97,0.98,0.5641,over,low,2026-09-18T05:19:12Z,,,0,,,0.6764,0.6178,0.638,42
-401816989,2026-09-18,5148964,Max Clark,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.07,0.1122,under,high,2026-09-18T05:19:12Z,,,0,,,0.0571,0.111,0.0924,42
-401816989,2026-09-18,5149072,Kevin McGonigle,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.06,1.05,0.6071,over,med,2026-09-18T05:19:12Z,,,0,,,0.7076,0.6478,0.6865,147
-401816989,2026-09-18,5149072,Kevin McGonigle,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.12,0.1311,under,high,2026-09-18T05:19:12Z,,,0,,,0.1027,0.1301,0.1124,147
-401816989,2026-09-18,5149072,Kevin McGonigle,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.47,1.63,0.382,under,med,2026-09-18T05:19:12Z,,,0,,,0.425,0.3998,0.4161,147
-401816989,2026-09-18,5207411,John Peck,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.58,0.6,0.4923,over,low,2026-09-18T05:19:12Z,,,0,,,0.4783,0.567,0.553,15
-401816989,2026-09-18,5207411,John Peck,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.47,0.47,0.2761,under,high,2026-09-18T05:19:12Z,,,0,,,0.3739,0.2657,0.2828,15
-401816990,2026-09-18,32078,George Springer,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.87,0.93,0.5665,over,low,2026-09-18T05:19:12Z,,,0,,,0.6244,0.6648,0.6407,119
-401816990,2026-09-18,32078,George Springer,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.13,0.1417,under,high,2026-09-18T05:19:12Z,,,0,,,0.1015,0.1572,0.1239,119
-401816990,2026-09-18,32078,George Springer,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.4,0.45,0.3174,under,high,2026-09-18T05:19:12Z,,,0,,,0.329,0.3428,0.3346,119
-401816990,2026-09-18,32078,George Springer,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.26,1.53,0.3542,under,med,2026-09-18T05:19:12Z,,,0,,,0.3574,0.4159,0.381,119
-401816990,2026-09-18,32159,Brandon Nimmo,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.92,1.01,0.5474,over,low,2026-09-18T05:19:12Z,,,0,,,0.6479,0.5653,0.6186,146
-401816990,2026-09-18,32159,Brandon Nimmo,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.08,0.1,0.1245,under,high,2026-09-18T05:19:12Z,,,0,,,0.0804,0.1509,0.1054,146
-401816990,2026-09-18,32691,Corey Seager,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.81,0.87,0.5298,over,low,2026-09-18T05:19:12Z,,,0,,,0.5959,0.6002,0.5979,92
-401816990,2026-09-18,32691,Corey Seager,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.15,0.2,0.1788,under,high,2026-09-18T05:19:12Z,,,0,,,0.1422,0.1925,0.1656,92
-401816990,2026-09-18,33594,Elias Diaz,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.55,0.6,0.4412,over,low,2026-09-18T05:19:12Z,,,0,,,0.4557,0.5261,0.4903,83
-401816990,2026-09-18,34943,Dylan Cease,away,er,Earned Runs,p_er_pg,negbin,1.5,book,Fanatics,1.85,1.57,0.4705,over,low,2026-09-18T05:19:12Z,,,0,,,0.4922,0.5385,0.5265,28
-401816990,2026-09-18,34943,Dylan Cease,away,k,Strikeouts,p_so_pg,negbin,7.5,book,4 books,7.37,8.43,0.3912,under,med,2026-09-18T05:19:12Z,,,0,,,0.449,0.4202,0.4277,28
-401816990,2026-09-18,34943,Dylan Cease,away,outs,Outs Recorded,outs_pg,normal,17.5,book,4 books,17.48,17.8,0.4993,under,low,2026-09-18T05:19:12Z,,,0,,,0.4987,0.5835,0.5615,28
-401816990,2026-09-18,34943,Dylan Cease,away,p_hits,Hits Allowed,p_h_pg,negbin,3.5,book,Fanatics,4.25,3.75,0.4976,over,low,2026-09-18T05:19:12Z,,,0,,,0.5819,0.5516,0.5594,28
-401816990,2026-09-18,35002,Vladimir Guerrero Jr.,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.91,0.99,0.5803,over,med,2026-09-18T05:19:12Z,,,0,,,0.6442,0.6776,0.6564,138
-401816990,2026-09-18,35002,Vladimir Guerrero Jr.,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.07,0.1178,under,high,2026-09-18T05:19:12Z,,,0,,,0.0511,0.1797,0.0983,138
-401816990,2026-09-18,35002,Vladimir Guerrero Jr.,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.14,1.36,0.346,under,med,2026-09-18T05:19:12Z,,,0,,,0.3323,0.4367,0.3706,138
-401816990,2026-09-18,35682,Nathan Lukes,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.84,0.9,0.5548,over,low,2026-09-18T05:19:12Z,,,0,,,0.6169,0.6424,0.6272,117
-401816990,2026-09-18,35682,Nathan Lukes,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.07,0.09,0.0946,under,high,2026-09-18T05:19:12Z,,,0,,,0.0644,0.0898,0.0747,117
-401816990,2026-09-18,35682,Nathan Lukes,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.08,1.27,0.3062,under,high,2026-09-18T05:19:12Z,,,0,,,0.2915,0.3629,0.3205,117
-401816990,2026-09-18,37729,Andres Gimenez,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.74,0.77,0.5124,over,low,2026-09-18T05:19:12Z,,,0,,,0.5651,0.5987,0.5772,141
-401816990,2026-09-18,37729,Andres Gimenez,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.06,0.0842,under,high,2026-09-18T05:19:12Z,,,0,,,0.0502,0.0898,0.0645,141
-401816990,2026-09-18,38106,Nicky Lopez,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.59,0.66,0.469,over,low,2026-09-18T05:19:12Z,,,0,,,0.4847,0.5694,0.5245,90
-401816990,2026-09-18,39882,Jake Burger,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.78,0.84,0.5027,over,low,2026-09-18T05:19:12Z,,,0,,,0.5839,0.5323,0.5655,145
-401816990,2026-09-18,39882,Jake Burger,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.18,0.1563,under,high,2026-09-18T05:19:12Z,,,0,,,0.1339,0.1509,0.14,145
-401816990,2026-09-18,41287,Ernie Clement,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.93,1.01,0.5686,over,low,2026-09-18T05:19:12Z,,,0,,,0.6525,0.6256,0.6431,149
-401816990,2026-09-18,42081,Alejandro Kirk,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.9,0.99,0.5757,over,med,2026-09-18T05:19:12Z,,,0,,,0.644,0.6578,0.6513,72
-401816990,2026-09-18,42081,Alejandro Kirk,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.14,0.1295,under,high,2026-09-18T05:19:12Z,,,0,,,0.1102,0.111,0.1106,72
-401816990,2026-09-18,42081,Alejandro Kirk,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.24,1.5,0.342,under,med,2026-09-18T05:19:12Z,,,0,,,0.3315,0.3963,0.3656,72
-401816990,2026-09-18,42437,Josh Jung,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.03,1.16,0.5828,over,med,2026-09-18T05:19:12Z,,,0,,,0.6953,0.616,0.6592,96
-401816990,2026-09-18,42437,Josh Jung,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.08,0.09,0.1092,under,high,2026-09-18T05:19:12Z,,,0,,,0.0812,0.0993,0.0894,96
-401816990,2026-09-18,42457,Ezequiel Duran,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.87,0.95,0.5483,over,low,2026-09-18T05:19:12Z,,,0,,,0.6294,0.6022,0.6197,143
-401816990,2026-09-18,42457,Ezequiel Duran,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.12,0.1132,under,high,2026-09-18T05:19:12Z,,,0,,,0.0955,0.0898,0.0935,143
-401816990,2026-09-18,42884,Josh Smith,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.54,0.59,0.4402,over,low,2026-09-18T05:19:12Z,,,0,,,0.4517,0.5221,0.489,71
-401816990,2026-09-18,42884,Josh Smith,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.08,0.0966,under,high,2026-09-18T05:19:12Z,,,0,,,0.0618,0.0898,0.0767,71
-401816990,2026-09-18,4414525,Kumar Rocker,home,k,Strikeouts,p_so_pg,negbin,4.5,book,3 books,4.43,4.71,0.383,under,med,2026-09-18T05:19:12Z,,,0,,,0.4429,0.4085,0.4174,28
-401816990,2026-09-18,4414525,Kumar Rocker,home,outs,Outs Recorded,outs_pg,normal,14.5,book,3 books,14.56,14.81,0.5125,over,low,2026-09-18T05:19:12Z,,,0,,,0.5048,0.6027,0.5773,28
-401816990,2026-09-18,4719324,Wyatt Langford,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.84,0.91,0.5163,over,low,2026-09-18T05:19:12Z,,,0,,,0.6107,0.5458,0.5819,100
-401816990,2026-09-18,4719324,Wyatt Langford,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.17,0.1461,under,high,2026-09-18T05:19:12Z,,,0,,,0.1275,0.1301,0.1287,100
-401816990,2026-09-18,4719324,Wyatt Langford,home,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,1.33,1.65,0.518,over,low,2026-09-18T05:19:12Z,,,0,,,0.6153,0.5446,0.5839,100
-401816990,2026-09-18,4917921,Evan Carter,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.5,0.54,0.4,under,med,2026-09-18T05:19:12Z,,,0,,,0.42,0.4698,0.4388,132
-401816990,2026-09-18,4917921,Evan Carter,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.07,0.0864,under,high,2026-09-18T05:19:12Z,,,0,,,0.0526,0.0898,0.0666,132
-401816990,2026-09-18,5134494,Brett Bateman,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.11,1.35,0.6153,over,med,2026-09-18T05:19:12Z,,,0,,,0.7253,0.6829,0.6955,34
-401816990,2026-09-18,5134494,Brett Bateman,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.37,1.74,0.3834,under,med,2026-09-18T05:19:12Z,,,0,,,0.4484,0.4049,0.4179,34
-401816990,2026-09-18,5134636,Kazuma Okamoto,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.8,0.86,0.5294,over,low,2026-09-18T05:19:12Z,,,0,,,0.594,0.6037,0.5974,147
-401816990,2026-09-18,5134636,Kazuma Okamoto,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.18,0.22,0.1908,under,high,2026-09-18T05:19:12Z,,,0,,,0.1632,0.2096,0.1795,147
-401816990,2026-09-18,5134636,Kazuma Okamoto,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.38,1.69,0.3524,under,med,2026-09-18T05:19:12Z,,,0,,,0.3688,0.3968,0.3787,147
-401816993,2026-09-18,31097,Manny Machado,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.94,0.82,0.5803,over,med,2026-09-18T05:19:12Z,,,0,,,0.6603,0.6492,0.6564,149
-401816993,2026-09-18,31097,Manny Machado,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.19,0.19,0.1888,under,high,2026-09-18T05:19:12Z,,,0,,,0.169,0.1925,0.1772,149
-401816993,2026-09-18,31097,Manny Machado,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.54,1.53,0.3783,over,low,2026-09-18T05:19:12Z,,,0,,,0.4093,0.4154,0.4114,149
-401816993,2026-09-18,31606,Xander Bogaerts,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.9,0.77,0.5636,over,low,2026-09-18T05:19:12Z,,,0,,,0.6437,0.6258,0.6374,146
-401816993,2026-09-18,31606,Xander Bogaerts,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.08,0.08,0.1107,under,high,2026-09-18T05:19:12Z,,,0,,,0.0762,0.1179,0.0909,146
-401816993,2026-09-18,35591,Ty France,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.1,0.98,0.6306,over,med,2026-09-18T05:19:12Z,,,0,,,0.7344,0.6776,0.7121,124
-401816993,2026-09-18,35591,Ty France,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.16,0.16,0.1671,under,high,2026-09-18T05:19:12Z,,,0,,,0.1489,0.1572,0.1522,124
-401816993,2026-09-18,35591,Ty France,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.67,1.68,0.4156,over,low,2026-09-18T05:19:12Z,,,0,,,0.4735,0.4347,0.4583,124
-401816993,2026-09-18,35983,Fernando Tatis Jr.,home,hits,Hits,hits_pg,binomial,1.5,book,DraftKings,1.25,1.13,0.3376,under,high,2026-09-18T05:19:12Z,,,0,,,0.3713,0.3387,0.36,151
-401816993,2026-09-18,35983,Fernando Tatis Jr.,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.15,0.15,0.1725,under,high,2026-09-18T05:19:12Z,,,0,,,0.1423,0.1887,0.1583,151
-401816993,2026-09-18,35983,Fernando Tatis Jr.,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.8,1.82,0.4508,over,low,2026-09-18T05:19:12Z,,,0,,,0.5205,0.4677,0.5022,151
-401816993,2026-09-18,36071,Nick Pivetta,home,er,Earned Runs,p_er_pg,negbin,1.5,book,Fanatics,2.12,1.67,0.4522,over,low,2026-09-18T05:19:12Z,,,0,,,0.5551,0.5,0.5038,6
-401816993,2026-09-18,36071,Nick Pivetta,home,k,Strikeouts,p_so_pg,negbin,5.5,book,3 books,5.65,5.17,0.4132,over,low,2026-09-18T05:19:12Z,,,0,,,0.4821,0.4533,0.4553,6
-401816993,2026-09-18,36071,Nick Pivetta,home,outs,Outs Recorded,outs_pg,normal,14.5,book,3 books,13.53,12.5,0.4934,under,low,2026-09-18T05:19:12Z,,,0,,,0.4178,0.5646,0.5544,6
-401816993,2026-09-18,36071,Nick Pivetta,home,p_hits,Hits Allowed,p_h_pg,negbin,3.5,book,Fanatics,4.48,3.17,0.463,over,low,2026-09-18T05:19:12Z,,,0,,,0.6197,0.5095,0.5172,6
-401816993,2026-09-18,36364,Jake Cronenworth,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.89,0.76,0.5328,over,low,2026-09-18T05:19:12Z,,,0,,,0.6401,0.553,0.6014,100
-401816993,2026-09-18,36364,Jake Cronenworth,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.05,0.0915,under,high,2026-09-18T05:19:12Z,,,0,,,0.0495,0.0993,0.0716,100
-401816993,2026-09-18,39710,Samad Taylor,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.14,1.05,0.5489,over,low,2026-09-18T05:19:12Z,,,0,,,0.7494,0.5574,0.6203,39
-401816993,2026-09-18,40521,Luis Campusano,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.94,0.81,0.558,over,low,2026-09-18T05:19:12Z,,,0,,,0.6778,0.5915,0.6308,67
-401816993,2026-09-18,41247,Tyler Phillips,away,k,Strikeouts,p_so_pg,negbin,3.5,book,4 books,3.08,2.74,0.3998,under,med,2026-09-18T05:19:12Z,,,0,,,0.3679,0.4694,0.4385,35
-401816993,2026-09-18,41247,Tyler Phillips,away,outs,Outs Recorded,outs_pg,normal,14.5,book,4 books,11.22,10.2,0.37,under,med,2026-09-18T05:19:12Z,,,0,,,0.2425,0.4702,0.4009,35
-401816993,2026-09-18,41295,Griffin Conine,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.68,0.76,0.4722,over,low,2026-09-18T05:19:12Z,,,0,,,0.5373,0.5192,0.5285,85
-401816993,2026-09-18,41295,Griffin Conine,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.19,0.1681,under,high,2026-09-18T05:19:12Z,,,0,,,0.1286,0.1797,0.1534,85
-401816993,2026-09-18,41295,Griffin Conine,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.37,0.45,0.2862,under,high,2026-09-18T05:19:12Z,,,0,,,0.3095,0.2804,0.2954,85
-401816993,2026-09-18,41326,Xavier Edwards,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.87,1.03,0.5347,over,low,2026-09-18T05:19:12Z,,,0,,,0.6261,0.5645,0.6037,140
-401816993,2026-09-18,41326,Xavier Edwards,away,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,1.05,1.36,0.5381,over,low,2026-09-18T05:19:12Z,,,0,,,0.6382,0.5541,0.6076,140
-401816993,2026-09-18,41917,Otto Lopez,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.02,1.22,0.5982,over,med,2026-09-18T05:19:12Z,,,0,,,0.69,0.6516,0.6766,149
-401816993,2026-09-18,41917,Otto Lopez,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.31,1.75,0.3684,under,med,2026-09-18T05:19:12Z,,,0,,,0.4003,0.3963,0.3989,149
-401816993,2026-09-18,42455,Heriberto Hernandez,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.69,0.79,0.4898,over,low,2026-09-18T05:19:12Z,,,0,,,0.5371,0.5694,0.55,121
-401816993,2026-09-18,42455,Heriberto Hernandez,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.15,0.2,0.1752,under,high,2026-09-18T05:19:12Z,,,0,,,0.1355,0.2007,0.1615,121
-401816993,2026-09-18,42796,Kyle Stowers,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.76,0.89,0.5165,over,low,2026-09-18T05:19:12Z,,,0,,,0.5722,0.5962,0.5821,115
-401816993,2026-09-18,42796,Kyle Stowers,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.17,0.1661,under,high,2026-09-18T05:19:12Z,,,0,,,0.1166,0.2007,0.1511,115
-401816993,2026-09-18,4866735,Jakob Marsee,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.66,0.76,0.4677,over,low,2026-09-18T05:19:12Z,,,0,,,0.5202,0.5282,0.523,147
-401816993,2026-09-18,4866735,Jakob Marsee,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.07,0.0859,under,high,2026-09-18T05:19:12Z,,,0,,,0.0533,0.0898,0.0662,147
-401816993,2026-09-18,4872691,Jackson Merrill,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.12,0.99,0.6269,over,med,2026-09-18T05:19:12Z,,,0,,,0.731,0.6651,0.7081,150
-401816993,2026-09-18,4872691,Jackson Merrill,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.17,0.17,0.176,under,high,2026-09-18T05:19:12Z,,,0,,,0.1531,0.1797,0.1624,150
-401816993,2026-09-18,4872691,Jackson Merrill,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.72,1.73,0.4159,over,low,2026-09-18T05:19:12Z,,,0,,,0.4755,0.4271,0.4587,150
-401816993,2026-09-18,4872695,Joe Mack,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.56,0.68,0.4212,over,low,2026-09-18T05:19:12Z,,,0,,,0.4633,0.4677,0.4653,99
-401816993,2026-09-18,4872695,Joe Mack,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.13,0.1176,under,high,2026-09-18T05:19:12Z,,,0,,,0.0972,0.0993,0.0981,99
-401816993,2026-09-18,4917924,Dustin Harris,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.98,0.83,0.5748,over,med,2026-09-18T05:19:12Z,,,0,,,0.6976,0.6288,0.6501,36
-401816993,2026-09-18,4917924,Dustin Harris,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.02,1.08,0.339,under,high,2026-09-18T05:19:12Z,,,0,,,0.3281,0.3769,0.3618,36
-401816993,2026-09-18,5073992,Javier Sanoja,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.79,0.92,0.5347,over,low,2026-09-18T05:19:12Z,,,0,,,0.5935,0.621,0.6037,135
-401816993,2026-09-18,5132014,Agustin Ramirez,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.56,0.68,0.4366,over,low,2026-09-18T05:19:12Z,,,0,,,0.4585,0.505,0.4845,63
-401816994,2026-09-18,30836,Mike Trout,home,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.82,0.87,0.5292,over,low,2026-09-18T05:19:12Z,,,0,,,0.601,0.591,0.5972,133
-401816994,2026-09-18,30836,Mike Trout,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.13,0.16,0.1599,under,high,2026-09-18T05:19:12Z,,,0,,,0.1216,0.1814,0.1441,133
-401816994,2026-09-18,30836,Mike Trout,home,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.36,0.39,0.2999,under,high,2026-09-18T05:19:12Z,,,0,,,0.3002,0.3333,0.3126,133
-401816994,2026-09-18,30836,Mike Trout,home,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.53,0.61,0.3913,over,low,2026-09-18T05:19:12Z,,,0,,,0.4104,0.4568,0.4278,133
-401816994,2026-09-18,30836,Mike Trout,home,sb,Stolen Base,sb_pg,poisson,0.5,book,4 books,0.08,0.08,0.1135,under,high,2026-09-18T05:19:12Z,,,0,,,0.0773,0.1214,0.0938,133
-401816994,2026-09-18,30836,Mike Trout,home,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,1.27,1.53,0.5287,over,low,2026-09-18T05:19:12Z,,,0,,,0.6044,0.5835,0.5966,133
-401816994,2026-09-18,32517,Josh Bell,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.78,0.93,0.5217,over,low,2026-09-18T05:19:12Z,,,0,,,0.5828,0.5982,0.5883,145
-401816994,2026-09-18,32517,Josh Bell,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.1,0.14,0.129,under,high,2026-09-18T05:19:12Z,,,0,,,0.099,0.1301,0.1101,145
-401816994,2026-09-18,32517,Josh Bell,away,rbi,RBIs,rbi_pg,poisson,0.5,book,4 books,0.47,0.61,0.3439,under,med,2026-09-18T05:19:12Z,,,0,,,0.3772,0.3513,0.3679,145
-401816994,2026-09-18,32517,Josh Bell,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.41,0.52,0.3353,under,high,2026-09-18T05:19:12Z,,,0,,,0.3391,0.3898,0.3571,145
-401816994,2026-09-18,32517,Josh Bell,away,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,1.16,1.55,0.529,over,low,2026-09-18T05:19:12Z,,,0,,,0.5892,0.611,0.5969,145
-401816994,2026-09-18,33229,Victor Caratini,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.55,0.67,0.455,over,low,2026-09-18T05:19:12Z,,,0,,,0.4547,0.5739,0.5074,101
-401816994,2026-09-18,33229,Victor Caratini,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.34,0.42,0.2848,under,high,2026-09-18T05:19:12Z,,,0,,,0.2901,0.2983,0.2937,101
-401816994,2026-09-18,33229,Victor Caratini,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.22,0.27,0.256,under,high,2026-09-18T05:19:12Z,,,0,,,0.1959,0.3364,0.258,101
-401816994,2026-09-18,33229,Victor Caratini,away,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,0.71,0.97,0.4625,over,low,2026-09-18T05:19:12Z,,,0,,,0.4689,0.5768,0.5166,101
-401816994,2026-09-18,33954,Jose Siri,home,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.45,0.47,0.404,under,med,2026-09-18T05:19:12Z,,,0,,,0.398,0.5,0.4438,98
-401816994,2026-09-18,33954,Jose Siri,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.06,0.08,0.1236,under,high,2026-09-18T05:19:12Z,,,0,,,0.0613,0.1572,0.1044,98
-401816994,2026-09-18,33954,Jose Siri,home,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.25,0.29,0.2494,under,high,2026-09-18T05:19:12Z,,,0,,,0.2196,0.2869,0.2499,98
-401816994,2026-09-18,33954,Jose Siri,home,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.28,0.33,0.2763,under,high,2026-09-18T05:19:12Z,,,0,,,0.2477,0.3265,0.2831,98
-401816994,2026-09-18,33954,Jose Siri,home,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,0.68,0.82,0.3991,over,low,2026-09-18T05:19:12Z,,,0,,,0.391,0.4948,0.4376,98
-401816994,2026-09-18,40557,Josh Lowe,home,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.53,0.57,0.4311,over,low,2026-09-18T05:19:12Z,,,0,,,0.4423,0.5241,0.4777,105
-401816994,2026-09-18,40557,Josh Lowe,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.1,0.11,0.1238,under,high,2026-09-18T05:19:12Z,,,0,,,0.0944,0.1179,0.1046,105
-401816994,2026-09-18,40557,Josh Lowe,home,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.24,0.28,0.2449,under,high,2026-09-18T05:19:12Z,,,0,,,0.2143,0.2838,0.2443,105
-401816994,2026-09-18,40557,Josh Lowe,home,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.24,0.27,0.267,under,high,2026-09-18T05:19:12Z,,,0,,,0.2136,0.3477,0.2716,105
-401816994,2026-09-18,40557,Josh Lowe,home,sb,Stolen Base,sb_pg,poisson,0.5,book,3 books,0.08,0.09,0.13,under,high,2026-09-18T05:19:12Z,,,0,,,0.0801,0.152,0.1112,105
-401816994,2026-09-18,40557,Josh Lowe,home,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,0.8,0.99,0.4296,over,low,2026-09-18T05:19:12Z,,,0,,,0.4497,0.5101,0.4758,105
-401816994,2026-09-18,40635,Royce Lewis,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.71,0.84,0.4934,over,low,2026-09-18T05:19:12Z,,,0,,,0.5459,0.5665,0.5543,116
-401816994,2026-09-18,40635,Royce Lewis,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.09,0.12,0.1308,under,high,2026-09-18T05:19:12Z,,,0,,,0.0893,0.1451,0.1121,116
-401816994,2026-09-18,40635,Royce Lewis,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.38,0.47,0.2965,under,high,2026-09-18T05:19:12Z,,,0,,,0.3128,0.3016,0.3082,116
-401816994,2026-09-18,40635,Royce Lewis,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.35,0.42,0.3079,under,high,2026-09-18T05:19:12Z,,,0,,,0.2947,0.363,0.3226,116
-401816994,2026-09-18,40635,Royce Lewis,away,sb,Stolen Base,sb_pg,poisson,0.5,book,3 books,0.11,0.13,0.1488,under,high,2026-09-18T05:19:12Z,,,0,,,0.1014,0.1755,0.1316,116
-401816994,2026-09-18,40635,Royce Lewis,away,tb,Total Bases,tb_pg,negbin,0.5,book,5 books,1.07,1.41,0.492,over,low,2026-09-18T05:19:12Z,,,0,,,0.5457,0.5627,0.5526,116
-401816994,2026-09-18,41311,Kody Clemens,away,hits,Hits,hits_pg,binomial,0.5,book,5 books,0.75,0.89,0.5173,over,low,2026-09-18T05:19:12Z,,,0,,,0.5663,0.6113,0.583,135
-401816994,2026-09-18,41311,Kody Clemens,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.14,0.19,0.1568,under,high,2026-09-18T05:19:12Z,,,0,,,0.1306,0.1572,0.1405,135
-401816994,2026-09-18,41311,Kody Clemens,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.44,0.56,0.3421,under,med,2026-09-18T05:19:12Z,,,0,,,0.3574,0.3797,0.3657,135
-401816994,2026-09-18,41311,Kody Clemens,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.42,0.53,0.3423,under,med,2026-09-18T05:19:12Z,,,0,,,0.3431,0.4047,0.366,135
-401816994,2026-09-18,41311,Kody Clemens,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.28,1.73,0.3414,under,med,2026-09-18T05:19:12Z,,,0,,,0.3492,0.3912,0.3648,135
-401816994,2026-09-18,41587,Ryan Jeffers,away,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.76,0.89,0.5039,over,low,2026-09-18T05:19:12Z,,,0,,,0.5712,0.5627,0.5671,85
-401816994,2026-09-18,41587,Ryan Jeffers,away,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,1.22,1.65,0.5058,over,low,2026-09-18T05:19:12Z,,,0,,,0.5755,0.5627,0.5693,85
-401816994,2026-09-18,42479,Oswald Peraza,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.57,0.62,0.442,over,low,2026-09-18T05:19:12Z,,,0,,,0.4699,0.5227,0.4913,117
-401816994,2026-09-18,42479,Oswald Peraza,home,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.25,0.28,0.2526,under,high,2026-09-18T05:19:12Z,,,0,,,0.2224,0.2997,0.2538,117
-401816994,2026-09-18,42479,Oswald Peraza,home,sb,Stolen Base,sb_pg,poisson,0.5,book,2 books,0.1,0.1,0.1248,under,high,2026-09-18T05:19:12Z,,,0,,,0.0922,0.1256,0.1057,117
-401816994,2026-09-18,42479,Oswald Peraza,home,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,0.77,0.94,0.4462,over,low,2026-09-18T05:19:12Z,,,0,,,0.4814,0.5185,0.4965,117
-401816994,2026-09-18,42480,Taj Bradley,away,er,Earned Runs,p_er_pg,negbin,2.5,book,3 books,2.7,2.41,0.3895,over,low,2026-09-18T05:19:12Z,,,0,,,0.4653,0.4112,0.4256,29
-401816994,2026-09-18,42480,Taj Bradley,away,k,Strikeouts,p_so_pg,negbin,6.5,book,6 books,6.49,6.55,0.4852,under,low,2026-09-18T05:19:12Z,,,0,,,0.4615,0.5744,0.5443,29
-401816994,2026-09-18,42480,Taj Bradley,away,outs,Outs Recorded,outs_pg,normal,17.5,book,8 books,17.64,17.08,0.4957,over,low,2026-09-18T05:19:12Z,,,0,,,0.5122,0.5735,0.5572,29
-401816994,2026-09-18,42480,Taj Bradley,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,3 books,4.76,4.62,0.4344,over,low,2026-09-18T05:19:12Z,,,0,,,0.4963,0.4765,0.4818,29
-401816994,2026-09-18,42503,Vaughn Grissom,home,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.8,0.84,0.5333,over,low,2026-09-18T05:19:12Z,,,0,,,0.5911,0.617,0.602,109
-401816994,2026-09-18,42503,Vaughn Grissom,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,1.14,1.35,0.5309,over,low,2026-09-18T05:19:12Z,,,0,,,0.5919,0.6091,0.5992,109
-401816994,2026-09-18,42701,Ryan Kreidler,away,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.44,0.51,0.3869,under,med,2026-09-18T05:19:12Z,,,0,,,0.3798,0.4744,0.4223,98
-401816994,2026-09-18,42701,Ryan Kreidler,away,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.66,0.88,0.3854,over,low,2026-09-18T05:19:12Z,,,0,,,0.3804,0.4694,0.4204,98
-401816994,2026-09-18,4424090,Wade Meckler,home,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.81,0.86,0.5387,over,low,2026-09-18T05:19:12Z,,,0,,,0.6127,0.6037,0.6084,88
-401816994,2026-09-18,4424090,Wade Meckler,home,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.25,0.3,0.2519,under,high,2026-09-18T05:19:12Z,,,0,,,0.2248,0.2838,0.2529,88
-401816994,2026-09-18,4424090,Wade Meckler,home,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.4,0.44,0.3213,under,high,2026-09-18T05:19:12Z,,,0,,,0.3322,0.3476,0.3395,88
-401816994,2026-09-18,4424090,Wade Meckler,home,sb,Stolen Base,sb_pg,poisson,0.5,book,3 books,0.09,0.09,0.1166,under,high,2026-09-18T05:19:12Z,,,0,,,0.0841,0.1113,0.0971,88
-401816994,2026-09-18,4424090,Wade Meckler,home,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,0.89,1.12,0.5366,over,low,2026-09-18T05:19:12Z,,,0,,,0.612,0.5993,0.6059,88
-401816994,2026-09-18,4629081,Brooks Lee,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.77,0.92,0.5294,over,low,2026-09-18T05:19:12Z,,,0,,,0.5773,0.6343,0.5975,146
-401816994,2026-09-18,4629081,Brooks Lee,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.12,0.16,0.1318,under,high,2026-09-18T05:19:12Z,,,0,,,0.1106,0.1179,0.1132,146
-401816994,2026-09-18,4629081,Brooks Lee,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.43,0.54,0.3232,under,high,2026-09-18T05:19:12Z,,,0,,,0.3478,0.3311,0.3419,146
-401816994,2026-09-18,4629081,Brooks Lee,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.37,0.45,0.3241,under,high,2026-09-18T05:19:12Z,,,0,,,0.308,0.407,0.3431,146
-401816994,2026-09-18,4629081,Brooks Lee,away,tb,Total Bases,tb_pg,negbin,1.5,book,6 books,1.18,1.59,0.3264,under,high,2026-09-18T05:19:12Z,,,0,,,0.322,0.3896,0.3459,146
-401816994,2026-09-18,4666100,Zach Neto,home,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.89,0.97,0.555,over,low,2026-09-18T05:19:12Z,,,0,,,0.6364,0.6108,0.6274,147
-401816994,2026-09-18,4666100,Zach Neto,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.14,0.18,0.1616,under,high,2026-09-18T05:19:12Z,,,0,,,0.1337,0.1685,0.146,147
-401816994,2026-09-18,4666100,Zach Neto,home,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.44,0.5,0.3269,under,high,2026-09-18T05:19:12Z,,,0,,,0.3579,0.3256,0.3465,147
-401816994,2026-09-18,4666100,Zach Neto,home,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.56,0.65,0.3996,over,low,2026-09-18T05:19:12Z,,,0,,,0.4308,0.4521,0.4383,147
-401816994,2026-09-18,4666100,Zach Neto,home,sb,Stolen Base,sb_pg,poisson,0.5,book,3 books,0.13,0.14,0.1455,under,high,2026-09-18T05:19:12Z,,,0,,,0.1218,0.1395,0.128,147
-401816994,2026-09-18,4666100,Zach Neto,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.43,1.76,0.3704,under,med,2026-09-18T05:19:12Z,,,0,,,0.4,0.4043,0.4015,147
-401816994,2026-09-18,4917822,Denzer Guzman,home,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.72,0.74,0.4996,over,low,2026-09-18T05:19:12Z,,,0,,,0.5567,0.5669,0.5619,77
-401816994,2026-09-18,4917822,Denzer Guzman,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.09,0.09,0.1104,under,high,2026-09-18T05:19:12Z,,,0,,,0.0817,0.0993,0.0907,77
-401816994,2026-09-18,4917822,Denzer Guzman,home,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.3,0.36,0.2738,under,high,2026-09-18T05:19:12Z,,,0,,,0.2604,0.2988,0.28,77
-401816994,2026-09-18,4917822,Denzer Guzman,home,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.31,0.36,0.2954,under,high,2026-09-18T05:19:12Z,,,0,,,0.2663,0.346,0.3069,77
-401816994,2026-09-18,4917822,Denzer Guzman,home,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,0.89,1.13,0.4857,over,low,2026-09-18T05:19:12Z,,,0,,,0.5425,0.5475,0.545,77
-401816994,2026-09-18,4927523,Christian Moore,home,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.53,0.59,0.4596,over,low,2026-09-18T05:19:12Z,,,0,,,0.4363,0.5408,0.513,29
-401816994,2026-09-18,4927523,Christian Moore,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.71,0.86,0.4497,over,low,2026-09-18T05:19:12Z,,,0,,,0.4489,0.5197,0.5008,29
-401816994,2026-09-18,4977664,Luke Keaschall,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.81,0.97,0.5493,over,low,2026-09-18T05:19:12Z,,,0,,,0.5983,0.6611,0.6208,143
-401816994,2026-09-18,4977664,Luke Keaschall,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.25,0.31,0.2456,under,high,2026-09-18T05:19:12Z,,,0,,,0.2178,0.2941,0.2452,143
-401816994,2026-09-18,4977664,Luke Keaschall,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.42,0.52,0.3562,under,med,2026-09-18T05:19:12Z,,,0,,,0.3425,0.4569,0.3835,143
-401816994,2026-09-18,4977664,Luke Keaschall,away,sb,Stolen Base,sb_pg,poisson,0.5,book,3 books,0.1,0.13,0.1498,under,high,2026-09-18T05:19:12Z,,,0,,,0.0995,0.1924,0.1328,143
-401816994,2026-09-18,4977664,Luke Keaschall,away,tb,Total Bases,tb_pg,negbin,1.5,book,6 books,1.02,1.34,0.3128,under,high,2026-09-18T05:19:12Z,,,0,,,0.2928,0.3929,0.3287,143
-401816994,2026-09-18,4987418,Moises Ballesteros,home,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.62,0.68,0.4729,over,low,2026-09-18T05:19:12Z,,,0,,,0.4981,0.5665,0.5293,95
-401816994,2026-09-18,4987418,Moises Ballesteros,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.09,0.09,0.1183,under,high,2026-09-18T05:19:12Z,,,0,,,0.0827,0.1179,0.0988,95
-401816994,2026-09-18,4987418,Moises Ballesteros,home,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.3,0.36,0.2822,under,high,2026-09-18T05:19:12Z,,,0,,,0.2595,0.3271,0.2904,95
-401816994,2026-09-18,4987418,Moises Ballesteros,home,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.23,0.25,0.269,under,high,2026-09-18T05:19:12Z,,,0,,,0.2057,0.3552,0.274,95
-401816994,2026-09-18,4987418,Moises Ballesteros,home,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,0.86,1.07,0.4786,over,low,2026-09-18T05:19:12Z,,,0,,,0.5142,0.5627,0.5364,95
-401816994,2026-09-18,5017049,Emmanuel Rodriguez,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.79,1.0,0.5028,over,low,2026-09-18T05:19:12Z,,,0,,,0.5833,0.5646,0.5657,5
-401816994,2026-09-18,5017049,Emmanuel Rodriguez,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.12,0.2,0.164,under,high,2026-09-18T05:19:12Z,,,0,,,0.1129,0.1509,0.1487,5
-401816994,2026-09-18,5017049,Emmanuel Rodriguez,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.45,0.8,0.2891,under,high,2026-09-18T05:19:12Z,,,0,,,0.3601,0.2952,0.299,5
-401816994,2026-09-18,5017049,Emmanuel Rodriguez,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.22,0.2,0.3387,under,high,2026-09-18T05:19:12Z,,,0,,,0.1983,0.3716,0.3614,5
-401816994,2026-09-18,5017049,Emmanuel Rodriguez,away,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,1.24,2.2,0.5001,over,low,2026-09-18T05:19:12Z,,,0,,,0.6174,0.559,0.5624,5
-401816994,2026-09-18,5148963,Walker Jenkins,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.35,0.25,0.4246,under,med,2026-09-18T05:19:12Z,,,0,,,0.3126,0.501,0.4696,16
-401816994,2026-09-18,5148963,Walker Jenkins,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.23,0.31,0.2557,under,high,2026-09-18T05:19:12Z,,,0,,,0.2026,0.2687,0.2577,16
-401816994,2026-09-18,5148963,Walker Jenkins,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.24,0.31,0.3029,under,high,2026-09-18T05:19:12Z,,,0,,,0.2154,0.3366,0.3164,16
-401816994,2026-09-18,5197476,Walbert Urena,home,er,Earned Runs,p_er_pg,negbin,1.5,book,4 books,2.02,1.63,0.4982,over,low,2026-09-18T05:19:12Z,,,0,,,0.5322,0.5695,0.5601,27
-401816994,2026-09-18,5197476,Walbert Urena,home,k,Strikeouts,p_so_pg,negbin,4.5,book,5 books,5.32,4.85,0.5043,over,low,2026-09-18T05:19:12Z,,,0,,,0.5851,0.5615,0.5675,27
-401816994,2026-09-18,5197476,Walbert Urena,home,outs,Outs Recorded,outs_pg,normal,17.5,book,7 books,14.78,15.23,0.3896,under,med,2026-09-18T05:19:12Z,,,0,,,0.2807,0.4746,0.4256,27
-401816994,2026-09-18,5197476,Walbert Urena,home,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,4 books,4.58,3.81,0.4109,over,low,2026-09-18T05:19:12Z,,,0,,,0.4675,0.4474,0.4525,27
-401816995,2026-09-18,31261,Nolan Arenado,home,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,1.26,1.57,0.5206,over,low,2026-09-18T05:19:12Z,,,0,,,0.5845,0.5915,0.587,143
-401816995,2026-09-18,32081,Gerrit Cole,away,k,Strikeouts,p_so_pg,negbin,4.5,book,2 books,5.76,5.85,0.4985,over,low,2026-09-18T05:19:12Z,,,0,,,0.6486,0.5384,0.5604,20
-401816995,2026-09-18,32081,Gerrit Cole,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,5.87,5.4,0.4502,over,low,2026-09-18T05:19:12Z,,,0,,,0.6607,0.4615,0.5014,20
-401816995,2026-09-18,32675,Eduardo Rodriguez,home,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,1.9,1.73,0.4158,under,med,2026-09-18T05:19:12Z,,,0,,,0.2974,0.519,0.4586,30
-401816995,2026-09-18,32675,Eduardo Rodriguez,home,k,Strikeouts,p_so_pg,negbin,4.5,book,3 books,4.28,4.5,0.4615,under,low,2026-09-18T05:19:12Z,,,0,,,0.4175,0.552,0.5153,30
-401816995,2026-09-18,32675,Eduardo Rodriguez,home,outs,Outs Recorded,outs_pg,normal,17.5,book,Fanatics,17.51,17.81,0.4436,over,low,2026-09-18T05:19:12Z,,,0,,,0.5006,0.4905,0.4933,30
-401816995,2026-09-18,40767,Pavin Smith,home,hits,Hits,hits_pg,binomial,0.5,book,Fanatics,0.46,0.47,0.4415,under,low,2026-09-18T05:19:12Z,,,0,,,0.3906,0.5306,0.4906,32
-401816995,2026-09-18,40767,Pavin Smith,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.22,0.25,0.2358,under,high,2026-09-18T05:19:12Z,,,0,,,0.1968,0.2478,0.2332,32
-401816996,2026-09-18,33190,Tyler Glasnow,home,k,Strikeouts,p_so_pg,negbin,6.5,book,2 books,6.21,7.0,0.4775,under,low,2026-09-18T05:19:12Z,,,0,,,0.4218,0.5506,0.535,11
-401816996,2026-09-18,34967,Kyle Tucker,home,hits,Hits,hits_pg,binomial,0.5,book,Fanatics,0.89,0.81,0.5601,over,low,2026-09-18T05:19:12Z,,,0,,,0.6379,0.625,0.6333,145
-401816996,2026-09-18,34967,Kyle Tucker,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.49,0.48,0.346,under,med,2026-09-18T05:19:12Z,,,0,,,0.3861,0.3428,0.3707,145
-401816996,2026-09-18,5145886,Jonah Cox,away,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,0.76,1.0,0.5048,over,low,2026-09-18T05:19:12Z,,,0,,,0.4954,0.6161,0.568,53
-401816996,2026-09-18,5271881,Cesar Perdomo,away,k,Strikeouts,p_so_pg,negbin,2.5,book,3 books,3.82,3.67,0.5276,over,low,2026-09-18T05:19:12Z,,,0,,,0.6955,0.5915,0.5953,3
+401816982,2026-09-18,32801,Jose Ramirez,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.09,0.86,0.6199,over,med,2026-09-18T06:01:31Z,,,0,,,0.7218,0.6696,0.7006,117
+401816982,2026-09-18,32801,Jose Ramirez,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.09,0.1452,under,high,2026-09-18T06:01:31Z,,,0,,,0.1075,0.1572,0.1277,117
+401816982,2026-09-18,32801,Jose Ramirez,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.55,1.37,0.406,over,low,2026-09-18T06:01:31Z,,,0,,,0.4558,0.4323,0.4463,117
+401816982,2026-09-18,33842,Jonah Heim,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.63,0.7,0.4699,over,low,2026-09-18T06:01:31Z,,,0,,,0.5003,0.5567,0.5256,98
+401816982,2026-09-18,33842,Jonah Heim,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.13,0.1223,under,high,2026-09-18T06:01:31Z,,,0,,,0.1061,0.0993,0.103,98
+401816982,2026-09-18,33900,Jeff McNeil,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.83,0.89,0.5501,over,low,2026-09-18T06:01:31Z,,,0,,,0.6128,0.6368,0.6217,135
+401816982,2026-09-18,33900,Jeff McNeil,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.05,1.23,0.3091,under,high,2026-09-18T06:01:31Z,,,0,,,0.2978,0.3685,0.3241,135
+401816982,2026-09-18,40538,Nathaniel Lowe,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.0,0.78,0.584,over,med,2026-09-18T06:01:31Z,,,0,,,0.7025,0.5982,0.6606,119
+401816982,2026-09-18,40538,Nathaniel Lowe,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.16,0.14,0.1605,under,high,2026-09-18T06:01:31Z,,,0,,,0.148,0.1398,0.1447,119
+401816982,2026-09-18,40854,Jo Adell,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.14,0.91,0.6204,over,med,2026-09-18T06:01:31Z,,,0,,,0.7389,0.6301,0.7011,150
+401816982,2026-09-18,40854,Jo Adell,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.16,0.15,0.1701,under,high,2026-09-18T06:01:31Z,,,0,,,0.151,0.1641,0.1556,150
+401816982,2026-09-18,40854,Jo Adell,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.7,1.53,0.4112,over,low,2026-09-18T06:01:31Z,,,0,,,0.4728,0.4154,0.4528,150
+401816982,2026-09-18,41217,Brayan Rocchio,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.09,0.86,0.6003,over,med,2026-09-18T06:01:31Z,,,0,,,0.7248,0.5951,0.6789,146
+401816982,2026-09-18,41217,Brayan Rocchio,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.09,0.1171,under,high,2026-09-18T06:01:31Z,,,0,,,0.1017,0.0898,0.0975,146
+401816982,2026-09-18,41996,Steven Kwan,home,hits,Hits,hits_pg,binomial,1.5,book,DraftKings,1.23,0.99,0.3296,under,high,2026-09-18T06:01:31Z,,,0,,,0.3598,0.3325,0.35,143
+401816982,2026-09-18,41996,Steven Kwan,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.4,1.22,0.4031,under,med,2026-09-18T06:01:31Z,,,0,,,0.4468,0.4354,0.4427,143
+401816982,2026-09-18,42438,Daniel Espino,home,er,Earned Runs,p_er_pg,negbin,0.5,book,Fanatics,1.96,1.57,0.3492,over,low,2026-09-18T06:01:31Z,,,0,,,0.7815,0.3188,0.3747,11
+401816982,2026-09-18,42598,Shea Langeliers,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.97,1.06,0.5718,over,med,2026-09-18T06:01:31Z,,,0,,,0.6692,0.6196,0.6468,97
+401816982,2026-09-18,42598,Shea Langeliers,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.18,0.24,0.1742,under,high,2026-09-18T06:01:31Z,,,0,,,0.1679,0.1509,0.1603,97
+401816982,2026-09-18,42598,Shea Langeliers,away,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,1.57,1.97,0.5768,over,med,2026-09-18T06:01:31Z,,,0,,,0.6823,0.6161,0.6524,97
+401816982,2026-09-18,4345843,Patrick Bailey,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.71,0.57,0.4987,over,low,2026-09-18T06:01:31Z,,,0,,,0.5579,0.5646,0.5608,105
+401816982,2026-09-18,4345843,Patrick Bailey,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.08,0.08,0.1067,under,high,2026-09-18T06:01:31Z,,,0,,,0.0773,0.0993,0.0868,105
+401816982,2026-09-18,4414531,Zack Gelof,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.82,0.87,0.515,over,low,2026-09-18T06:01:31Z,,,0,,,0.6032,0.5511,0.5803,102
+401816982,2026-09-18,4414531,Zack Gelof,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.18,0.1487,under,high,2026-09-18T06:01:31Z,,,0,,,0.1327,0.1301,0.1316,102
+401816982,2026-09-18,4424289,Alika Williams,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.56,0.61,0.4428,over,low,2026-09-18T06:01:31Z,,,0,,,0.4682,0.5171,0.4922,83
+401816982,2026-09-18,4619649,Chase DeLauter,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.21,1.07,0.6485,over,med,2026-09-18T06:01:31Z,,,0,,,0.7656,0.6776,0.7313,125
+401816982,2026-09-18,4619649,Chase DeLauter,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.7,1.68,0.433,over,low,2026-09-18T06:01:31Z,,,0,,,0.5079,0.4367,0.4801,125
+401816982,2026-09-18,4620704,Mason Barnett,away,k,Strikeouts,p_so_pg,negbin,2.5,book,2 books,4.0,4.48,0.5027,over,low,2026-09-18T06:01:31Z,,,0,,,0.7228,0.5302,0.5656,18
+401816982,2026-09-18,4620704,Mason Barnett,away,outs,Outs Recorded,outs_pg,normal,12.5,book,4 books,13.85,14.21,0.4567,over,low,2026-09-18T06:01:31Z,,,0,,,0.613,0.4862,0.5095,18
+401816982,2026-09-18,4620704,Mason Barnett,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,4.46,4.95,0.4075,under,med,2026-09-18T06:01:31Z,,,0,,,0.4469,0.4484,0.4481,18
+401816982,2026-09-18,4917919,Lawrence Butler,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.63,0.7,0.4779,over,low,2026-09-18T06:01:31Z,,,0,,,0.5083,0.5846,0.5354,145
+401816982,2026-09-18,4917919,Lawrence Butler,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.12,0.13,under,high,2026-09-18T06:01:31Z,,,0,,,0.0954,0.1398,0.1112,145
+401816982,2026-09-18,4917919,Lawrence Butler,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.37,0.41,0.2995,under,high,2026-09-18T06:01:31Z,,,0,,,0.3084,0.3188,0.3121,145
+401816982,2026-09-18,5007707,Travis Bazzana,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.14,0.9,0.6096,over,med,2026-09-18T06:01:31Z,,,0,,,0.7398,0.6165,0.6892,115
+401816982,2026-09-18,5007707,Travis Bazzana,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.12,0.1513,under,high,2026-09-18T06:01:31Z,,,0,,,0.1308,0.1398,0.1345,115
+401816982,2026-09-18,5080756,Henry Bolte,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.88,0.95,0.5542,over,low,2026-09-18T06:01:31Z,,,0,,,0.6329,0.6178,0.6266,110
+401816982,2026-09-18,5080756,Henry Bolte,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.1,0.1157,under,high,2026-09-18T06:01:31Z,,,0,,,0.0852,0.111,0.0961,110
+401816982,2026-09-18,5204351,Angel Genao,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.01,0.74,0.5772,over,med,2026-09-18T06:01:31Z,,,0,,,0.6954,0.6343,0.6529,35
+401816982,2026-09-18,5204351,Angel Genao,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.06,0.1005,under,high,2026-09-18T06:01:31Z,,,0,,,0.0595,0.0898,0.0806,35
+401816983,2026-09-18,32150,Trevor Story,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.91,0.98,0.549,over,low,2026-09-18T06:01:31Z,,,0,,,0.6446,0.6033,0.6204,57
+401816983,2026-09-18,32150,Trevor Story,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.05,0.07,0.1292,under,high,2026-09-18T06:01:31Z,,,0,,,0.0533,0.1509,0.1103,57
+401816983,2026-09-18,32150,Trevor Story,away,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.44,0.49,0.3315,under,high,2026-09-18T06:01:31Z,,,0,,,0.3566,0.3494,0.3524,57
+401816983,2026-09-18,32150,Trevor Story,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.23,1.44,0.339,under,high,2026-09-18T06:01:31Z,,,0,,,0.3697,0.3562,0.3618,57
+401816983,2026-09-18,33481,Yandy Diaz,home,hits,Hits,hits_pg,binomial,1.5,book,3 books,1.11,1.18,0.3169,under,high,2026-09-18T06:01:31Z,,,0,,,0.3093,0.379,0.3339,147
+401816983,2026-09-18,33481,Yandy Diaz,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.13,0.15,0.1468,under,high,2026-09-18T06:01:31Z,,,0,,,0.1209,0.1451,0.1294,147
+401816983,2026-09-18,33481,Yandy Diaz,home,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.5,0.55,0.3626,under,med,2026-09-18T06:01:31Z,,,0,,,0.3934,0.3882,0.3916,147
+401816983,2026-09-18,33481,Yandy Diaz,home,tb,Total Bases,tb_pg,negbin,1.5,book,5 books,1.53,1.81,0.4133,over,low,2026-09-18T06:01:31Z,,,0,,,0.4416,0.4808,0.4554,147
+401816983,2026-09-18,33572,Isiah Kiner-Falefa,away,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.58,0.64,0.4769,over,low,2026-09-18T06:01:31Z,,,0,,,0.481,0.5728,0.5342,58
+401816983,2026-09-18,33572,Isiah Kiner-Falefa,away,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.7,0.83,0.4843,over,low,2026-09-18T06:01:31Z,,,0,,,0.5026,0.5728,0.5433,58
+401816983,2026-09-18,33832,Jorge Mateo,home,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.45,0.44,0.4054,under,med,2026-09-18T06:01:31Z,,,0,,,0.3932,0.5052,0.4456,91
+401816983,2026-09-18,33832,Jorge Mateo,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.62,0.68,0.3975,over,low,2026-09-18T06:01:31Z,,,0,,,0.3816,0.4969,0.4356,91
+401816983,2026-09-18,34958,Jahmai Jones,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.36,0.34,0.3828,under,med,2026-09-18T06:01:31Z,,,0,,,0.3267,0.5164,0.4171,88
+401816983,2026-09-18,36950,Andruw Monasterio,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.64,0.7,0.4741,over,low,2026-09-18T06:01:31Z,,,0,,,0.5135,0.5527,0.5309,101
+401816983,2026-09-18,39817,Ranger Suarez,away,er,Earned Runs,p_er_pg,negbin,1.5,book,2 books,2.0,1.96,0.5147,over,low,2026-09-18T06:01:31Z,,,0,,,0.5282,0.5967,0.5799,26
+401816983,2026-09-18,39817,Ranger Suarez,away,k,Strikeouts,p_so_pg,negbin,4.5,book,5 books,5.27,5.0,0.4647,over,low,2026-09-18T06:01:31Z,,,0,,,0.5789,0.5,0.5193,26
+401816983,2026-09-18,39817,Ranger Suarez,away,outs,Outs Recorded,outs_pg,normal,17.5,book,5 books,16.06,15.83,0.4223,under,med,2026-09-18T06:01:31Z,,,0,,,0.3791,0.4951,0.4667,26
+401816983,2026-09-18,39817,Ranger Suarez,away,p_hits,Hits Allowed,p_h_pg,negbin,5.5,book,Fanatics,5.18,4.77,0.4197,under,med,2026-09-18T06:01:31Z,,,0,,,0.4098,0.481,0.4635,26
+401816983,2026-09-18,40086,Connor Wong,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.6,0.65,0.4572,over,low,2026-09-18T06:01:31Z,,,0,,,0.4859,0.5319,0.5101,72
+401816983,2026-09-18,40576,Taylor Walls,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.62,0.65,0.4596,over,low,2026-09-18T06:01:31Z,,,0,,,0.4999,0.5323,0.513,118
+401816983,2026-09-18,40576,Taylor Walls,home,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.27,0.3,0.2525,under,high,2026-09-18T06:01:31Z,,,0,,,0.2346,0.2816,0.2536,118
+401816983,2026-09-18,40576,Taylor Walls,home,tb,Total Bases,tb_pg,negbin,1.5,book,BetRivers,0.75,0.87,0.2477,under,high,2026-09-18T06:01:31Z,,,0,,,0.2189,0.2903,0.2477,118
+401816983,2026-09-18,40810,Jonathan Aranda,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,1.0,1.05,0.5848,over,med,2026-09-18T06:01:31Z,,,0,,,0.6847,0.6189,0.6615,147
+401816983,2026-09-18,40810,Jonathan Aranda,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.12,0.14,0.133,under,high,2026-09-18T06:01:31Z,,,0,,,0.1163,0.111,0.1145,147
+401816983,2026-09-18,40810,Jonathan Aranda,home,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.55,0.61,0.3585,over,low,2026-09-18T06:01:31Z,,,0,,,0.4226,0.3198,0.3864,147
+401816983,2026-09-18,40810,Jonathan Aranda,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.41,1.65,0.3537,under,med,2026-09-18T06:01:31Z,,,0,,,0.3985,0.3471,0.3804,147
+401816983,2026-09-18,40960,Ryan Vilade,home,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.61,0.65,0.4798,over,low,2026-09-18T06:01:31Z,,,0,,,0.4988,0.5808,0.5379,88
+401816983,2026-09-18,40960,Ryan Vilade,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.11,0.12,0.1271,under,high,2026-09-18T06:01:31Z,,,0,,,0.1056,0.111,0.1081,88
+401816983,2026-09-18,40960,Ryan Vilade,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.42,0.45,0.3107,under,high,2026-09-18T06:01:31Z,,,0,,,0.346,0.3042,0.3261,88
+401816983,2026-09-18,40960,Ryan Vilade,home,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,1.06,1.16,0.4889,over,low,2026-09-18T06:01:31Z,,,0,,,0.5179,0.5829,0.5488,88
+401816983,2026-09-18,41359,Richie Palacios,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.62,0.65,0.468,over,low,2026-09-18T06:01:31Z,,,0,,,0.4989,0.559,0.5233,117
+401816983,2026-09-18,41359,Richie Palacios,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.07,0.09,0.0916,under,high,2026-09-18T06:01:31Z,,,0,,,0.067,0.0786,0.0717,117
+401816983,2026-09-18,41674,Nick Fortes,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.74,0.73,0.5117,over,low,2026-09-18T06:01:31Z,,,0,,,0.5733,0.5802,0.5763,101
+401816983,2026-09-18,41674,Nick Fortes,home,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.3,0.34,0.2722,under,high,2026-09-18T06:01:31Z,,,0,,,0.2573,0.3043,0.2781,101
+401816983,2026-09-18,41674,Nick Fortes,home,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,0.87,1.04,0.5042,over,low,2026-09-18T06:01:31Z,,,0,,,0.563,0.5728,0.5673,101
+401816983,2026-09-18,42178,Adley Rutschman,away,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.82,0.86,0.5483,over,low,2026-09-18T06:01:31Z,,,0,,,0.6021,0.6398,0.6196,92
+401816983,2026-09-18,42178,Adley Rutschman,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.28,1.52,0.3525,under,med,2026-09-18T06:01:31Z,,,0,,,0.3761,0.382,0.3789,92
+401816983,2026-09-18,42845,Nate Eaton,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.39,0.26,0.404,under,med,2026-09-18T06:01:31Z,,,0,,,0.3478,0.4665,0.4437,19
+401816983,2026-09-18,42845,Nate Eaton,away,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.26,0.32,0.2492,under,high,2026-09-18T06:01:31Z,,,0,,,0.2268,0.255,0.2496,19
+401816983,2026-09-18,42979,Nick Sogard,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.87,0.93,0.5176,over,low,2026-09-18T06:01:31Z,,,0,,,0.6298,0.5504,0.5834,57
+401816983,2026-09-18,42979,Nick Sogard,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.09,0.09,0.1124,under,high,2026-09-18T06:01:31Z,,,0,,,0.0834,0.0993,0.0927,57
+401816983,2026-09-18,42979,Nick Sogard,away,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.28,0.33,0.2736,under,high,2026-09-18T06:01:31Z,,,0,,,0.2451,0.3043,0.2797,57
+401816983,2026-09-18,42979,Nick Sogard,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetRivers,1.24,1.46,0.3344,under,high,2026-09-18T06:01:31Z,,,0,,,0.3652,0.3494,0.356,57
+401816983,2026-09-18,4669425,Ian Seymour,home,er,Earned Runs,p_er_pg,negbin,1.5,book,Bovada,2.13,2.25,0.4859,over,low,2026-09-18T06:01:31Z,,,0,,,0.5575,0.5385,0.5452,44
+401816983,2026-09-18,4669425,Ian Seymour,home,k,Strikeouts,p_so_pg,negbin,5.5,book,4 books,5.68,5.82,0.4509,over,low,2026-09-18T06:01:31Z,,,0,,,0.4869,0.5108,0.5023,44
+401816983,2026-09-18,4669425,Ian Seymour,home,outs,Outs Recorded,outs_pg,normal,15.5,book,4 books,13.68,14.21,0.3763,under,med,2026-09-18T06:01:31Z,,,0,,,0.3489,0.442,0.4089,44
+401816983,2026-09-18,4679983,Chandler Simpson,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,1.11,1.17,0.6286,over,med,2026-09-18T06:01:31Z,,,0,,,0.7275,0.6786,0.71,144
+401816983,2026-09-18,4679983,Chandler Simpson,home,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.23,0.25,0.2437,under,high,2026-09-18T06:01:31Z,,,0,,,0.206,0.3093,0.2429,144
+401816983,2026-09-18,4679983,Chandler Simpson,home,tb,Total Bases,tb_pg,negbin,1.5,book,5 books,1.2,1.37,0.3519,under,med,2026-09-18T06:01:31Z,,,0,,,0.3797,0.375,0.378,144
+401816983,2026-09-18,4905921,Junior Caminero,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,1.01,1.06,0.603,over,med,2026-09-18T06:01:31Z,,,0,,,0.6887,0.669,0.6819,152
+401816983,2026-09-18,4905921,Junior Caminero,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.22,0.27,0.1908,under,high,2026-09-18T06:01:31Z,,,0,,,0.1976,0.1451,0.1795,152
+401816983,2026-09-18,4905921,Junior Caminero,home,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.57,0.63,0.3756,over,low,2026-09-18T06:01:31Z,,,0,,,0.4318,0.3628,0.408,152
+401816983,2026-09-18,4905921,Junior Caminero,home,tb,Total Bases,tb_pg,negbin,1.5,book,5 books,1.7,2.03,0.399,over,low,2026-09-18T06:01:31Z,,,0,,,0.4476,0.4181,0.4375,152
+401816983,2026-09-18,4990055,Wilyer Abreu,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.91,0.97,0.5626,over,low,2026-09-18T06:01:31Z,,,0,,,0.6431,0.6234,0.6362,149
+401816983,2026-09-18,4990055,Wilyer Abreu,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.13,0.16,0.1531,under,high,2026-09-18T06:01:31Z,,,0,,,0.1254,0.1572,0.1365,149
+401816983,2026-09-18,4990055,Wilyer Abreu,away,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.44,0.5,0.3272,under,high,2026-09-18T06:01:31Z,,,0,,,0.3586,0.3253,0.347,149
+401816983,2026-09-18,4990055,Wilyer Abreu,away,tb,Total Bases,tb_pg,negbin,1.5,book,5 books,1.44,1.74,0.3767,under,med,2026-09-18T06:01:31Z,,,0,,,0.4158,0.3974,0.4094,149
+401816983,2026-09-18,5005912,Jonny DeLuca,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.81,0.81,0.5446,over,low,2026-09-18T06:01:31Z,,,0,,,0.6053,0.628,0.6153,102
+401816983,2026-09-18,5005912,Jonny DeLuca,home,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.08,0.09,0.0973,under,high,2026-09-18T06:01:31Z,,,0,,,0.0812,0.0726,0.0774,102
+401816983,2026-09-18,5005912,Jonny DeLuca,home,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.41,0.43,0.3031,under,high,2026-09-18T06:01:31Z,,,0,,,0.3337,0.2948,0.3166,102
+401816983,2026-09-18,5005912,Jonny DeLuca,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.14,1.28,0.3688,under,med,2026-09-18T06:01:31Z,,,0,,,0.3284,0.49,0.3994,102
+401816983,2026-09-18,5007615,Caleb Durbin,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.79,0.82,0.5297,over,low,2026-09-18T06:01:31Z,,,0,,,0.5893,0.6132,0.5978,145
+401816983,2026-09-18,5007615,Caleb Durbin,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.08,0.09,0.1074,under,high,2026-09-18T06:01:31Z,,,0,,,0.0781,0.1048,0.0876,145
+401816983,2026-09-18,5007615,Caleb Durbin,away,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.4,0.44,0.3039,under,high,2026-09-18T06:01:31Z,,,0,,,0.3302,0.2948,0.3176,145
+401816983,2026-09-18,5007615,Caleb Durbin,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.09,1.26,0.301,under,high,2026-09-18T06:01:31Z,,,0,,,0.3006,0.3381,0.3139,145
+401816983,2026-09-18,5080767,Roman Anthony,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.85,0.89,0.5597,over,low,2026-09-18T06:01:31Z,,,0,,,0.6156,0.6429,0.6328,47
+401816983,2026-09-18,5080767,Roman Anthony,away,hr,Home Run,hr_pg,poisson,0.5,book,2 books,0.06,0.09,0.1265,under,high,2026-09-18T06:01:31Z,,,0,,,0.061,0.1348,0.1075,47
+401816983,2026-09-18,5080767,Roman Anthony,away,rbi,RBIs,rbi_pg,poisson,0.5,book,BetRivers,0.22,0.23,0.2632,under,high,2026-09-18T06:01:31Z,,,0,,,0.1946,0.3093,0.2669,47
+401816983,2026-09-18,5080767,Roman Anthony,away,tb,Total Bases,tb_pg,negbin,1.5,book,5 books,1.2,1.38,0.3439,under,med,2026-09-18T06:01:31Z,,,0,,,0.3291,0.3909,0.368,47
+401816984,2026-09-18,32827,Clay Holmes,away,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,1.99,1.81,0.3764,under,med,2026-09-18T06:01:31Z,,,0,,,0.316,0.4276,0.409,16
+401816984,2026-09-18,32827,Clay Holmes,away,k,Strikeouts,p_so_pg,negbin,4.5,book,2 books,4.17,4.44,0.4161,under,med,2026-09-18T06:01:31Z,,,0,,,0.3985,0.4711,0.459,16
+401816984,2026-09-18,32827,Clay Holmes,away,outs,Outs Recorded,outs_pg,normal,15.5,book,Fanatics,17.12,17.1,0.4738,over,low,2026-09-18T06:01:31Z,,,0,,,0.6351,0.5095,0.5304,16
+401816984,2026-09-18,4142424,Seiya Suzuki,away,tb,Total Bases,tb_pg,negbin,1.5,book,Fanatics,1.98,1.78,0.446,over,low,2026-09-18T06:01:31Z,,,0,,,0.5543,0.3983,0.4962,135
+401816984,2026-09-18,42410,JJ Bleday,home,hits,Hits,hits_pg,binomial,0.5,book,Fanatics,0.72,0.75,0.5104,over,low,2026-09-18T06:01:31Z,,,0,,,0.5528,0.6091,0.5749,124
+401816984,2026-09-18,42410,JJ Bleday,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.41,0.45,0.33,under,high,2026-09-18T06:01:31Z,,,0,,,0.334,0.376,0.3504,124
+401816984,2026-09-18,4927516,Chase Burns,home,k,Strikeouts,p_so_pg,negbin,4.5,book,FanDuel,5.91,6.46,0.4444,over,low,2026-09-18T06:01:31Z,,,0,,,0.6684,0.4333,0.4942,28
+401816984,2026-09-18,4927516,Chase Burns,home,p_hits,Hits Allowed,p_h_pg,negbin,2.5,book,Fanatics,3.37,4.29,0.4737,over,low,2026-09-18T06:01:31Z,,,0,,,0.6172,0.5,0.5304,28
+401816985,2026-09-18,35183,Ryan O'Hearn,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.59,0.71,0.3722,over,low,2026-09-18T06:01:31Z,,,0,,,0.4475,0.3484,0.4037,101
+401816985,2026-09-18,35183,Ryan O'Hearn,home,tb,Total Bases,tb_pg,negbin,1.5,book,Fanatics,1.36,1.68,0.3511,under,med,2026-09-18T06:01:31Z,,,0,,,0.3717,0.3839,0.3771,101
+401816985,2026-09-18,42214,Randy Dobnak,away,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,1.94,1.62,0.414,under,med,2026-09-18T06:01:31Z,,,0,,,0.3048,0.481,0.4564,13
+401816985,2026-09-18,42214,Randy Dobnak,away,k,Strikeouts,p_so_pg,negbin,2.5,book,2 books,3.84,3.62,0.5511,over,low,2026-09-18T06:01:31Z,,,0,,,0.6985,0.6106,0.6229,13
+401816985,2026-09-18,42214,Randy Dobnak,away,outs,Outs Recorded,outs_pg,normal,15.5,book,Fanatics,16.79,15.95,0.4112,over,low,2026-09-18T06:01:31Z,,,0,,,0.608,0.4276,0.4528,13
+401816985,2026-09-18,42214,Randy Dobnak,away,p_hits,Hits Allowed,p_h_pg,negbin,5.5,book,Fanatics,5.61,5.0,0.433,over,low,2026-09-18T06:01:31Z,,,0,,,0.4745,0.481,0.4801,13
+401816985,2026-09-18,4719507,Paul Skenes,home,k,Strikeouts,p_so_pg,negbin,5.5,book,3 books,6.06,6.17,0.4725,over,low,2026-09-18T06:01:31Z,,,0,,,0.5423,0.5239,0.5289,30
+401816985,2026-09-18,5218285,Konnor Griffin,home,hits,Hits,hits_pg,binomial,1.5,book,Fanatics,0.92,1.01,0.2751,under,high,2026-09-18T06:01:31Z,,,0,,,0.2278,0.3294,0.2816,71
+401816986,2026-09-18,40937,Dustin May,away,er,Earned Runs,p_er_pg,negbin,1.5,book,Fanatics,2.74,2.46,0.5188,over,low,2026-09-18T06:01:31Z,,,0,,,0.6798,0.5516,0.5848,28
+401816986,2026-09-18,40937,Dustin May,away,outs,Outs Recorded,outs_pg,normal,15.5,book,Fanatics,14.38,14.8,0.3936,under,med,2026-09-18T06:01:31Z,,,0,,,0.406,0.4393,0.4307,28
+401816986,2026-09-18,40937,Dustin May,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,4.81,4.71,0.4194,over,low,2026-09-18T06:01:31Z,,,0,,,0.5051,0.4484,0.4631,28
+401816988,2026-09-18,31389,Christian Vazquez,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.53,0.58,0.4397,over,low,2026-09-18T06:01:31Z,,,0,,,0.4421,0.5371,0.4885,84
+401816988,2026-09-18,31662,Jose Altuve,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.86,0.94,0.553,over,low,2026-09-18T06:01:31Z,,,0,,,0.6189,0.6348,0.6251,126
+401816988,2026-09-18,31662,Jose Altuve,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.12,0.1165,under,high,2026-09-18T06:01:31Z,,,0,,,0.0955,0.0993,0.097,126
+401816988,2026-09-18,31662,Jose Altuve,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.24,1.52,0.3355,under,high,2026-09-18T06:01:31Z,,,0,,,0.3515,0.3666,0.3574,126
+401816988,2026-09-18,32758,Christian Walker,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.75,0.81,0.5104,over,low,2026-09-18T06:01:31Z,,,0,,,0.5679,0.5875,0.5748,147
+401816988,2026-09-18,32758,Christian Walker,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.17,0.1616,under,high,2026-09-18T06:01:31Z,,,0,,,0.1276,0.1797,0.146,147
+401816988,2026-09-18,32758,Christian Walker,home,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.23,1.5,0.3234,under,high,2026-09-18T06:01:31Z,,,0,,,0.3343,0.3562,0.3421,147
+401816988,2026-09-18,32767,Matt Olson,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.9,0.97,0.5643,over,low,2026-09-18T06:01:31Z,,,0,,,0.6381,0.6382,0.6381,153
+401816988,2026-09-18,32767,Matt Olson,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.2,0.25,0.2078,under,high,2026-09-18T06:01:31Z,,,0,,,0.1821,0.2329,0.1996,153
+401816988,2026-09-18,32767,Matt Olson,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.57,1.95,0.3942,over,low,2026-09-18T06:01:31Z,,,0,,,0.4288,0.4367,0.4315,153
+401816988,2026-09-18,33341,Mike Yastrzemski,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.54,0.58,0.4367,over,low,2026-09-18T06:01:31Z,,,0,,,0.4518,0.538,0.4847,130
+401816988,2026-09-18,33341,Mike Yastrzemski,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.08,0.1137,under,high,2026-09-18T06:01:31Z,,,0,,,0.0591,0.1509,0.0941,130
+401816988,2026-09-18,33341,Mike Yastrzemski,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,0.79,0.97,0.2672,under,high,2026-09-18T06:01:31Z,,,0,,,0.2282,0.3428,0.2718,130
+401816988,2026-09-18,33783,Ozzie Albies,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.87,0.93,0.5432,over,low,2026-09-18T06:01:31Z,,,0,,,0.6256,0.591,0.6137,153
+401816988,2026-09-18,33783,Ozzie Albies,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.14,0.14,under,high,2026-09-18T06:01:31Z,,,0,,,0.1128,0.1398,0.1221,153
+401816988,2026-09-18,33783,Ozzie Albies,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.29,1.56,0.3344,under,high,2026-09-18T06:01:31Z,,,0,,,0.3581,0.352,0.356,153
+401816988,2026-09-18,34973,Tyler Mahle,away,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,2.75,2.4,0.4069,over,low,2026-09-18T06:01:31Z,,,0,,,0.4736,0.4393,0.4474,25
+401816988,2026-09-18,34973,Tyler Mahle,away,k,Strikeouts,p_so_pg,negbin,4.5,book,4 books,5.42,5.08,0.4433,over,low,2026-09-18T06:01:31Z,,,0,,,0.6006,0.4592,0.4929,25
+401816988,2026-09-18,34973,Tyler Mahle,away,outs,Outs Recorded,outs_pg,normal,17.5,book,4 books,16.76,16.56,0.4358,under,low,2026-09-18T06:01:31Z,,,0,,,0.4373,0.498,0.4836,25
+401816988,2026-09-18,34973,Tyler Mahle,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,5.69,5.16,0.5136,over,low,2026-09-18T06:01:31Z,,,0,,,0.636,0.5607,0.5786,25
+401816988,2026-09-18,34982,Austin Riley,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.75,0.79,0.5056,over,low,2026-09-18T06:01:31Z,,,0,,,0.5659,0.575,0.569,151
+401816988,2026-09-18,34982,Austin Riley,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.11,0.1434,under,high,2026-09-18T06:01:31Z,,,0,,,0.0923,0.1887,0.1257,151
+401816988,2026-09-18,34982,Austin Riley,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.09,1.29,0.302,under,high,2026-09-18T06:01:31Z,,,0,,,0.2935,0.3562,0.3152,151
+401816988,2026-09-18,35304,Mauricio Dubon,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.93,1.01,0.5725,over,med,2026-09-18T06:01:31Z,,,0,,,0.6563,0.6317,0.6475,145
+401816988,2026-09-18,35304,Mauricio Dubon,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.08,0.093,under,high,2026-09-18T06:01:31Z,,,0,,,0.0586,0.0993,0.0731,145
+401816988,2026-09-18,35304,Mauricio Dubon,away,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,1.22,1.46,0.5785,over,med,2026-09-18T06:01:31Z,,,0,,,0.6673,0.6312,0.6545,145
+401816988,2026-09-18,36018,Yordan Alvarez,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.0,1.11,0.5963,over,med,2026-09-18T06:01:31Z,,,0,,,0.6868,0.6515,0.6744,149
+401816988,2026-09-18,36018,Yordan Alvarez,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.21,0.27,0.2204,under,high,2026-09-18T06:01:31Z,,,0,,,0.1872,0.2657,0.2146,149
+401816988,2026-09-18,36018,Yordan Alvarez,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.69,2.14,0.4167,over,low,2026-09-18T06:01:31Z,,,0,,,0.46,0.4592,0.4597,149
+401816988,2026-09-18,36185,Ronald Acuna Jr.,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.9,0.98,0.5737,over,med,2026-09-18T06:01:31Z,,,0,,,0.6417,0.658,0.649,100
+401816988,2026-09-18,36185,Ronald Acuna Jr.,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.18,0.1847,under,high,2026-09-18T06:01:31Z,,,0,,,0.1349,0.2194,0.1725,100
+401816988,2026-09-18,36185,Ronald Acuna Jr.,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.4,1.72,0.3736,under,med,2026-09-18T06:01:31Z,,,0,,,0.3881,0.4272,0.4055,100
+401816988,2026-09-18,37773,Taylor Trammell,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.49,0.53,0.4076,under,med,2026-09-18T06:01:31Z,,,0,,,0.4174,0.4838,0.4483,92
+401816988,2026-09-18,37773,Taylor Trammell,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.08,0.09,0.1156,under,high,2026-09-18T06:01:31Z,,,0,,,0.0769,0.1179,0.096,92
+401816988,2026-09-18,39706,Isaac Paredes,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.85,0.93,0.5438,over,low,2026-09-18T06:01:31Z,,,0,,,0.6187,0.6067,0.6144,146
+401816988,2026-09-18,39706,Isaac Paredes,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.14,0.1429,under,high,2026-09-18T06:01:31Z,,,0,,,0.1111,0.1509,0.1252,146
+401816988,2026-09-18,39706,Isaac Paredes,home,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.26,1.55,0.3301,under,high,2026-09-18T06:01:31Z,,,0,,,0.3524,0.3471,0.3505,146
+401816988,2026-09-18,39898,Peter Lambert,home,k,Strikeouts,p_so_pg,negbin,4.5,book,5 books,5.59,5.42,0.5149,over,low,2026-09-18T06:01:31Z,,,0,,,0.6253,0.5656,0.5802,26
+401816988,2026-09-18,39898,Peter Lambert,home,outs,Outs Recorded,outs_pg,normal,17.5,book,3 books,16.82,16.75,0.4213,under,med,2026-09-18T06:01:31Z,,,0,,,0.4421,0.473,0.4655,26
+401816988,2026-09-18,4089862,Ha-Seong Kim,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.35,0.3,0.4091,under,med,2026-09-18T06:01:31Z,,,0,,,0.3154,0.5276,0.4502,46
+401816988,2026-09-18,40963,Daulton Varsho,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.73,0.78,0.5041,over,low,2026-09-18T06:01:31Z,,,0,,,0.5553,0.5878,0.5672,138
+401816988,2026-09-18,40963,Daulton Varsho,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.08,0.09,0.124,under,high,2026-09-18T06:01:31Z,,,0,,,0.0744,0.1572,0.1048,138
+401816988,2026-09-18,40963,Daulton Varsho,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.04,1.25,0.3321,under,high,2026-09-18T06:01:31Z,,,0,,,0.2909,0.4601,0.353,138
+401816988,2026-09-18,41273,Jeremy Pena,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.99,1.11,0.5891,over,med,2026-09-18T06:01:31Z,,,0,,,0.6781,0.6512,0.6664,103
+401816988,2026-09-18,41273,Jeremy Pena,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.15,0.19,0.1612,under,high,2026-09-18T06:01:31Z,,,0,,,0.1413,0.1509,0.1455,103
+401816988,2026-09-18,41273,Jeremy Pena,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.49,1.89,0.3776,under,med,2026-09-18T06:01:31Z,,,0,,,0.4196,0.3988,0.4105,103
+401816988,2026-09-18,42470,Michael Harris II,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.01,1.1,0.6032,over,med,2026-09-18T06:01:31Z,,,0,,,0.6873,0.6726,0.6821,147
+401816988,2026-09-18,42470,Michael Harris II,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.17,0.1668,under,high,2026-09-18T06:01:31Z,,,0,,,0.1296,0.1925,0.1518,147
+401816988,2026-09-18,42470,Michael Harris II,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.5,1.84,0.3956,under,med,2026-09-18T06:01:31Z,,,0,,,0.4288,0.4412,0.4332,147
+401816988,2026-09-18,4781491,Yainer Diaz,home,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.87,0.96,0.5577,over,low,2026-09-18T06:01:31Z,,,0,,,0.6291,0.6321,0.6305,89
+401816988,2026-09-18,4781491,Yainer Diaz,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.13,0.1273,under,high,2026-09-18T06:01:31Z,,,0,,,0.106,0.111,0.1084,89
+401816988,2026-09-18,4781491,Yainer Diaz,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.38,0.43,0.3002,under,high,2026-09-18T06:01:31Z,,,0,,,0.3177,0.3077,0.3129,89
+401816988,2026-09-18,4781491,Yainer Diaz,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.23,1.51,0.3294,under,high,2026-09-18T06:01:31Z,,,0,,,0.3372,0.3635,0.3496,89
+401816988,2026-09-18,4810190,Drake Baldwin,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.0,1.1,0.594,over,med,2026-09-18T06:01:31Z,,,0,,,0.6851,0.6505,0.6719,130
+401816988,2026-09-18,4810190,Drake Baldwin,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.15,0.18,0.1731,under,high,2026-09-18T06:01:31Z,,,0,,,0.1385,0.1925,0.1591,130
+401816988,2026-09-18,4810190,Drake Baldwin,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.46,1.79,0.38,under,med,2026-09-18T06:01:31Z,,,0,,,0.4,0.4355,0.4136,130
+401816988,2026-09-18,5080766,Cam Smith,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.61,0.68,0.4585,over,low,2026-09-18T06:01:31Z,,,0,,,0.4919,0.5483,0.5116,149
+401816988,2026-09-18,5080766,Cam Smith,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.13,0.1391,under,high,2026-09-18T06:01:31Z,,,0,,,0.1049,0.1509,0.121,149
+401816988,2026-09-18,5080766,Cam Smith,home,tb,Total Bases,tb_pg,negbin,0.5,book,2 books,1.06,1.28,0.4596,over,low,2026-09-18T06:01:31Z,,,0,,,0.5055,0.527,0.513,149
+401816989,2026-09-18,31208,Tommy Pham,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.36,0.08,0.516,under,low,2026-09-18T06:01:31Z,,,0,,,0.3279,0.6196,0.5816,12
+401816989,2026-09-18,31208,Tommy Pham,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.08,0.1381,under,high,2026-09-18T06:01:31Z,,,0,,,0.0525,0.1301,0.12,12
+401816989,2026-09-18,31399,Randal Grichuk,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.59,0.63,0.485,over,low,2026-09-18T06:01:31Z,,,0,,,0.4958,0.6099,0.5441,109
+401816989,2026-09-18,31399,Randal Grichuk,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.12,0.1507,under,high,2026-09-18T06:01:31Z,,,0,,,0.1001,0.1797,0.1338,109
+401816989,2026-09-18,31399,Randal Grichuk,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.09,1.24,0.3324,under,high,2026-09-18T06:01:31Z,,,0,,,0.3253,0.3919,0.3535,109
+401816989,2026-09-18,38420,Zach McKinstry,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.61,0.61,0.4818,over,low,2026-09-18T06:01:31Z,,,0,,,0.4946,0.6099,0.5403,122
+401816989,2026-09-18,39900,Jake Rogers,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.41,0.38,0.4211,under,med,2026-09-18T06:01:31Z,,,0,,,0.3579,0.5458,0.4653,60
+401816989,2026-09-18,39900,Jake Rogers,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.07,0.1309,under,high,2026-09-18T06:01:31Z,,,0,,,0.0521,0.1572,0.1122,60
+401816989,2026-09-18,42179,Riley Greene,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.04,1.04,0.5954,over,med,2026-09-18T06:01:31Z,,,0,,,0.7025,0.6254,0.6734,132
+401816989,2026-09-18,42179,Riley Greene,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.15,0.1577,under,high,2026-09-18T06:01:31Z,,,0,,,0.1279,0.1641,0.1415,132
+401816989,2026-09-18,42179,Riley Greene,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.56,1.75,0.3955,over,low,2026-09-18T06:01:31Z,,,0,,,0.4514,0.4028,0.4331,132
+401816989,2026-09-18,42411,Luisangel Acuna,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.46,0.46,0.4307,under,low,2026-09-18T06:01:31Z,,,0,,,0.4046,0.567,0.4772,99
+401816989,2026-09-18,42453,Miguel Vargas,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.88,0.92,0.5634,over,low,2026-09-18T06:01:31Z,,,0,,,0.6316,0.6478,0.6372,151
+401816989,2026-09-18,42453,Miguel Vargas,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.17,0.21,0.1774,under,high,2026-09-18T06:01:31Z,,,0,,,0.1556,0.1797,0.1639,151
+401816989,2026-09-18,42453,Miguel Vargas,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.47,1.75,0.38,under,med,2026-09-18T06:01:31Z,,,0,,,0.4034,0.433,0.4136,151
+401816989,2026-09-18,42462,Brenton Doyle,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.51,0.53,0.4522,over,low,2026-09-18T06:01:31Z,,,0,,,0.4358,0.5711,0.5039,79
+401816989,2026-09-18,4345620,Dillon Dingler,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.94,0.92,0.5753,over,med,2026-09-18T06:01:31Z,,,0,,,0.657,0.6401,0.6508,139
+401816989,2026-09-18,4345620,Dillon Dingler,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.17,0.19,0.1657,under,high,2026-09-18T06:01:31Z,,,0,,,0.1569,0.1398,0.1506,139
+401816989,2026-09-18,4345620,Dillon Dingler,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.53,1.72,0.3792,over,low,2026-09-18T06:01:31Z,,,0,,,0.4207,0.3983,0.4125,139
+401816989,2026-09-18,4424286,Spencer Torkelson,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.79,0.76,0.5096,over,low,2026-09-18T06:01:31Z,,,0,,,0.5923,0.5391,0.5738,150
+401816989,2026-09-18,4424286,Spencer Torkelson,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.16,0.1526,under,high,2026-09-18T06:01:31Z,,,0,,,0.1338,0.1398,0.1359,150
+401816989,2026-09-18,4683384,Colt Keith,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.7,0.71,0.5038,over,low,2026-09-18T06:01:31Z,,,0,,,0.5524,0.592,0.567,138
+401816989,2026-09-18,4683384,Colt Keith,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.07,0.0994,under,high,2026-09-18T06:01:31Z,,,0,,,0.0612,0.111,0.0795,138
+401816989,2026-09-18,4683384,Colt Keith,away,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,0.98,1.12,0.5137,over,low,2026-09-18T06:01:31Z,,,0,,,0.5714,0.5915,0.5788,138
+401816989,2026-09-18,4872685,Colson Montgomery,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.68,0.76,0.4942,over,low,2026-09-18T06:01:31Z,,,0,,,0.5285,0.6037,0.5554,144
+401816989,2026-09-18,4872685,Colson Montgomery,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.22,1.56,0.3314,under,high,2026-09-18T06:01:31Z,,,0,,,0.3262,0.3988,0.3521,144
+401816989,2026-09-18,4960696,David Sandlin,home,k,Strikeouts,p_so_pg,negbin,4.5,book,2 books,5.47,4.83,0.4018,over,low,2026-09-18T06:01:31Z,,,0,,,0.6074,0.4285,0.441,6
+401816989,2026-09-18,4960696,David Sandlin,home,outs,Outs Recorded,outs_pg,normal,14.5,book,3 books,13.85,15.05,0.4423,under,low,2026-09-18T06:01:31Z,,,0,,,0.4447,0.4951,0.4916,6
+401816989,2026-09-18,4960696,David Sandlin,home,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,4.02,4.0,0.4035,under,med,2026-09-18T06:01:31Z,,,0,,,0.3734,0.4484,0.4432,6
+401816989,2026-09-18,5085893,Tristan Peters,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.75,0.77,0.508,over,low,2026-09-18T06:01:31Z,,,0,,,0.5812,0.5548,0.572,148
+401816989,2026-09-18,5085893,Tristan Peters,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.07,0.08,0.0962,under,high,2026-09-18T06:01:31Z,,,0,,,0.0638,0.0993,0.0763,148
+401816989,2026-09-18,5124113,Hao-Yu Lee,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.69,0.7,0.5162,over,low,2026-09-18T06:01:31Z,,,0,,,0.5463,0.6284,0.5818,105
+401816989,2026-09-18,5124113,Hao-Yu Lee,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.09,0.1227,under,high,2026-09-18T06:01:31Z,,,0,,,0.0831,0.1301,0.1035,105
+401816989,2026-09-18,5124113,Hao-Yu Lee,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.09,1.14,0.3156,under,high,2026-09-18T06:01:31Z,,,0,,,0.293,0.3839,0.3323,105
+401816989,2026-09-18,5136929,Chase Meidroth,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.95,1.0,0.5879,over,med,2026-09-18T06:01:31Z,,,0,,,0.6626,0.6696,0.6651,147
+401816989,2026-09-18,5136929,Chase Meidroth,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.1,0.1149,under,high,2026-09-18T06:01:31Z,,,0,,,0.0829,0.1179,0.0953,147
+401816989,2026-09-18,5136929,Chase Meidroth,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.27,1.48,0.3564,under,med,2026-09-18T06:01:31Z,,,0,,,0.3713,0.4069,0.3838,147
+401816989,2026-09-18,5140040,Andrew Sears,away,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,2.79,2.5,0.3932,over,low,2026-09-18T06:01:31Z,,,0,,,0.4829,0.4276,0.4302,4
+401816989,2026-09-18,5140040,Andrew Sears,away,outs,Outs Recorded,outs_pg,normal,14.5,book,Fanatics,13.48,12.15,0.4755,under,low,2026-09-18T06:01:31Z,,,0,,,0.4141,0.5385,0.5325,4
+401816989,2026-09-18,5148964,Max Clark,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.98,0.98,0.5645,over,low,2026-09-18T06:01:31Z,,,0,,,0.6768,0.6178,0.6384,43
+401816989,2026-09-18,5148964,Max Clark,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.07,0.1116,under,high,2026-09-18T06:01:31Z,,,0,,,0.0562,0.111,0.0918,43
+401816989,2026-09-18,5149072,Kevin McGonigle,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.06,1.06,0.6086,over,med,2026-09-18T06:01:31Z,,,0,,,0.7099,0.6478,0.6881,148
+401816989,2026-09-18,5149072,Kevin McGonigle,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.11,0.1307,under,high,2026-09-18T06:01:31Z,,,0,,,0.1021,0.1301,0.1119,148
+401816989,2026-09-18,5149072,Kevin McGonigle,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.47,1.64,0.3826,under,med,2026-09-18T06:01:31Z,,,0,,,0.4261,0.3998,0.4169,148
+401816989,2026-09-18,5207411,John Peck,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.6,0.62,0.4927,over,low,2026-09-18T06:01:31Z,,,0,,,0.4855,0.567,0.5534,16
+401816989,2026-09-18,5207411,John Peck,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.46,0.44,0.2757,under,high,2026-09-18T06:01:31Z,,,0,,,0.3657,0.2657,0.2824,16
+401816990,2026-09-18,32078,George Springer,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.87,0.93,0.5665,over,low,2026-09-18T06:01:31Z,,,0,,,0.6244,0.6648,0.6406,119
+401816990,2026-09-18,32078,George Springer,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.13,0.1417,under,high,2026-09-18T06:01:31Z,,,0,,,0.1014,0.1572,0.1239,119
+401816990,2026-09-18,32078,George Springer,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.4,0.45,0.3174,under,high,2026-09-18T06:01:31Z,,,0,,,0.329,0.3428,0.3346,119
+401816990,2026-09-18,32078,George Springer,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.26,1.53,0.3542,under,med,2026-09-18T06:01:31Z,,,0,,,0.3574,0.4159,0.381,119
+401816990,2026-09-18,32159,Brandon Nimmo,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.91,1.0,0.5461,over,low,2026-09-18T06:01:31Z,,,0,,,0.6453,0.5653,0.6171,147
+401816990,2026-09-18,32159,Brandon Nimmo,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.08,0.1,0.1241,under,high,2026-09-18T06:01:31Z,,,0,,,0.0799,0.1509,0.1049,147
+401816990,2026-09-18,32691,Corey Seager,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.81,0.87,0.53,over,low,2026-09-18T06:01:31Z,,,0,,,0.5963,0.6002,0.5981,93
+401816990,2026-09-18,32691,Corey Seager,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.15,0.19,0.1782,under,high,2026-09-18T06:01:31Z,,,0,,,0.141,0.1925,0.1648,93
+401816990,2026-09-18,33594,Elias Diaz,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.55,0.6,0.4412,over,low,2026-09-18T06:01:31Z,,,0,,,0.4557,0.5261,0.4903,83
+401816990,2026-09-18,34943,Dylan Cease,away,er,Earned Runs,p_er_pg,negbin,1.5,book,Fanatics,1.85,1.57,0.4705,over,low,2026-09-18T06:01:31Z,,,0,,,0.4922,0.5385,0.5265,28
+401816990,2026-09-18,34943,Dylan Cease,away,k,Strikeouts,p_so_pg,negbin,7.5,book,4 books,7.37,8.43,0.3912,under,med,2026-09-18T06:01:31Z,,,0,,,0.449,0.4202,0.4276,28
+401816990,2026-09-18,34943,Dylan Cease,away,outs,Outs Recorded,outs_pg,normal,17.5,book,4 books,17.49,17.8,0.4993,under,low,2026-09-18T06:01:31Z,,,0,,,0.4987,0.5835,0.5615,28
+401816990,2026-09-18,34943,Dylan Cease,away,p_hits,Hits Allowed,p_h_pg,negbin,3.5,book,Fanatics,4.25,3.75,0.4976,over,low,2026-09-18T06:01:31Z,,,0,,,0.582,0.5516,0.5595,28
+401816990,2026-09-18,35002,Vladimir Guerrero Jr.,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.91,0.99,0.5803,over,med,2026-09-18T06:01:31Z,,,0,,,0.6441,0.6776,0.6564,138
+401816990,2026-09-18,35002,Vladimir Guerrero Jr.,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.07,0.1178,under,high,2026-09-18T06:01:31Z,,,0,,,0.0511,0.1797,0.0983,138
+401816990,2026-09-18,35002,Vladimir Guerrero Jr.,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.14,1.36,0.346,under,med,2026-09-18T06:01:31Z,,,0,,,0.3323,0.4367,0.3706,138
+401816990,2026-09-18,35682,Nathan Lukes,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.84,0.9,0.5548,over,low,2026-09-18T06:01:31Z,,,0,,,0.6169,0.6424,0.6272,117
+401816990,2026-09-18,35682,Nathan Lukes,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.07,0.09,0.0946,under,high,2026-09-18T06:01:31Z,,,0,,,0.0643,0.0898,0.0747,117
+401816990,2026-09-18,35682,Nathan Lukes,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.08,1.27,0.3062,under,high,2026-09-18T06:01:31Z,,,0,,,0.2915,0.3629,0.3205,117
+401816990,2026-09-18,37729,Andres Gimenez,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.74,0.77,0.5124,over,low,2026-09-18T06:01:31Z,,,0,,,0.565,0.5987,0.5772,141
+401816990,2026-09-18,37729,Andres Gimenez,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.06,0.0842,under,high,2026-09-18T06:01:31Z,,,0,,,0.0502,0.0898,0.0645,141
+401816990,2026-09-18,38106,Nicky Lopez,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.58,0.65,0.4674,over,low,2026-09-18T06:01:31Z,,,0,,,0.4814,0.5694,0.5226,91
+401816990,2026-09-18,39882,Jake Burger,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.78,0.84,0.5014,over,low,2026-09-18T06:01:31Z,,,0,,,0.5814,0.5323,0.564,146
+401816990,2026-09-18,39882,Jake Burger,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.18,0.1558,under,high,2026-09-18T06:01:31Z,,,0,,,0.1332,0.1509,0.1395,146
+401816990,2026-09-18,41287,Ernie Clement,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.93,1.01,0.5685,over,low,2026-09-18T06:01:31Z,,,0,,,0.6524,0.6256,0.643,149
+401816990,2026-09-18,42081,Alejandro Kirk,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.9,0.99,0.5757,over,med,2026-09-18T06:01:31Z,,,0,,,0.644,0.6578,0.6512,72
+401816990,2026-09-18,42081,Alejandro Kirk,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.14,0.1294,under,high,2026-09-18T06:01:31Z,,,0,,,0.1102,0.111,0.1106,72
+401816990,2026-09-18,42081,Alejandro Kirk,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.24,1.5,0.342,under,med,2026-09-18T06:01:31Z,,,0,,,0.3315,0.3963,0.3656,72
+401816990,2026-09-18,42437,Josh Jung,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.03,1.15,0.5827,over,med,2026-09-18T06:01:31Z,,,0,,,0.6948,0.616,0.6592,97
+401816990,2026-09-18,42437,Josh Jung,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.1,0.1122,under,high,2026-09-18T06:01:31Z,,,0,,,0.0869,0.0993,0.0925,97
+401816990,2026-09-18,42457,Ezequiel Duran,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.87,0.94,0.5469,over,low,2026-09-18T06:01:31Z,,,0,,,0.6268,0.6022,0.618,144
+401816990,2026-09-18,42457,Ezequiel Duran,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.12,0.1128,under,high,2026-09-18T06:01:31Z,,,0,,,0.0949,0.0898,0.0931,144
+401816990,2026-09-18,42884,Josh Smith,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.54,0.59,0.4401,over,low,2026-09-18T06:01:31Z,,,0,,,0.4516,0.5221,0.4889,71
+401816990,2026-09-18,42884,Josh Smith,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.08,0.0966,under,high,2026-09-18T06:01:31Z,,,0,,,0.0618,0.0898,0.0767,71
+401816990,2026-09-18,4414525,Kumar Rocker,home,k,Strikeouts,p_so_pg,negbin,4.5,book,3 books,4.43,4.71,0.3831,under,med,2026-09-18T06:01:31Z,,,0,,,0.4431,0.4085,0.4175,28
+401816990,2026-09-18,4414525,Kumar Rocker,home,outs,Outs Recorded,outs_pg,normal,14.5,book,3 books,14.56,14.81,0.5125,over,low,2026-09-18T06:01:31Z,,,0,,,0.5048,0.6027,0.5773,28
+401816990,2026-09-18,4719324,Wyatt Langford,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.83,0.9,0.5149,over,low,2026-09-18T06:01:31Z,,,0,,,0.6074,0.5458,0.5802,101
+401816990,2026-09-18,4719324,Wyatt Langford,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.17,0.1455,under,high,2026-09-18T06:01:31Z,,,0,,,0.1265,0.1301,0.1281,101
+401816990,2026-09-18,4719324,Wyatt Langford,home,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,1.32,1.63,0.5163,over,low,2026-09-18T06:01:31Z,,,0,,,0.6114,0.5446,0.5819,101
+401816990,2026-09-18,4917921,Evan Carter,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.49,0.53,0.3988,under,med,2026-09-18T06:01:31Z,,,0,,,0.4177,0.4698,0.4373,133
+401816990,2026-09-18,4917921,Evan Carter,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.07,0.0861,under,high,2026-09-18T06:01:31Z,,,0,,,0.0522,0.0898,0.0663,133
+401816990,2026-09-18,5134494,Brett Bateman,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.11,1.35,0.6153,over,med,2026-09-18T06:01:31Z,,,0,,,0.7252,0.6829,0.6955,34
+401816990,2026-09-18,5134494,Brett Bateman,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.37,1.74,0.3834,under,med,2026-09-18T06:01:31Z,,,0,,,0.4484,0.4049,0.4179,34
+401816990,2026-09-18,5134636,Kazuma Okamoto,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.8,0.86,0.5294,over,low,2026-09-18T06:01:31Z,,,0,,,0.594,0.6037,0.5974,147
+401816990,2026-09-18,5134636,Kazuma Okamoto,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.18,0.22,0.1908,under,high,2026-09-18T06:01:31Z,,,0,,,0.1631,0.2096,0.1795,147
+401816990,2026-09-18,5134636,Kazuma Okamoto,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.38,1.69,0.3524,under,med,2026-09-18T06:01:31Z,,,0,,,0.3688,0.3968,0.3787,147
+401816991,2026-09-18,38827,Keibert Ruiz,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.95,0.92,0.5718,over,med,2026-09-18T06:01:31Z,,,0,,,0.6755,0.6116,0.6468,98
+401816991,2026-09-18,38827,Keibert Ruiz,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.1,0.1174,under,high,2026-09-18T06:01:31Z,,,0,,,0.0967,0.0993,0.0979,98
+401816991,2026-09-18,38827,Keibert Ruiz,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.37,1.47,0.3956,under,med,2026-09-18T06:01:31Z,,,0,,,0.4092,0.4627,0.4332,98
+401816991,2026-09-18,41174,Nolan Gorman,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.63,0.59,0.4428,over,low,2026-09-18T06:01:31Z,,,0,,,0.5007,0.4836,0.4922,81
+401816991,2026-09-18,41174,Nolan Gorman,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.11,0.1411,under,high,2026-09-18T06:01:31Z,,,0,,,0.1069,0.1398,0.1232,81
+401816991,2026-09-18,41174,Nolan Gorman,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.93,1.0,0.4443,over,low,2026-09-18T06:01:31Z,,,0,,,0.5106,0.4773,0.4941,81
+401816991,2026-09-18,41889,Ivan Herrera,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.97,0.91,0.5829,over,med,2026-09-18T06:01:31Z,,,0,,,0.6736,0.6324,0.6594,152
+401816991,2026-09-18,41889,Ivan Herrera,home,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.35,1.4,0.3472,under,med,2026-09-18T06:01:31Z,,,0,,,0.3828,0.352,0.3722,152
+401816991,2026-09-18,42402,CJ Abrams,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,1.04,1.01,0.594,over,med,2026-09-18T06:01:31Z,,,0,,,0.699,0.6234,0.6719,143
+401816991,2026-09-18,42402,CJ Abrams,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.19,0.21,0.1735,under,high,2026-09-18T06:01:31Z,,,0,,,0.1705,0.1398,0.1595,143
+401816991,2026-09-18,42402,CJ Abrams,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.64,0.67,0.3915,over,low,2026-09-18T06:01:31Z,,,0,,,0.4727,0.3484,0.4281,143
+401816991,2026-09-18,42402,CJ Abrams,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.7,1.89,0.4001,over,low,2026-09-18T06:01:31Z,,,0,,,0.4707,0.382,0.4389,143
+401816991,2026-09-18,4308037,Cade Cavalli,away,er,Earned Runs,p_er_pg,negbin,1.5,book,Fanatics,1.77,1.84,0.4728,over,low,2026-09-18T06:01:31Z,,,0,,,0.4717,0.5516,0.5293,31
+401816991,2026-09-18,4308037,Cade Cavalli,away,k,Strikeouts,p_so_pg,negbin,6.5,book,4 books,6.04,6.26,0.3931,under,med,2026-09-18T06:01:31Z,,,0,,,0.3977,0.4426,0.4301,31
+401816991,2026-09-18,4308037,Cade Cavalli,away,outs,Outs Recorded,outs_pg,normal,17.5,book,4 books,16.14,15.89,0.4333,under,low,2026-09-18T06:01:31Z,,,0,,,0.3863,0.5169,0.4804,31
+401816991,2026-09-18,4308037,Cade Cavalli,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,4.24,4.65,0.4289,under,med,2026-09-18T06:01:31Z,,,0,,,0.4102,0.5,0.4749,31
+401816991,2026-09-18,4345070,Alec Burleson,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.14,1.08,0.6306,over,med,2026-09-18T06:01:31Z,,,0,,,0.7381,0.6627,0.7121,152
+401816991,2026-09-18,4345070,Alec Burleson,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.15,0.1561,under,high,2026-09-18T06:01:31Z,,,0,,,0.134,0.1509,0.1398,152
+401816991,2026-09-18,4345070,Alec Burleson,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.68,1.79,0.4201,over,low,2026-09-18T06:01:31Z,,,0,,,0.4889,0.4165,0.464,152
+401816991,2026-09-18,4414210,Jacob Young,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.8,0.74,0.5249,over,low,2026-09-18T06:01:31Z,,,0,,,0.6038,0.5728,0.5922,133
+401816991,2026-09-18,4414210,Jacob Young,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.12,1.17,0.3034,under,high,2026-09-18T06:01:31Z,,,0,,,0.31,0.3286,0.317,133
+401816991,2026-09-18,4683365,Masyn Winn,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.9,0.83,0.5327,over,low,2026-09-18T06:01:31Z,,,0,,,0.6436,0.5331,0.6013,129
+401816991,2026-09-18,4684778,Jordan Walker,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.13,1.07,0.6132,over,med,2026-09-18T06:01:31Z,,,0,,,0.7358,0.6138,0.6932,149
+401816991,2026-09-18,4684778,Jordan Walker,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.17,0.19,0.1753,under,high,2026-09-18T06:01:31Z,,,0,,,0.1602,0.1641,0.1615,149
+401816991,2026-09-18,4684778,Jordan Walker,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.73,1.86,0.439,over,low,2026-09-18T06:01:31Z,,,0,,,0.49,0.483,0.4876,149
+401816991,2026-09-18,4719511,Dylan Crews,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.87,0.82,0.5336,over,low,2026-09-18T06:01:31Z,,,0,,,0.6261,0.5728,0.6024,100
+401816991,2026-09-18,4719511,Dylan Crews,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.11,0.1371,under,high,2026-09-18T06:01:31Z,,,0,,,0.1021,0.1398,0.1188,100
+401816991,2026-09-18,4719511,Dylan Crews,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.28,1.36,0.3291,under,high,2026-09-18T06:01:31Z,,,0,,,0.3621,0.3333,0.3493,100
+401816991,2026-09-18,4722676,Jorbit Vivas,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.63,0.61,0.4692,over,low,2026-09-18T06:01:31Z,,,0,,,0.5098,0.5463,0.5248,114
+401816991,2026-09-18,4722676,Jorbit Vivas,away,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,0.78,0.84,0.4741,over,low,2026-09-18T06:01:31Z,,,0,,,0.5238,0.5408,0.5308,114
+401816991,2026-09-18,4843048,Nathan Church,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.84,0.77,0.5348,over,low,2026-09-18T06:01:31Z,,,0,,,0.6266,0.5658,0.6038,133
+401816991,2026-09-18,4843048,Nathan Church,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.07,0.08,0.0951,under,high,2026-09-18T06:01:31Z,,,0,,,0.0663,0.0898,0.0752,133
+401816991,2026-09-18,4843048,Nathan Church,home,tb,Total Bases,tb_pg,negbin,0.5,book,2 books,1.04,1.13,0.5301,over,low,2026-09-18T06:01:31Z,,,0,,,0.6197,0.5627,0.5983,133
+401816991,2026-09-18,4872681,Brady House,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.87,0.82,0.5559,over,low,2026-09-18T06:01:31Z,,,0,,,0.6291,0.6278,0.6285,87
+401816991,2026-09-18,4872681,Brady House,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.11,0.1305,under,high,2026-09-18T06:01:31Z,,,0,,,0.1061,0.1179,0.1118,87
+401816991,2026-09-18,4872681,Brady House,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.27,1.34,0.3432,under,med,2026-09-18T06:01:31Z,,,0,,,0.3561,0.3791,0.3671,87
+401816991,2026-09-18,4917889,Daylen Lile,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.98,0.95,0.5926,over,med,2026-09-18T06:01:31Z,,,0,,,0.6765,0.6588,0.6704,151
+401816991,2026-09-18,4917889,Daylen Lile,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.13,0.14,0.1453,under,high,2026-09-18T06:01:31Z,,,0,,,0.1215,0.1398,0.1279,151
+401816991,2026-09-18,4917889,Daylen Lile,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.51,1.65,0.3882,over,low,2026-09-18T06:01:31Z,,,0,,,0.4249,0.4221,0.4239,151
+401816991,2026-09-18,4918256,James Wood,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.04,1.01,0.599,over,med,2026-09-18T06:01:31Z,,,0,,,0.6989,0.6436,0.6774,126
+401816991,2026-09-18,4918256,James Wood,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.21,0.24,0.1997,under,high,2026-09-18T06:01:31Z,,,0,,,0.1884,0.1925,0.19,126
+401816991,2026-09-18,4918256,James Wood,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.76,1.97,0.417,over,low,2026-09-18T06:01:31Z,,,0,,,0.486,0.4193,0.4601,126
+401816991,2026-09-18,4920835,Joshua Baez,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.83,0.79,0.5195,over,low,2026-09-18T06:01:31Z,,,0,,,0.6102,0.5768,0.5857,29
+401816991,2026-09-18,4920835,Joshua Baez,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.18,0.24,0.169,under,high,2026-09-18T06:01:31Z,,,0,,,0.1636,0.1509,0.1543,29
+401816991,2026-09-18,4920835,Joshua Baez,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.46,1.76,0.3968,under,med,2026-09-18T06:01:31Z,,,0,,,0.4279,0.4371,0.4347,29
+401816991,2026-09-18,4941056,JJ Wetherholt,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.0,0.93,0.577,over,med,2026-09-18T06:01:31Z,,,0,,,0.6823,0.6043,0.6527,131
+401816991,2026-09-18,4941056,JJ Wetherholt,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.13,0.13,0.1365,under,high,2026-09-18T06:01:31Z,,,0,,,0.1184,0.1179,0.1182,131
+401816991,2026-09-18,4941056,JJ Wetherholt,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,1.37,1.43,0.5784,over,med,2026-09-18T06:01:31Z,,,0,,,0.6879,0.5993,0.6543,131
+401816991,2026-09-18,5006093,Kyle Leahy,home,k,Strikeouts,p_so_pg,negbin,2.5,book,5 books,4.24,4.57,0.5534,over,low,2026-09-18T06:01:31Z,,,0,,,0.7554,0.5801,0.6256,28
+401816991,2026-09-18,5006093,Kyle Leahy,home,outs,Outs Recorded,outs_pg,normal,8.5,book,3 books,14.0,14.46,0.6349,over,med,2026-09-18T06:01:31Z,,,0,,,0.8796,0.6597,0.7167,28
+401816991,2026-09-18,5194635,Abimelec Ortiz,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.62,0.62,0.4667,over,low,2026-09-18T06:01:31Z,,,0,,,0.4994,0.5326,0.5217,39
+401816991,2026-09-18,5194635,Abimelec Ortiz,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.13,0.13,0.1437,under,high,2026-09-18T06:01:31Z,,,0,,,0.1176,0.1301,0.126,39
+401816991,2026-09-18,5194635,Abimelec Ortiz,away,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.96,1.13,0.4634,over,low,2026-09-18T06:01:31Z,,,0,,,0.5162,0.5185,0.5178,39
+401816993,2026-09-18,31097,Manny Machado,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.94,0.82,0.5818,over,med,2026-09-18T06:01:31Z,,,0,,,0.6603,0.6543,0.6582,149
+401816993,2026-09-18,31097,Manny Machado,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.19,0.19,0.185,under,high,2026-09-18T06:01:31Z,,,0,,,0.1689,0.1797,0.1727,149
+401816993,2026-09-18,31097,Manny Machado,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.54,1.53,0.378,over,low,2026-09-18T06:01:31Z,,,0,,,0.4093,0.4143,0.4111,149
+401816993,2026-09-18,31606,Xander Bogaerts,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.9,0.77,0.5675,over,low,2026-09-18T06:01:31Z,,,0,,,0.6437,0.6384,0.6418,146
+401816993,2026-09-18,31606,Xander Bogaerts,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.08,0.08,0.1083,under,high,2026-09-18T06:01:31Z,,,0,,,0.0761,0.111,0.0885,146
+401816993,2026-09-18,31606,Xander Bogaerts,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.21,1.15,0.3541,under,med,2026-09-18T06:01:31Z,,,0,,,0.3264,0.4801,0.3808,146
+401816993,2026-09-18,35591,Ty France,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.1,0.98,0.6291,over,med,2026-09-18T06:01:31Z,,,0,,,0.7343,0.6736,0.7105,124
+401816993,2026-09-18,35591,Ty France,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.16,0.16,0.1649,under,high,2026-09-18T06:01:31Z,,,0,,,0.1488,0.1509,0.1497,124
+401816993,2026-09-18,35591,Ty France,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.67,1.68,0.4135,over,low,2026-09-18T06:01:31Z,,,0,,,0.4735,0.428,0.4557,124
+401816993,2026-09-18,35983,Fernando Tatis Jr.,home,hits,Hits,hits_pg,binomial,1.5,book,2 books,1.25,1.13,0.3411,under,med,2026-09-18T06:01:31Z,,,0,,,0.3712,0.3516,0.3644,151
+401816993,2026-09-18,35983,Fernando Tatis Jr.,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.15,0.15,0.1725,under,high,2026-09-18T06:01:31Z,,,0,,,0.1422,0.1887,0.1583,151
+401816993,2026-09-18,35983,Fernando Tatis Jr.,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.8,1.82,0.4542,over,low,2026-09-18T06:01:31Z,,,0,,,0.5205,0.4797,0.5064,151
+401816993,2026-09-18,36071,Nick Pivetta,home,er,Earned Runs,p_er_pg,negbin,1.5,book,Fanatics,2.12,1.67,0.4522,over,low,2026-09-18T06:01:31Z,,,0,,,0.5551,0.5,0.5038,6
+401816993,2026-09-18,36071,Nick Pivetta,home,k,Strikeouts,p_so_pg,negbin,5.5,book,4 books,5.65,5.17,0.3897,over,low,2026-09-18T06:01:31Z,,,0,,,0.482,0.4216,0.4258,6
+401816993,2026-09-18,36071,Nick Pivetta,home,outs,Outs Recorded,outs_pg,normal,15.5,book,3 books,13.53,12.5,0.3638,under,med,2026-09-18T06:01:31Z,,,0,,,0.337,0.3973,0.3931,6
+401816993,2026-09-18,36071,Nick Pivetta,home,p_hits,Hits Allowed,p_h_pg,negbin,3.5,book,Fanatics,4.48,3.17,0.4775,over,low,2026-09-18T06:01:31Z,,,0,,,0.6199,0.5287,0.535,6
+401816993,2026-09-18,36364,Jake Cronenworth,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.89,0.76,0.5294,over,low,2026-09-18T06:01:31Z,,,0,,,0.6401,0.544,0.5974,100
+401816993,2026-09-18,36364,Jake Cronenworth,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.05,0.0871,under,high,2026-09-18T06:01:31Z,,,0,,,0.0494,0.0898,0.0674,100
+401816993,2026-09-18,36364,Jake Cronenworth,home,tb,Total Bases,tb_pg,negbin,0.5,book,2 books,1.02,1.04,0.5196,over,low,2026-09-18T06:01:31Z,,,0,,,0.6328,0.527,0.5858,100
+401816993,2026-09-18,39680,Esteury Ruiz,away,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.38,0.42,0.3847,under,med,2026-09-18T06:01:31Z,,,0,,,0.3434,0.5164,0.4195,102
+401816993,2026-09-18,39710,Samad Taylor,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.14,1.05,0.5548,over,low,2026-09-18T06:01:31Z,,,0,,,0.7493,0.5676,0.6272,39
+401816993,2026-09-18,39710,Samad Taylor,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,1.39,1.31,0.5654,over,low,2026-09-18T06:01:31Z,,,0,,,0.7761,0.5728,0.6394,39
+401816993,2026-09-18,40521,Luis Campusano,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.94,0.81,0.5572,over,low,2026-09-18T06:01:31Z,,,0,,,0.6777,0.5899,0.63,67
+401816993,2026-09-18,40521,Luis Campusano,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.13,0.12,0.137,under,high,2026-09-18T06:01:31Z,,,0,,,0.1197,0.1179,0.1187,67
+401816993,2026-09-18,40521,Luis Campusano,home,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.4,1.34,0.3448,under,med,2026-09-18T06:01:31Z,,,0,,,0.3894,0.352,0.3691,67
+401816993,2026-09-18,41247,Tyler Phillips,away,k,Strikeouts,p_so_pg,negbin,3.5,book,5 books,3.08,2.74,0.3915,under,med,2026-09-18T06:01:31Z,,,0,,,0.3681,0.4542,0.428,35
+401816993,2026-09-18,41247,Tyler Phillips,away,outs,Outs Recorded,outs_pg,normal,14.5,book,3 books,11.22,10.2,0.3669,under,med,2026-09-18T06:01:31Z,,,0,,,0.2425,0.4646,0.397,35
+401816993,2026-09-18,41295,Griffin Conine,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.68,0.76,0.476,over,low,2026-09-18T06:01:31Z,,,0,,,0.5372,0.5288,0.5332,85
+401816993,2026-09-18,41295,Griffin Conine,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.19,0.1614,under,high,2026-09-18T06:01:31Z,,,0,,,0.1285,0.1641,0.1457,85
+401816993,2026-09-18,41295,Griffin Conine,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.37,0.45,0.3011,under,high,2026-09-18T06:01:31Z,,,0,,,0.3095,0.3188,0.314,85
+401816993,2026-09-18,41295,Griffin Conine,away,tb,Total Bases,tb_pg,negbin,0.5,book,2 books,1.1,1.42,0.4615,over,low,2026-09-18T06:01:31Z,,,0,,,0.5257,0.5043,0.5153,85
+401816993,2026-09-18,41326,Xavier Edwards,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.87,1.03,0.5355,over,low,2026-09-18T06:01:31Z,,,0,,,0.6261,0.567,0.6046,140
+401816993,2026-09-18,41326,Xavier Edwards,away,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,1.05,1.36,0.5377,over,low,2026-09-18T06:01:31Z,,,0,,,0.6382,0.553,0.6072,140
+401816993,2026-09-18,41917,Otto Lopez,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.02,1.22,0.5997,over,med,2026-09-18T06:01:31Z,,,0,,,0.69,0.6565,0.6783,149
+401816993,2026-09-18,41917,Otto Lopez,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.31,1.75,0.3687,under,med,2026-09-18T06:01:31Z,,,0,,,0.4003,0.3973,0.3993,149
+401816993,2026-09-18,42455,Heriberto Hernandez,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.69,0.79,0.4927,over,low,2026-09-18T06:01:31Z,,,0,,,0.5371,0.5783,0.5535,121
+401816993,2026-09-18,42455,Heriberto Hernandez,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.15,0.2,0.1752,under,high,2026-09-18T06:01:31Z,,,0,,,0.1355,0.2007,0.1614,121
+401816993,2026-09-18,42455,Heriberto Hernandez,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.17,1.54,0.3158,under,high,2026-09-18T06:01:31Z,,,0,,,0.3057,0.3731,0.3325,121
+401816993,2026-09-18,42796,Kyle Stowers,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.76,0.89,0.5159,over,low,2026-09-18T06:01:31Z,,,0,,,0.5722,0.5947,0.5814,115
+401816993,2026-09-18,42796,Kyle Stowers,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.17,0.1693,under,high,2026-09-18T06:01:31Z,,,0,,,0.1165,0.2096,0.1547,115
+401816993,2026-09-18,42796,Kyle Stowers,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.26,1.68,0.3461,under,med,2026-09-18T06:01:31Z,,,0,,,0.363,0.382,0.3708,115
+401816993,2026-09-18,4866735,Jakob Marsee,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.66,0.76,0.4684,over,low,2026-09-18T06:01:31Z,,,0,,,0.5202,0.5306,0.5239,147
+401816993,2026-09-18,4866735,Jakob Marsee,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.07,0.0859,under,high,2026-09-18T06:01:31Z,,,0,,,0.0533,0.0898,0.0662,147
+401816993,2026-09-18,4866735,Jakob Marsee,away,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.94,1.19,0.4564,over,low,2026-09-18T06:01:31Z,,,0,,,0.5157,0.4969,0.5091,147
+401816993,2026-09-18,4872691,Jackson Merrill,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.12,0.99,0.6263,over,med,2026-09-18T06:01:31Z,,,0,,,0.731,0.6635,0.7075,150
+401816993,2026-09-18,4872691,Jackson Merrill,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.17,0.17,0.176,under,high,2026-09-18T06:01:31Z,,,0,,,0.1531,0.1797,0.1623,150
+401816993,2026-09-18,4872691,Jackson Merrill,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.72,1.73,0.4185,over,low,2026-09-18T06:01:31Z,,,0,,,0.4755,0.4367,0.462,150
+401816993,2026-09-18,4872695,Joe Mack,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.56,0.68,0.4242,over,low,2026-09-18T06:01:31Z,,,0,,,0.4632,0.4764,0.4691,99
+401816993,2026-09-18,4872695,Joe Mack,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.13,0.1176,under,high,2026-09-18T06:01:31Z,,,0,,,0.0971,0.0993,0.0981,99
+401816993,2026-09-18,4872695,Joe Mack,away,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.93,1.16,0.4194,over,low,2026-09-18T06:01:31Z,,,0,,,0.479,0.4435,0.4631,99
+401816993,2026-09-18,4917924,Dustin Harris,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.98,0.83,0.575,over,med,2026-09-18T06:01:31Z,,,0,,,0.6976,0.6291,0.6504,36
+401816993,2026-09-18,4917924,Dustin Harris,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.01,1.08,0.3379,under,high,2026-09-18T06:01:31Z,,,0,,,0.3281,0.375,0.3605,36
+401816993,2026-09-18,5073992,Javier Sanoja,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.79,0.92,0.5359,over,low,2026-09-18T06:01:31Z,,,0,,,0.5934,0.6247,0.6051,135
+401816993,2026-09-18,5073992,Javier Sanoja,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.09,1.41,0.3544,under,med,2026-09-18T06:01:31Z,,,0,,,0.3244,0.4772,0.3813,135
+401816993,2026-09-18,5124004,Ethan Salas,home,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.55,0.33,0.4845,over,low,2026-09-18T06:01:31Z,,,0,,,0.4618,0.5527,0.5435,9
+401816993,2026-09-18,5124004,Ethan Salas,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,1.44,1.22,0.4657,over,low,2026-09-18T06:01:31Z,,,0,,,0.3408,0.5408,0.5206,9
+401816993,2026-09-18,5132014,Agustin Ramirez,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.56,0.68,0.4348,over,low,2026-09-18T06:01:31Z,,,0,,,0.4585,0.501,0.4823,63
+401816994,2026-09-18,29951,Travis d'Arnaud,home,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.43,0.4,0.4253,under,med,2026-09-18T06:01:31Z,,,0,,,0.3753,0.5061,0.4704,30
+401816994,2026-09-18,30836,Mike Trout,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.82,0.87,0.5434,over,low,2026-09-18T06:01:31Z,,,0,,,0.601,0.6354,0.6139,133
+401816994,2026-09-18,30836,Mike Trout,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.13,0.16,0.1636,under,high,2026-09-18T06:01:31Z,,,0,,,0.1216,0.1925,0.1482,133
+401816994,2026-09-18,30836,Mike Trout,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.27,1.53,0.3481,under,med,2026-09-18T06:01:31Z,,,0,,,0.352,0.4085,0.3732,133
+401816994,2026-09-18,32517,Josh Bell,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.78,0.93,0.5381,over,low,2026-09-18T06:01:31Z,,,0,,,0.5827,0.6529,0.6077,145
+401816994,2026-09-18,32517,Josh Bell,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.14,0.1321,under,high,2026-09-18T06:01:31Z,,,0,,,0.099,0.1398,0.1135,145
+401816994,2026-09-18,32517,Josh Bell,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.16,1.55,0.3351,under,high,2026-09-18T06:01:31Z,,,0,,,0.3258,0.4133,0.3569,145
+401816994,2026-09-18,33954,Jose Siri,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.45,0.47,0.4275,under,med,2026-09-18T06:01:31Z,,,0,,,0.3979,0.5653,0.4732,98
+401816994,2026-09-18,33954,Jose Siri,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.08,0.1209,under,high,2026-09-18T06:01:31Z,,,0,,,0.0613,0.1509,0.1016,98
+401816994,2026-09-18,33954,Jose Siri,home,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,0.68,0.82,0.2482,under,high,2026-09-18T06:01:31Z,,,0,,,0.1829,0.3286,0.2484,98
+401816994,2026-09-18,40635,Royce Lewis,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.71,0.84,0.5111,over,low,2026-09-18T06:01:31Z,,,0,,,0.5459,0.6189,0.5757,116
+401816994,2026-09-18,40635,Royce Lewis,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.12,0.1354,under,high,2026-09-18T06:01:31Z,,,0,,,0.0892,0.1572,0.117,116
+401816994,2026-09-18,40635,Royce Lewis,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.07,1.41,0.3201,under,high,2026-09-18T06:01:31Z,,,0,,,0.3024,0.3896,0.338,116
+401816994,2026-09-18,41196,Grayson Rodriguez,home,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,3.42,3.28,0.4512,over,low,2026-09-18T06:01:31Z,,,0,,,0.5989,0.481,0.5026,18
+401816994,2026-09-18,41196,Grayson Rodriguez,home,k,Strikeouts,p_so_pg,negbin,4.5,book,4 books,4.17,4.39,0.4271,under,med,2026-09-18T06:01:31Z,,,0,,,0.3997,0.4892,0.4727,18
+401816994,2026-09-18,41196,Grayson Rodriguez,home,outs,Outs Recorded,outs_pg,normal,16.5,book,4 books,14.29,14.5,0.435,under,low,2026-09-18T06:01:31Z,,,0,,,0.3188,0.5194,0.4826,18
+401816994,2026-09-18,41311,Kody Clemens,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.75,0.89,0.5307,over,low,2026-09-18T06:01:31Z,,,0,,,0.5662,0.6541,0.5989,135
+401816994,2026-09-18,41311,Kody Clemens,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.19,0.1671,under,high,2026-09-18T06:01:31Z,,,0,,,0.1306,0.1887,0.1522,135
+401816994,2026-09-18,41311,Kody Clemens,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.28,1.73,0.3561,under,med,2026-09-18T06:01:31Z,,,0,,,0.3492,0.441,0.3833,135
+401816994,2026-09-18,41587,Ryan Jeffers,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.76,0.89,0.5451,over,low,2026-09-18T06:01:31Z,,,0,,,0.5712,0.6635,0.6159,85
+401816994,2026-09-18,41587,Ryan Jeffers,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.16,0.149,under,high,2026-09-18T06:01:31Z,,,0,,,0.114,0.1509,0.1319,85
+401816994,2026-09-18,41587,Ryan Jeffers,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.22,1.65,0.3576,under,med,2026-09-18T06:01:31Z,,,0,,,0.3474,0.4256,0.3853,85
+401816994,2026-09-18,42479,Oswald Peraza,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.57,0.62,0.4546,over,low,2026-09-18T06:01:31Z,,,0,,,0.4698,0.5611,0.5069,117
+401816994,2026-09-18,42503,Vaughn Grissom,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.8,0.84,0.5478,over,low,2026-09-18T06:01:31Z,,,0,,,0.591,0.6572,0.619,109
+401816994,2026-09-18,42503,Vaughn Grissom,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.1,0.116,under,high,2026-09-18T06:01:31Z,,,0,,,0.0858,0.111,0.0964,109
+401816994,2026-09-18,42503,Vaughn Grissom,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.14,1.35,0.3294,under,high,2026-09-18T06:01:31Z,,,0,,,0.3249,0.3834,0.3497,109
+401816994,2026-09-18,42701,Ryan Kreidler,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.44,0.51,0.4317,under,low,2026-09-18T06:01:31Z,,,0,,,0.3797,0.5993,0.4784,98
+401816994,2026-09-18,42701,Ryan Kreidler,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.07,0.0971,under,high,2026-09-18T06:01:31Z,,,0,,,0.0496,0.111,0.0772,98
+401816994,2026-09-18,42701,Ryan Kreidler,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,0.66,0.88,0.247,under,high,2026-09-18T06:01:31Z,,,0,,,0.1764,0.3333,0.2469,98
+401816994,2026-09-18,4620001,Connor Prielipp,away,k,Strikeouts,p_so_pg,negbin,5.5,book,3 books,5.76,5.32,0.4581,over,low,2026-09-18T06:01:31Z,,,0,,,0.4988,0.5146,0.5112,22
+401816994,2026-09-18,4620001,Connor Prielipp,away,outs,Outs Recorded,outs_pg,normal,14.5,book,3 books,15.21,15.42,0.5224,over,low,2026-09-18T06:01:31Z,,,0,,,0.56,0.5972,0.5892,22
+401816994,2026-09-18,4620001,Connor Prielipp,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,5.58,5.09,0.4763,over,low,2026-09-18T06:01:31Z,,,0,,,0.6208,0.5095,0.5335,22
+401816994,2026-09-18,4629081,Brooks Lee,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.77,0.92,0.5403,over,low,2026-09-18T06:01:31Z,,,0,,,0.5773,0.6706,0.6103,146
+401816994,2026-09-18,4629081,Brooks Lee,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.16,0.1318,under,high,2026-09-18T06:01:31Z,,,0,,,0.1105,0.1179,0.1132,146
+401816994,2026-09-18,4629081,Brooks Lee,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.18,1.59,0.3342,under,high,2026-09-18T06:01:31Z,,,0,,,0.322,0.4172,0.3557,146
+401816994,2026-09-18,4666100,Zach Neto,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.89,0.97,0.5627,over,low,2026-09-18T06:01:31Z,,,0,,,0.6364,0.6362,0.6363,147
+401816994,2026-09-18,4666100,Zach Neto,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.18,0.1602,under,high,2026-09-18T06:01:31Z,,,0,,,0.1337,0.1641,0.1444,147
+401816994,2026-09-18,4666100,Zach Neto,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.43,1.76,0.3692,under,med,2026-09-18T06:01:31Z,,,0,,,0.4,0.3997,0.3999,147
+401816994,2026-09-18,4917822,Denzer Guzman,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.72,0.74,0.5131,over,low,2026-09-18T06:01:31Z,,,0,,,0.5566,0.5988,0.5781,77
+401816994,2026-09-18,4917822,Denzer Guzman,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.09,0.1162,under,high,2026-09-18T06:01:31Z,,,0,,,0.0816,0.111,0.0966,77
+401816994,2026-09-18,4917822,Denzer Guzman,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,0.89,1.13,0.3352,under,high,2026-09-18T06:01:31Z,,,0,,,0.2512,0.4587,0.357,77
+401816994,2026-09-18,4927523,Christian Moore,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.53,0.59,0.4971,over,low,2026-09-18T06:01:31Z,,,0,,,0.4362,0.6033,0.5588,29
+401816994,2026-09-18,4927523,Christian Moore,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,0.71,0.86,0.3649,under,med,2026-09-18T06:01:31Z,,,0,,,0.1971,0.466,0.3945,29
+401816994,2026-09-18,4977664,Luke Keaschall,away,hits,Hits,hits_pg,binomial,1.5,book,2 books,0.81,0.97,0.2342,under,high,2026-09-18T06:01:31Z,,,0,,,0.1824,0.3187,0.2313,143
+401816994,2026-09-18,4977664,Luke Keaschall,away,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.25,0.31,0.2496,under,high,2026-09-18T06:01:31Z,,,0,,,0.2178,0.3077,0.25,143
+401816994,2026-09-18,4977664,Luke Keaschall,away,tb,Total Bases,tb_pg,negbin,1.5,book,5 books,1.02,1.34,0.3248,under,high,2026-09-18T06:01:31Z,,,0,,,0.2928,0.4354,0.3439,143
+401816994,2026-09-18,5017049,Emmanuel Rodriguez,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.79,1.0,0.5244,over,low,2026-09-18T06:01:31Z,,,0,,,0.5831,0.592,0.5915,5
+401816994,2026-09-18,5017049,Emmanuel Rodriguez,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.2,0.1465,under,high,2026-09-18T06:01:31Z,,,0,,,0.1127,0.1301,0.1291,5
+401816994,2026-09-18,5017049,Emmanuel Rodriguez,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.24,2.2,0.4161,under,med,2026-09-18T06:01:31Z,,,0,,,0.4501,0.4595,0.459,5
+401816994,2026-09-18,5148963,Walker Jenkins,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.35,0.25,0.4697,under,low,2026-09-18T06:01:31Z,,,0,,,0.3124,0.568,0.5254,16
+401816995,2026-09-18,31027,Paul Goldschmidt,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.78,0.83,0.5474,over,low,2026-09-18T06:01:31Z,,,0,,,0.5866,0.6588,0.6185,101
+401816995,2026-09-18,31027,Paul Goldschmidt,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.18,0.1569,under,high,2026-09-18T06:01:31Z,,,0,,,0.1325,0.1509,0.1406,101
+401816995,2026-09-18,31027,Paul Goldschmidt,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.24,1.5,0.3421,under,med,2026-09-18T06:01:31Z,,,0,,,0.3215,0.4215,0.3657,101
+401816995,2026-09-18,31261,Nolan Arenado,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.78,0.85,0.5206,over,low,2026-09-18T06:01:31Z,,,0,,,0.5823,0.5952,0.5869,143
+401816995,2026-09-18,31261,Nolan Arenado,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.14,0.18,0.1527,under,high,2026-09-18T06:01:31Z,,,0,,,0.1339,0.1398,0.136,143
+401816995,2026-09-18,31261,Nolan Arenado,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.26,1.57,0.3529,under,med,2026-09-18T06:01:31Z,,,0,,,0.3409,0.4481,0.3794,143
+401816995,2026-09-18,32081,Gerrit Cole,away,k,Strikeouts,p_so_pg,negbin,4.5,book,4 books,5.76,5.85,0.5016,over,low,2026-09-18T06:01:31Z,,,0,,,0.6486,0.5432,0.5643,20
+401816995,2026-09-18,32081,Gerrit Cole,away,outs,Outs Recorded,outs_pg,normal,15.5,book,2 books,16.89,17.27,0.485,over,low,2026-09-18T06:01:31Z,,,0,,,0.6163,0.5261,0.5442,20
+401816995,2026-09-18,32081,Gerrit Cole,away,p_hits,Hits Allowed,p_h_pg,negbin,4.5,book,Fanatics,5.87,5.4,0.4751,over,low,2026-09-18T06:01:31Z,,,0,,,0.6606,0.5,0.5321,20
+401816995,2026-09-18,32512,Ketel Marte,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.9,1.0,0.5694,over,low,2026-09-18T06:01:31Z,,,0,,,0.6396,0.6515,0.6441,132
+401816995,2026-09-18,32512,Ketel Marte,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.13,0.17,0.161,under,high,2026-09-18T06:01:31Z,,,0,,,0.1245,0.1797,0.1453,132
+401816995,2026-09-18,32512,Ketel Marte,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.4,1.77,0.377,under,med,2026-09-18T06:01:31Z,,,0,,,0.3992,0.4272,0.4098,132
+401816995,2026-09-18,32675,Eduardo Rodriguez,home,er,Earned Runs,p_er_pg,negbin,2.5,book,Fanatics,1.9,1.73,0.4158,under,med,2026-09-18T06:01:31Z,,,0,,,0.2974,0.519,0.4586,30
+401816995,2026-09-18,32675,Eduardo Rodriguez,home,k,Strikeouts,p_so_pg,negbin,4.5,book,5 books,4.28,4.5,0.4641,under,low,2026-09-18T06:01:31Z,,,0,,,0.4177,0.5565,0.5186,30
+401816995,2026-09-18,32675,Eduardo Rodriguez,home,outs,Outs Recorded,outs_pg,normal,17.5,book,4 books,17.51,17.81,0.4503,over,low,2026-09-18T06:01:31Z,,,0,,,0.5006,0.502,0.5016,30
+401816995,2026-09-18,33192,Aaron Judge,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.74,0.86,0.5398,over,low,2026-09-18T06:01:31Z,,,0,,,0.5623,0.6489,0.6098,66
+401816995,2026-09-18,33192,Aaron Judge,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.18,0.27,0.2297,under,high,2026-09-18T06:01:31Z,,,0,,,0.168,0.2734,0.2258,66
+401816995,2026-09-18,33192,Aaron Judge,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.33,1.83,0.3794,under,med,2026-09-18T06:01:31Z,,,0,,,0.3556,0.46,0.4128,66
+401816995,2026-09-18,33215,Amed Rosario,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.55,0.6,0.4776,over,low,2026-09-18T06:01:31Z,,,0,,,0.4553,0.618,0.5352,83
+401816995,2026-09-18,33215,Amed Rosario,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.12,0.1182,under,high,2026-09-18T06:01:31Z,,,0,,,0.0982,0.0993,0.0987,83
+401816995,2026-09-18,33215,Amed Rosario,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,0.84,1.06,0.2797,under,high,2026-09-18T06:01:31Z,,,0,,,0.2169,0.3602,0.2873,83
+401816995,2026-09-18,33912,Cody Bellinger,away,hits,Hits,hits_pg,binomial,1.5,book,2 books,0.94,1.03,0.2662,under,high,2026-09-18T06:01:31Z,,,0,,,0.2353,0.3256,0.2705,125
+401816995,2026-09-18,33912,Cody Bellinger,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.13,0.135,under,high,2026-09-18T06:01:31Z,,,0,,,0.1017,0.1398,0.1166,125
+401816995,2026-09-18,33912,Cody Bellinger,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.35,1.66,0.3799,under,med,2026-09-18T06:01:31Z,,,0,,,0.3892,0.4514,0.4135,125
+401816995,2026-09-18,39642,Heliot Ramos,away,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.81,0.87,0.552,over,low,2026-09-18T06:01:31Z,,,0,,,0.5987,0.6564,0.6239,103
+401816995,2026-09-18,39957,Jesus Sanchez,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.62,0.7,0.4648,over,low,2026-09-18T06:01:31Z,,,0,,,0.5003,0.5435,0.5194,101
+401816995,2026-09-18,39957,Jesus Sanchez,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.08,0.1141,under,high,2026-09-18T06:01:31Z,,,0,,,0.0585,0.1398,0.0944,101
+401816995,2026-09-18,39957,Jesus Sanchez,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.87,1.12,0.4733,over,low,2026-09-18T06:01:31Z,,,0,,,0.5211,0.5408,0.5298,101
+401816995,2026-09-18,40767,Pavin Smith,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.46,0.47,0.4291,under,med,2026-09-18T06:01:31Z,,,0,,,0.3905,0.5092,0.4753,32
+401816995,2026-09-18,40767,Pavin Smith,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.22,0.25,0.2318,under,high,2026-09-18T06:01:31Z,,,0,,,0.1968,0.241,0.2284,32
+401816995,2026-09-18,40767,Pavin Smith,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.63,0.72,0.4181,over,low,2026-09-18T06:01:31Z,,,0,,,0.3729,0.4969,0.4615,32
+401816995,2026-09-18,41355,Geraldo Perdomo,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.82,0.9,0.5347,over,low,2026-09-18T06:01:31Z,,,0,,,0.6029,0.6052,0.6037,148
+401816995,2026-09-18,41355,Geraldo Perdomo,home,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.07,1.29,0.3307,under,high,2026-09-18T06:01:31Z,,,0,,,0.2958,0.4538,0.3513,148
+401816995,2026-09-18,42404,Corbin Carroll,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.81,0.89,0.5383,over,low,2026-09-18T06:01:31Z,,,0,,,0.5984,0.6253,0.6079,147
+401816995,2026-09-18,42404,Corbin Carroll,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.14,0.1541,under,high,2026-09-18T06:01:31Z,,,0,,,0.1097,0.1887,0.1375,147
+401816995,2026-09-18,42404,Corbin Carroll,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.39,1.74,0.3763,under,med,2026-09-18T06:01:31Z,,,0,,,0.3993,0.4266,0.4089,147
+401816995,2026-09-18,42464,Gabriel Moreno,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.99,1.11,0.5932,over,med,2026-09-18T06:01:31Z,,,0,,,0.6813,0.6552,0.671,122
+401816995,2026-09-18,42464,Gabriel Moreno,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.12,0.1221,under,high,2026-09-18T06:01:31Z,,,0,,,0.0974,0.111,0.1028,122
+401816995,2026-09-18,42464,Gabriel Moreno,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.4,1.76,0.3769,under,med,2026-09-18T06:01:31Z,,,0,,,0.422,0.3909,0.4097,122
+401816995,2026-09-18,42547,Anthony Volpe,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.75,0.78,0.5201,over,low,2026-09-18T06:01:31Z,,,0,,,0.5745,0.5957,0.5863,63
+401816995,2026-09-18,42547,Anthony Volpe,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,0.84,1.08,0.3432,under,med,2026-09-18T06:01:31Z,,,0,,,0.2652,0.4473,0.3671,63
+401816995,2026-09-18,4448736,Lars Nootbaar,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.71,0.74,0.5184,over,low,2026-09-18T06:01:31Z,,,0,,,0.5506,0.6191,0.5844,82
+401816995,2026-09-18,4448736,Lars Nootbaar,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.09,0.1278,under,high,2026-09-18T06:01:31Z,,,0,,,0.0616,0.1572,0.1089,82
+401816995,2026-09-18,4448736,Lars Nootbaar,home,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.01,1.18,0.3121,under,high,2026-09-18T06:01:31Z,,,0,,,0.2719,0.3853,0.3279,82
+401816995,2026-09-18,4683349,Austin Wells,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.46,0.49,0.4172,under,med,2026-09-18T06:01:31Z,,,0,,,0.3947,0.5553,0.4603,116
+401816995,2026-09-18,4683349,Austin Wells,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.1,0.1271,under,high,2026-09-18T06:01:31Z,,,0,,,0.0863,0.1398,0.1081,116
+401816995,2026-09-18,4683349,Austin Wells,away,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.71,0.86,0.4188,over,low,2026-09-18T06:01:31Z,,,0,,,0.3931,0.5627,0.4623,116
+401816995,2026-09-18,4867424,Spencer Jones,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.72,0.75,0.529,over,low,2026-09-18T06:01:31Z,,,0,,,0.5613,0.6321,0.5969,79
+401816995,2026-09-18,4867424,Spencer Jones,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.13,0.1346,under,high,2026-09-18T06:01:31Z,,,0,,,0.1019,0.1301,0.1161,79
+401816995,2026-09-18,4867424,Spencer Jones,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.11,1.3,0.3246,under,high,2026-09-18T06:01:31Z,,,0,,,0.2957,0.3909,0.3436,79
+401816995,2026-09-18,4872649,Jordan Lawlar,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.74,0.76,0.4959,over,low,2026-09-18T06:01:31Z,,,0,,,0.5726,0.5503,0.5573,37
+401816995,2026-09-18,4872649,Jordan Lawlar,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.14,0.1211,under,high,2026-09-18T06:01:31Z,,,0,,,0.1072,0.0993,0.1018,37
+401816995,2026-09-18,4872649,Jordan Lawlar,home,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.1,1.27,0.2895,under,high,2026-09-18T06:01:31Z,,,0,,,0.2676,0.3143,0.2995,37
+401816995,2026-09-18,5016968,Ben Rice,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.9,0.98,0.5741,over,med,2026-09-18T06:01:31Z,,,0,,,0.6385,0.669,0.6493,145
+401816995,2026-09-18,5016968,Ben Rice,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.2,0.26,0.1886,under,high,2026-09-18T06:01:31Z,,,0,,,0.1841,0.1641,0.177,145
+401816995,2026-09-18,5016968,Ben Rice,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.56,1.96,0.3853,over,low,2026-09-18T06:01:31Z,,,0,,,0.4117,0.4355,0.4202,145
+401816995,2026-09-18,5149070,George Lombard Jr.,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.77,0.79,0.5147,over,low,2026-09-18T06:01:31Z,,,0,,,0.5794,0.5801,0.5799,34
+401816995,2026-09-18,5149070,George Lombard Jr.,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.09,0.1152,under,high,2026-09-18T06:01:31Z,,,0,,,0.0869,0.0993,0.0956,34
+401816995,2026-09-18,5149070,George Lombard Jr.,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.08,1.21,0.2966,under,high,2026-09-18T06:01:31Z,,,0,,,0.261,0.3286,0.3085,34
+401816996,2026-09-18,30193,Freddie Freeman,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,1.17,1.11,0.6374,over,med,2026-09-18T06:01:31Z,,,0,,,0.7507,0.6627,0.7194,145
+401816996,2026-09-18,30193,Freddie Freeman,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.11,0.1389,under,high,2026-09-18T06:01:31Z,,,0,,,0.1042,0.1509,0.1208,145
+401816996,2026-09-18,30193,Freddie Freeman,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.59,1.68,0.4112,over,low,2026-09-18T06:01:31Z,,,0,,,0.4774,0.4085,0.4529,145
+401816996,2026-09-18,30791,Miguel Rojas,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.61,0.57,0.4896,over,low,2026-09-18T06:01:31Z,,,0,,,0.5113,0.5978,0.5497,100
+401816996,2026-09-18,30791,Miguel Rojas,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.81,0.84,0.4907,over,low,2026-09-18T06:01:31Z,,,0,,,0.519,0.591,0.551,100
+401816996,2026-09-18,31358,Enrique Hernandez,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.55,0.49,0.4964,over,low,2026-09-18T06:01:31Z,,,0,,,0.4683,0.5972,0.5579,35
+401816996,2026-09-18,31358,Enrique Hernandez,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.1,0.09,0.1751,under,high,2026-09-18T06:01:31Z,,,0,,,0.099,0.1887,0.1614,35
+401816996,2026-09-18,31358,Enrique Hernandez,home,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,0.81,0.83,0.3007,under,high,2026-09-18T06:01:31Z,,,0,,,0.2068,0.3602,0.3135,35
+401816996,2026-09-18,33039,Mookie Betts,home,hits,Hits,hits_pg,binomial,1.5,book,2 books,1.04,0.97,0.2907,under,high,2026-09-18T06:01:31Z,,,0,,,0.2785,0.3333,0.3011,114
+401816996,2026-09-18,33039,Mookie Betts,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.16,0.18,0.1798,under,high,2026-09-18T06:01:31Z,,,0,,,0.1513,0.1887,0.1667,114
+401816996,2026-09-18,33039,Mookie Betts,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.58,1.68,0.4066,over,low,2026-09-18T06:01:31Z,,,0,,,0.438,0.46,0.4471,114
+401816996,2026-09-18,33190,Tyler Glasnow,home,er,Earned Runs,p_er_pg,negbin,1.5,book,Fanatics,2.21,2.18,0.4429,over,low,2026-09-18T06:01:31Z,,,0,,,0.5752,0.481,0.4924,11
+401816996,2026-09-18,33190,Tyler Glasnow,home,k,Strikeouts,p_so_pg,negbin,6.5,book,4 books,6.21,7.0,0.4883,under,low,2026-09-18T06:01:31Z,,,0,,,0.4216,0.5656,0.5482,11
+401816996,2026-09-18,33190,Tyler Glasnow,home,outs,Outs Recorded,outs_pg,normal,16.5,book,3 books,16.78,16.69,0.4744,over,low,2026-09-18T06:01:31Z,,,0,,,0.524,0.5323,0.5313,11
+401816996,2026-09-18,33190,Tyler Glasnow,home,p_hits,Hits Allowed,p_h_pg,negbin,3.5,book,Fanatics,4.34,3.55,0.4862,over,low,2026-09-18T06:01:31Z,,,0,,,0.5972,0.5385,0.5456,11
+401816996,2026-09-18,33377,Teoscar Hernandez,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.99,0.92,0.595,over,med,2026-09-18T06:01:31Z,,,0,,,0.6843,0.6568,0.6731,116
+401816996,2026-09-18,33377,Teoscar Hernandez,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.13,0.13,0.1704,under,high,2026-09-18T06:01:31Z,,,0,,,0.1189,0.2096,0.1559,116
+401816996,2026-09-18,33377,Teoscar Hernandez,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.43,1.49,0.3787,under,med,2026-09-18T06:01:31Z,,,0,,,0.3982,0.432,0.412,116
+401816996,2026-09-18,34967,Kyle Tucker,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.89,0.81,0.5601,over,low,2026-09-18T06:01:31Z,,,0,,,0.6379,0.625,0.6333,145
+401816996,2026-09-18,34967,Kyle Tucker,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.11,0.1432,under,high,2026-09-18T06:01:31Z,,,0,,,0.1042,0.1641,0.1255,145
+401816996,2026-09-18,34967,Kyle Tucker,home,rbi,RBIs,rbi_pg,poisson,0.5,book,Fanatics,0.49,0.48,0.3476,under,med,2026-09-18T06:01:31Z,,,0,,,0.3861,0.3484,0.3727,145
+401816996,2026-09-18,34967,Kyle Tucker,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.32,1.36,0.348,under,med,2026-09-18T06:01:31Z,,,0,,,0.3672,0.3839,0.3731,145
+401816996,2026-09-18,38309,Will Smith,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.87,0.77,0.5753,over,med,2026-09-18T06:01:31Z,,,0,,,0.6337,0.6648,0.6507,66
+401816996,2026-09-18,38309,Will Smith,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.11,0.11,0.1761,under,high,2026-09-18T06:01:31Z,,,0,,,0.1052,0.2096,0.1624,66
+401816996,2026-09-18,38309,Will Smith,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.24,1.23,0.3625,under,med,2026-09-18T06:01:31Z,,,0,,,0.3269,0.4447,0.3914,66
+401816996,2026-09-18,38994,Alex Call,home,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.5,0.44,0.4471,under,low,2026-09-18T06:01:31Z,,,0,,,0.4357,0.5627,0.4976,84
+401816996,2026-09-18,39907,Tommy Edman,home,hits,Hits,hits_pg,binomial,1.5,book,2 books,0.93,0.86,0.2775,under,high,2026-09-18T06:01:31Z,,,0,,,0.2333,0.3333,0.2846,76
+401816996,2026-09-18,39907,Tommy Edman,home,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.07,0.08,0.1428,under,high,2026-09-18T06:01:31Z,,,0,,,0.0676,0.1797,0.1251,76
+401816996,2026-09-18,39907,Tommy Edman,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.28,1.29,0.3763,under,med,2026-09-18T06:01:31Z,,,0,,,0.3559,0.4592,0.4089,76
+401816996,2026-09-18,4109031,Christian Koss,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.58,0.69,0.456,over,low,2026-09-18T06:01:31Z,,,0,,,0.4756,0.5336,0.5085,61
+401816996,2026-09-18,4109031,Christian Koss,away,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.74,0.97,0.4731,over,low,2026-09-18T06:01:31Z,,,0,,,0.4994,0.5527,0.5297,61
+401816996,2026-09-18,4619467,Drew Gilbert,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.53,0.61,0.4406,over,low,2026-09-18T06:01:31Z,,,0,,,0.4451,0.559,0.4896,125
+401816996,2026-09-18,4619467,Drew Gilbert,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.06,0.08,0.0941,under,high,2026-09-18T06:01:31Z,,,0,,,0.0581,0.0993,0.0742,125
+401816996,2026-09-18,4683352,Shay Whitcomb,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.43,0.45,0.4183,under,med,2026-09-18T06:01:31Z,,,0,,,0.3749,0.5052,0.4617,40
+401816996,2026-09-18,4683352,Shay Whitcomb,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.09,0.1,0.1225,under,high,2026-09-18T06:01:31Z,,,0,,,0.0877,0.111,0.1032,40
+401816996,2026-09-18,4683352,Shay Whitcomb,away,tb,Total Bases,tb_pg,negbin,0.5,book,2 books,0.66,0.82,0.4091,over,low,2026-09-18T06:01:31Z,,,0,,,0.3567,0.4969,0.4502,40
+401816996,2026-09-18,5102682,Josue De Paula,home,hits,Hits,hits_pg,binomial,0.5,book,BetOnline.ag,0.56,0.43,0.5092,over,low,2026-09-18T06:01:31Z,,,0,,,0.4642,0.5829,0.5734,7
+401816996,2026-09-18,5102682,Josue De Paula,home,tb,Total Bases,tb_pg,negbin,0.5,book,BetOnline.ag,0.86,1.0,0.4972,over,low,2026-09-18T06:01:31Z,,,0,,,0.4013,0.5728,0.559,7
+401816996,2026-09-18,5134621,Jung Hoo Lee,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.9,1.04,0.5642,over,low,2026-09-18T06:01:31Z,,,0,,,0.6422,0.6309,0.6381,140
+401816996,2026-09-18,5134621,Jung Hoo Lee,away,tb,Total Bases,tb_pg,negbin,1.5,book,BetOnline.ag,1.18,1.5,0.3404,under,med,2026-09-18T06:01:31Z,,,0,,,0.3556,0.3775,0.3636,140
+401816996,2026-09-18,5145886,Jonah Cox,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.56,0.66,0.4741,over,low,2026-09-18T06:01:31Z,,,0,,,0.4705,0.5708,0.5308,53
+401816996,2026-09-18,5145886,Jonah Cox,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.05,0.08,0.1007,under,high,2026-09-18T06:01:31Z,,,0,,,0.0528,0.0993,0.0808,53
+401816996,2026-09-18,5145886,Jonah Cox,away,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,0.76,1.0,0.4882,over,low,2026-09-18T06:01:31Z,,,0,,,0.4954,0.5829,0.5481,53
+401816996,2026-09-18,5149064,Bryce Eldridge,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.85,0.97,0.5272,over,low,2026-09-18T06:01:31Z,,,0,,,0.6192,0.5624,0.5949,107
+401816996,2026-09-18,5149064,Bryce Eldridge,away,hr,Home Run,hr_pg,poisson,0.5,book,Caesars,0.12,0.16,0.1595,under,high,2026-09-18T06:01:31Z,,,0,,,0.1165,0.1797,0.1436,107
+401816996,2026-09-18,5149064,Bryce Eldridge,away,tb,Total Bases,tb_pg,negbin,0.5,book,2 books,1.29,1.66,0.5323,over,low,2026-09-18T06:01:31Z,,,0,,,0.6295,0.5627,0.6009,107
+401816996,2026-09-18,5207758,Turner Hill,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.74,0.78,0.4993,over,low,2026-09-18T06:01:31Z,,,0,,,0.5687,0.559,0.5614,27
+401816996,2026-09-18,5207758,Turner Hill,away,tb,Total Bases,tb_pg,negbin,0.5,book,2 books,0.79,1.11,0.4893,over,low,2026-09-18T06:01:31Z,,,0,,,0.5437,0.5513,0.5494,27
+401816996,2026-09-18,5270445,Drew Cavanaugh,away,hits,Hits,hits_pg,binomial,0.5,book,2 books,0.51,0.58,0.4187,over,low,2026-09-18T06:01:31Z,,,0,,,0.4315,0.4826,0.4623,53
+401816996,2026-09-18,5271881,Cesar Perdomo,away,k,Strikeouts,p_so_pg,negbin,2.5,book,5 books,3.82,3.67,0.525,over,low,2026-09-18T06:01:31Z,,,0,,,0.6959,0.5883,0.5922,3
+401816996,2026-09-18,5271881,Cesar Perdomo,away,outs,Outs Recorded,outs_pg,normal,13.5,book,3 books,13.76,14.2,0.4794,over,low,2026-09-18T06:01:31Z,,,0,,,0.5224,0.5379,0.5373,3
 401817027,2026-09-21,32078,George Springer,away,hits,Hits,hits_pg,poisson,0.5,,,0.87,0.93,0.5804,over,low,2026-09-16T00:23:14Z,,,0,,,,,,
 401817027,2026-09-21,32078,George Springer,away,hits2,Hits (2+),hits_pg,poisson,1.5,,,0.87,0.93,0.216,under,high,2026-09-16T00:23:14Z,,,0,,,,,,
 401817027,2026-09-21,32078,George Springer,away,hr,Home Run,hr_pg,poisson,0.5,,,0.12,0.13,0.1143,under,high,2026-09-16T00:23:14Z,,,0,,,,,,
