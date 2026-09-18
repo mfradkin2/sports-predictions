@@ -151,6 +151,20 @@ what the last one learned:
   with the standings as they stood that morning — the leak-free version of a
   season-statistics model.
 
+### Live on the page
+
+The site is rebuilt every half hour, but the page itself keeps up between
+rebuilds. While games are on it polls ESPN's public scoreboard and box score
+feeds every half minute and shows the score and clock on each game, the
+number so far against the line for every chosen prop (how much is still
+needed, or that it has already cleared), and an "on track" count per player
+and per game. The moment a game goes final the page grades the game pick and
+every prop from the final box score and moves the game to Results, tagged
+"confirming" until the next rebuild writes the same verdict to the ledger.
+Every ten minutes it also re-fetches the data files, so a rebuild shows up
+without a reload. Nothing about a pick moves: lines, leans and probabilities
+were frozen at kickoff; only the outcome fills in.
+
 ### Live signals
 
 - **Injuries** are fetched each run. A player listed as out is left off the

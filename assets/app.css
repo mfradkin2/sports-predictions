@@ -214,7 +214,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .bar i { display: block; height: 100%; }
 .bar .a { background: var(--faint); }
 .bar .h { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, var(--bg3)), var(--accent)); }
-.metarow { display: flex; align-items: center; gap: 6px; font-size: 11.5px; min-width: 0; }
+.metarow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11.5px; min-width: 0; }
 .pick { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pick b { color: var(--text); font-weight: 600; }
 .tag {
@@ -346,6 +346,24 @@ table.grid th.mid { text-align: center; }
 .src.book { color: var(--accent); }
 .src.model { color: var(--faint); }
 table.grid .src { display: inline; }
+/* live progress against the line: bar with the line marked, then words */
+.prop-progress-slot:empty { display: none; }
+.prop-progress-slot { grid-column: 1 / -1; }
+.prop-progress { display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: var(--muted); min-width: 0; }
+.prop-progress .pbar { position: relative; flex: 0 0 120px; height: 7px; background: var(--bg3); border-radius: 4px; overflow: visible; }
+.prop-progress .pbar i { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; background: var(--accent); transition: width .4s ease; }
+.prop-progress .pbar u { position: absolute; top: -3px; width: 2px; height: 13px; background: var(--text); border-radius: 1px; }
+.prop-progress .ptext { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prop-progress .ptext b { color: var(--text); font-variant-numeric: tabular-nums; }
+.prop-progress.win .pbar i, .prop-progress.lead .pbar i { background: var(--good); }
+.prop-progress.win .ptext, .prop-progress.lead .ptext { color: var(--good); }
+.prop-progress.lose .pbar i { background: var(--bad); }
+.prop-progress.lose .ptext { color: var(--bad); }
+.prop-progress.push .ptext { color: var(--faint); }
+.prop-progress.live .pbar i { animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+table.grid .prop-progress .pbar { flex-basis: 90px; }
+.tag.live-tag { background: color-mix(in srgb, var(--good) 20%, transparent); color: var(--good); }
 .live-dot {
   position: absolute; top: -3px; width: 11px; height: 11px; margin-left: -5px;
   border-radius: 50%; background: var(--good); border: 2px solid var(--bg1);
@@ -467,6 +485,7 @@ table.grid .src { display: inline; }
   .prop-name { grid-area: name; }
   .prop-pick { grid-area: pick; flex-direction: column; align-items: flex-end; gap: 3px; }
   .prop-range { display: none; }
+  .prop-progress .pbar { flex-basis: 80px; }
   .prop-nums { grid-area: nums; display: flex; gap: 14px; }
   .prop-num { text-align: left; }
   .prop-num .lbl { display: inline; margin-right: 4px; }
