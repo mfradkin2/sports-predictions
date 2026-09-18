@@ -243,5 +243,48 @@ class TestPayloadEfficiency(unittest.TestCase):
         self.assertFalse(pool_is_fresh((now + timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%SZ'), now))
 
 
+class TestAuditFixes(unittest.TestCase):
+    def test_a_lone_books_alternate_line_is_left_blank(self):
+        from sportspred.props import looks_like_alternate
+        spec = next(x for x in props_for('baseball', 'pitcher') if x['key'] == 'outs')
+        self.assertTrue(looks_like_alternate(spec, 14.0, {'line': 3.5, 'books': 1}))
+        self.assertFalse(looks_like_alternate(spec, 14.0, {'line': 3.5, 'books': 3}))   # a real consensus stands
+        self.assertFalse(looks_like_alternate(spec, 14.0, {'line': 12.5, 'books': 1}))
+        k = next(x for x in props_for('baseball', 'pitcher') if x['key'] == 'k')
+        self.assertTrue(looks_like_alternate(k, 5.4, {'line': 1.5, 'books': 1}))
+        self.assertFalse(looks_like_alternate(k, 5.4, {'line': 4.5, 'books': 1}))
+        hits = next(x for x in props_for('baseball', 'batter') if x['key'] == 'hits')
+        self.assertFalse(looks_like_alternate(hits, 1.4, {'line': 0.5, 'books': 1}))
+        self.assertFalse(looks_like_alternate(spec, 14.0, None))
+
+    def test_one_confidence_rule_for_games_and_props(self):
+        from sportspred.props import confidence
+        from sportspred.pipeline import conf_tier
+        for p in (0.5, 0.56, 0.57, 0.6, 0.65, 0.66, 0.8, 0.3, 0.2):
+            self.assertEqual(confidence(p), conf_tier(p), p)
+
+    def test_preseason_prop_rows_are_dropped_not_graded(self):
+        from sportspred import config
+        from sportspred.pipeline import grade_props
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = PropsLedger('nhl', history_dir=tmp)
+            prop = {'key': 'sog', 'label': 'Shots', 'stat': 'sog_pg', 'dist': 'negbin', 'line': 2.5,
+                    'proj': 3.0, 'season': 3.0, 'over': 0.6, 'pick': 'over', 'conf': 'med'}
+            ledger.record({'game_id': 'pre1', 'date': '2026-09-20'}, 'home', {'id': 'a'}, prop)
+            ledger.record({'game_id': 'reg1', 'date': '2026-10-08'}, 'home', {'id': 'b'}, prop)
+            ledger.record({'game_id': 'pre2', 'date': '2026-09-21'}, 'home', {'id': 'c'}, prop)
+            next(r for r in ledger.rows.values() if r['game_id'] == 'pre2').update(graded='1', played='1', hit='1', actual='4')
+            records = [{'game': {'game_id': 'pre1', 'final': True, 'preseason': True}},
+                       {'game': {'game_id': 'pre2', 'final': True, 'preseason': True}},
+                       {'game': {'game_id': 'reg1', 'final': False, 'preseason': False}}]
+            class NoHttp:
+                def get_json(self, *a, **k):
+                    raise AssertionError('no box score should be fetched for an exhibition game')
+            grade_props('nhl', config.LEAGUES['nhl'], ledger, records, NoHttp())
+            ids = sorted(r['game_id'] for r in ledger.rows.values())
+            self.assertEqual(ids, ['pre2', 'reg1'])        # the graded row stays, the stale one goes
+            self.assertEqual(ledger.drop_ungraded([]), 0)
+
+
 if __name__ == '__main__':
     unittest.main()

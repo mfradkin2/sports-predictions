@@ -26,6 +26,11 @@ SPORT_KEYS = {'mlb': 'baseball_mlb', 'nba': 'basketball_nba',
               'nfl': 'americanfootball_nfl', 'nhl': 'icehockey_nhl'}
 REGION = 'us'
 AHEAD_HOURS = 36            # fetch lines only this close to kickoff
+# Football plays once a week and the books post its markets days early, so
+# its lines are worth having from midweek; far from kickoff they are only
+# refreshed daily, which keeps the extra cost to one fetch per game per day.
+AHEAD_HOURS_BY_LEAGUE = {'nfl': 120}
+FAR_REFRESH_HOURS = 24
 MIN_REMAINING = 40          # keep this much monthly quota in reserve
 # How often a game's lines are re-fetched before kickoff, so a player the
 # books had not posted yet fills in once they do. Each fetch costs one credit
@@ -314,12 +319,15 @@ def load_lines(league_key, games, http=None, cache_dir=None):
         start = parse_iso((g.get('row') or {}).get('game_start_utc'))
         if start is None:
             start = datetime.combine(g['date'], datetime.min.time(), tzinfo=timezone.utc) + timedelta(hours=23)
-        if start < now or start - now > timedelta(hours=AHEAD_HOURS):
+        ahead = AHEAD_HOURS_BY_LEAGUE.get(league_key, AHEAD_HOURS)
+        if start < now or start - now > timedelta(hours=ahead):
             continue
         fetched = parse_iso((cache.get(g['game_id']) or {}).get('fetched'))
+        far = start - now > timedelta(hours=AHEAD_HOURS)
+        due = timedelta(hours=FAR_REFRESH_HOURS) if far else refresh
         if fetched is None:
             fresh.append((start, g))
-        elif now - fetched >= refresh:
+        elif now - fetched >= due:
             stale.append((fetched, g))
     # A game never priced comes before refreshing one that is; soonest first.
     soon = [g for _, g in sorted(fresh, key=lambda x: x[0])] + \
