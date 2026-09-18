@@ -504,14 +504,39 @@ class PropsLedger:
                 prop['book'] = r['book']
             if prop['proj'] is not None and prop['season'] is not None:
                 prop['delta'] = round(prop['proj'] - prop['season'], 2)
+            if self.is_void(r):
+                prop['void'] = True
             players[pk]['props'].append(prop)
         return board
+
+    # ── voided rows ─────────────────────────────────────────────────────────
+    # A projection no player could post (sixteen hits a game) came from a
+    # corrupt feed row, not from the model. The row stays in the ledger as
+    # published, but it is void everywhere a verdict is counted or shown:
+    # every prop of that player on that day, since his other rates came from
+    # the same row. Like a book voiding a bet on a bad line.
+    def suspect_keys(self):
+        from .props import PER_GAME_MAX      # local import: props does not import learn
+        if getattr(self, '_suspect_n', None) == len(self.rows) and hasattr(self, '_suspect'):
+            return self._suspect
+        out = set()
+        for r in self.rows.values():
+            proj = num(r.get('proj'))
+            stat = r.get('stat') or ''
+            cap = PER_GAME_MAX.get(stat[:-3] if stat.endswith('_pg') else stat)
+            if proj is not None and cap is not None and proj > cap:
+                out.add((r.get('game_date'), r.get('athlete_id')))
+        self._suspect, self._suspect_n = out, len(self.rows)
+        return out
+
+    def is_void(self, r):
+        return (r.get('game_date'), r.get('athlete_id')) in self.suspect_keys()
 
     def tallies(self):
         """{game_id: {'n', 'hit', 'push'}} over graded props, for the Results view."""
         out = {}
         for r in self.rows.values():
-            if r.get('graded') != '1' or r.get('played') != '1':
+            if r.get('graded') != '1' or r.get('played') != '1' or self.is_void(r):
                 continue
             t = out.setdefault(r.get('game_id'), {'n': 0, 'hit': 0, 'push': 0})
             if r.get('push') == '1':
@@ -584,7 +609,7 @@ class PropsLedger:
 
     def scorecard(self):
         """Hit rate by market and by confidence tier — for the Model tab."""
-        rows = self.graded()
+        rows = [r for r in self.graded() if not self.is_void(r)]
         by_key, by_conf = {}, {}
         for r in rows:
             hit = r.get('hit')
@@ -635,25 +660,13 @@ class PropsLedger:
                    assumed. Both are clamped so a strange month cannot swing
                    a market by more than a third.
         """
-        from .props import PER_GAME_MAX      # local import: props does not import learn
-        # A projection no player could post came from a bad feed row, not
-        # from the model. Every prop of that player on that day is suspect
-        # (his other rates came from the same row), so the whole player is
-        # left out of the lesson rather than just the impossible number.
-        suspect = set()
         rows = self.graded()
-        for r in rows:
-            proj = num(r.get('proj'))
-            stat = r.get('stat') or ''
-            cap = PER_GAME_MAX.get(stat[:-3] if stat.endswith('_pg') else stat)
-            if proj is not None and cap is not None and proj > cap:
-                suspect.add((r.get('game_date'), r.get('athlete_id')))
         buckets = {}
         for r in rows:
             proj, actual = num(r.get('proj')), num(r.get('actual'))
             if proj is None or actual is None or proj <= 0:
                 continue
-            if (r.get('game_date'), r.get('athlete_id')) in suspect:
+            if self.is_void(r):                  # a corrupt feed row teaches nothing
                 continue
             buckets.setdefault(r['key'], []).append((proj, actual, r.get('dist', '')))
         tuned = {}
@@ -690,6 +703,8 @@ class PropsLedger:
         out = []
         for r in self.graded():
             if r.get('played') == '0' or r.get('push') == '1' or r.get('hit') not in ('0', '1'):
+                continue
+            if self.is_void(r):
                 continue
             p = num(r.get('raw_p'))
             if p is None:
@@ -816,8 +831,9 @@ class FrozenBoards:
         if entry:
             entry['frozen'] = True
 
-    def annotate(self, game_id, ledger_rows):
-        """Write graded outcomes back onto the frozen board's props."""
+    def annotate(self, game_id, ledger_rows, is_void=None):
+        """Write graded outcomes back onto the frozen board's props. A row
+        ``is_void`` flags (a corrupt feed day) shows as void, not as a verdict."""
         entry = self.boards.get(str(game_id))
         if not entry:
             return
@@ -828,6 +844,12 @@ class FrozenBoards:
                 for prop in player.get('props') or []:
                     row = graded.get((player.get('id'), prop.get('key')))
                     if not row:
+                        continue
+                    if is_void and is_void(row):
+                        prop['void'] = True
+                        prop['actual'] = num(row.get('actual'))
+                        prop['hit'] = None
+                        prop['push'] = False
                         continue
                     prop['actual'] = num(row.get('actual'))
                     prop['played'] = row.get('played') == '1'

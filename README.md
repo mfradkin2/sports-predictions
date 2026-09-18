@@ -1,7 +1,7 @@
 # Sports Predictions
 
 Game predictions and player prop projections for MLB, NFL, NBA and NHL,
-rebuilt every hour by GitHub Actions and served as a static site.
+rebuilt every fifteen minutes by GitHub Actions and served as a static site.
 
 Live site: open `index.html` (or the per-sport pages `mlb.html`, `nfl.html`,
 `nba.html`, `nhl.html`).
@@ -82,7 +82,7 @@ Everything is standard-library Python; there is nothing to install and no R.
 
 ### Why predictions are frozen
 
-The model is refit every hour and the standings model behind it is recomputed
+The model is refit on every run and the standings model behind it is recomputed
 from *current* standings. Left alone, that means a finished game's probability
 keeps moving — and once the result is in the standings, the model can end up
 naming the winner as the team it favoured all along. A prediction that changes
@@ -151,9 +151,19 @@ what the last one learned:
   with the standings as they stood that morning — the leak-free version of a
   season-statistics model.
 
+### Voided props
+
+A statistics feed occasionally sends a corrupt row (a hitter at sixteen hits
+a game). Any prop priced from such a row stays in the ledger as published,
+but it is void wherever a verdict is counted or shown: the record, the
+per-market and per-player tables, the corrections and the calibration. The
+page shows it as "VOID · bad feed data", the way a book voids a bet on a bad
+line. The cap that catches these rows (`PER_GAME_MAX`) also stops new ones
+from being published.
+
 ### Live on the page
 
-The site is rebuilt every half hour, but the page itself keeps up between
+The site is rebuilt every fifteen minutes, but the page itself keeps up between
 rebuilds. While games are on it polls ESPN's public scoreboard and box score
 feeds every half minute and shows the score and clock on each game, the
 number so far against the line for every chosen prop (how much is still
@@ -193,7 +203,7 @@ Only the standard library is required.
 
 Sportsbook lines need an API key from [The Odds API](https://the-odds-api.com):
 set `ODDS_API_KEY` locally, and add it as a repository secret of the same
-name so the hourly refresh can use it. Lines are fetched for games within
+name so the refresh can use it. Lines are fetched for games within
 36 hours of kickoff and re-fetched every `ODDS_REFRESH_HOURS` (default 4)
 so newly posted players fill in; each fetch costs one credit per market,
 and the client stops with 40 credits in reserve. Without a key the board

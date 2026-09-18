@@ -439,11 +439,23 @@ class TestPipelineWithLiveSignals(unittest.TestCase):
         self.assertGreater(payload['props_record']['total'], 0)
 
     def test_feed_outage_falls_back_to_cache(self):
+        from sportspred.util import read_json, write_json
         pipeline.run('mlb', fetch_props=True, http=self._http(), tune=False)
         pipeline._POOL_CACHE.clear()
         class Dead(Http):
             def get_json(self, url, cache=True):
                 return None
+        # A fetch from minutes ago is reused as is: no call to the feed, and
+        # the page is told the numbers are live.
+        payload, _, _ = pipeline.run('mlb', fetch_props=True, http=Dead(), tune=False)
+        self.assertEqual(payload['props_status'], 'live')
+        self.assertTrue(any(g.get('props') for g in payload['games']))
+        # Once that fetch is old, an outage falls back to it and says so.
+        cache_path = os.path.join(config.DATA_DIR, 'mlb_players.json')
+        cached = read_json(cache_path, {})
+        cached['updated'] = '2026-01-01T00:00:00Z'
+        write_json(cache_path, cached, indent=None)
+        pipeline._POOL_CACHE.clear()
         payload, _, _ = pipeline.run('mlb', fetch_props=True, http=Dead(), tune=False)
         self.assertEqual(payload['props_status'], 'cached')
         self.assertTrue(any(g.get('props') for g in payload['games']))

@@ -167,5 +167,81 @@ class TestPropsCorrections(unittest.TestCase):
         self.assertEqual(apply_tuning(spec, {'_calibration': {'a': 2.0}})[1], 1.0)
 
 
+class TestVoidRows(unittest.TestCase):
+    """A corrupt feed day is void everywhere a verdict is counted or shown."""
+    def _ledger(self):
+        ledger = PropsLedger('mlb', history_dir=self.tmp)
+        sane = {'key': 'hits', 'label': 'Hits', 'stat': 'hits_pg', 'dist': 'binomial', 'line': 0.5,
+                'proj': 1.0, 'season': 1.0, 'over': 0.6, 'raw_over': 0.6, 'pick': 'over', 'conf': 'med'}
+        broken = dict(sane, proj=16.7, season=12.7)
+        for i in range(10):
+            ledger.record({'game_id': 'g1', 'date': '2026-09-15'}, 'home', {'id': f'p{i}', 'gp': 20}, sane if i % 2 else broken)
+        for r in ledger.rows.values():
+            r.update(graded='1', played='1', actual='0', push='0', hit='0')   # every one missed
+        return ledger
+
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.mkdtemp()
+
+    def test_void_rows_leave_every_count(self):
+        ledger = self._ledger()
+        self.assertEqual(len(ledger.suspect_keys()), 5)
+        sc = ledger.scorecard()
+        self.assertEqual(sc['total'], 5)                 # only the sane half counts
+        self.assertEqual(ledger.tallies()['g1'], {'n': 5, 'hit': 0, 'push': 0})
+        self.assertEqual(len(ledger._outcome_rows()), 5)
+        board = ledger.board_for('g1')
+        flags = [p.get('void') for pl in board['home'] for p in pl['props']]
+        self.assertEqual(sum(1 for f in flags if f), 5)
+
+    def test_frozen_board_shows_void_not_a_verdict(self):
+        from sportspred.learn import FrozenBoards
+        ledger = self._ledger()
+        boards = FrozenBoards('mlb', history_dir=self.tmp)
+        board = {'away': [], 'home': [{'id': 'p0', 'name': 'x', 'props': [{'key': 'hits', 'line': 0.5}]},
+                                      {'id': 'p1', 'name': 'y', 'props': [{'key': 'hits', 'line': 0.5}]}]}
+        boards.store({'game_id': 'g1', 'date': '2026-09-15'}, board, True)
+        boards.annotate('g1', ledger.rows.values(), is_void=ledger.is_void)
+        got = boards.get('g1')['home']
+        self.assertTrue(got[0]['props'][0].get('void'))
+        self.assertIsNone(got[0]['props'][0]['hit'])
+        self.assertFalse(got[1]['props'][0].get('void'))
+        self.assertIs(got[1]['props'][0]['hit'], False)
+
+
+class TestPayloadEfficiency(unittest.TestCase):
+    def test_finished_boards_keep_only_what_results_show(self):
+        from sportspred.pipeline import slim_board
+        board = {'locked': True, 'away_out': [1], 'home_out': [], 'away': [], 'home': [
+            {'id': 'a', 'name': 'A', 'pos': 'RF', 'headshot': 'h', 'status': 'ok', 'extra': 1, 'props': [
+                {'key': 'hits', 'label': 'Hits', 'line': 0.5, 'proj': 1.1, 'pick': 'over', 'pick_prob': 0.6,
+                 'conf': 'med', 'over': 0.6, 'under': 0.4, 'model_over': 0.62, 'raw_over': 0.6, 'book_p': 0.55,
+                 'book_over': -140, 'dist': 'binomial', 'rank': 1, 'hit': True, 'actual': 2},
+                {'key': 'tb', 'label': 'TB', 'pending': True, 'line': None}]},
+            {'id': 'b', 'name': 'B', 'props': [{'key': 'hr', 'pending': True, 'line': None}]}]}
+        slim = slim_board(board)
+        self.assertTrue(slim['locked'])
+        self.assertNotIn('away_out', slim)
+        self.assertEqual([pl['id'] for pl in slim['home']], ['a'])       # nothing graded for B
+        p = slim['home'][0]['props']
+        self.assertEqual(len(p), 1)                                       # the pending row is gone
+        self.assertEqual(p[0]['hit'], True)
+        for gone in ('over', 'under', 'model_over', 'raw_over', 'book_p', 'book_over', 'dist', 'rank'):
+            self.assertNotIn(gone, p[0])
+        self.assertNotIn('extra', slim['home'][0])
+        self.assertIsNone(slim_board(None))
+
+    def test_player_pool_is_reused_while_fresh(self):
+        from datetime import datetime, timedelta, timezone
+        from sportspred.pipeline import pool_is_fresh
+        now = datetime(2026, 9, 18, 12, 0, tzinfo=timezone.utc)
+        self.assertTrue(pool_is_fresh((now - timedelta(minutes=20)).strftime('%Y-%m-%dT%H:%M:%SZ'), now))
+        self.assertFalse(pool_is_fresh((now - timedelta(minutes=70)).strftime('%Y-%m-%dT%H:%M:%SZ'), now))
+        self.assertFalse(pool_is_fresh('', now))
+        self.assertFalse(pool_is_fresh(None, now))
+        self.assertFalse(pool_is_fresh((now + timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%SZ'), now))
+
+
 if __name__ == '__main__':
     unittest.main()
