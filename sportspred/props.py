@@ -533,12 +533,19 @@ def starter_scale(rates, starter_prior):
 
 
 def project_player(player, sport, group, factor, max_props=5, tuning=None, priors=None,
-                   role=None):
+                   role=None, booked=None):
     """Every prop we can price for one player, best signal first
     (``max_props=None`` returns them all). ``priors`` is ``group_priors``
     output; with it, thin samples are shrunk toward the group's typical rate.
     The published ``season`` figure is always the player's actual rate; the
-    shrunk one drives the projection and travels as ``_base``."""
+    shrunk one drives the projection and travels as ``_base``.
+
+    ``booked`` is the set of markets the sportsbooks have posted a line for.
+    Those are priced whatever the projection: the minimum below is a
+    relevance filter for lines we derive ourselves, and a player the market
+    prices is by definition worth showing. Without it a team's fourth
+    receiver and change-of-pace back, whom every book lists, were missing
+    from the board."""
     rates = derive(sport, per_game(player.get('stats') or {}))
     gp = rates.get('gp') or 0
     if group == 'pitcher' and rates.get('p_gp'):
@@ -566,11 +573,19 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
         own = num(mine.get(spec['stat'])) if mine else None
         from_prev = False
         if gp < 1 or season is None or season <= 0:
-            # Nothing this season yet (opening night): last season's rate is
-            # the whole projection, and the page says so.
-            if own is None or own <= 0 or gp >= 1:
+            if gp < 1:
+                # Nothing this season yet (opening night): last season's rate
+                # is the whole projection, and the page says so.
+                if own is None or own <= 0:
+                    continue
+                season, from_prev = own, True
+            elif spec['key'] in (booked or ()):
+                # He has played and the market prices him, so a blank line in
+                # the stat sheet is a real zero: shrink it toward his group
+                # like any other rate rather than dropping him off the board.
+                season = 0.0
+            else:
                 continue
-            season, from_prev = own, True
         # A rate no one has ever posted means the games-played figure is
         # wrong for this player; better no prop than an absurd one.
         cap = PER_GAME_MAX.get(spec['stat'][:-3] if spec['stat'].endswith('_pg') else spec['stat'])
@@ -581,7 +596,7 @@ def project_player(player, sport, group, factor, max_props=5, tuning=None, prior
         else:
             base = shrink(season, gp, group_prior_for(group_prior, spec['stat'], season), sport, k=k_group)
         projection = base * factor * bias
-        if projection < spec.get('min_proj', 0.0):
+        if projection < spec.get('min_proj', 0.0) and spec['key'] not in (booked or ()):
             continue
         priced = _price(spec, base, projection, season=season, sample=gp, sport=sport,
                         tuning=tuning)
@@ -872,8 +887,11 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                 posted = any(line_for(lines, player.get('name', ''), k) for k in ('outs', 'k', 'er', 'p_hits'))
                 if (announced and announced == player.get('name')) or posted:
                     role = 'pitcher:starter'
+            booked_keys = {spec['key'] for spec in props_for(sport, group)
+                           if line_for(lines, player.get('name', ''), spec['key'])} if book_mode else set()
             props, gp = project_player(player, sport, group, factor, tuning=tuning,
-                                       max_props=None, priors=priors, role=role)
+                                       max_props=None, priors=priors, role=role,
+                                       booked=booked_keys)
             if not props:
                 continue
             # Re-price each prop with its own matchup factor, against the

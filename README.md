@@ -165,6 +165,14 @@ game is within 36 hours, since the books post them early in the week.
 Confidence tiers are the same for game picks and props: 66% and up is high,
 57% to 65% medium, anything closer to a coin flip low.
 
+Every player the books have posted a line for makes the board, up to twelve
+a side. Each market has a minimum projection below which the site will not
+invent a line of its own (a receiver averaging half a catch gets no
+receptions prop), but that minimum is a relevance filter, not a judgement:
+where a real line exists it is priced whatever the projection, because the
+market has already decided the player is worth pricing. A player who has not
+taken the field, with no previous season to lean on, is still left off.
+
 ### Voided props
 
 A statistics feed occasionally sends a corrupt row (a hitter at sixteen hits
