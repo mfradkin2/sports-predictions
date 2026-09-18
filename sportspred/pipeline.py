@@ -14,7 +14,8 @@ from .util import (Http, clamp, format_eastern, now_iso, num, parse_date, parse_
                    read_json, short_name, today_utc, write_json)
 
 RECENT_DAYS = 21        # how far back the Results view can reach
-LIVE_RECENT_DAYS = 4    # finished games kept in the first-paint payload
+LIVE_RECENT_DAYS = 2    # finished games kept in the first-paint payload; older ones load on demand
+POOL_TTL_MIN = 40       # reuse the last player-statistics fetch this fresh (season rates move once a day)
 UPCOMING_DAYS = 14
 GRADE_CAP = 60          # box scores fetched per run to grade finished props
 # Price props only this close to kickoff: further out the lineups are guesses
@@ -166,7 +167,7 @@ def run(league_key, fetch_props=True, http=None, tune=True, replay=None):
 
     # ── predict every game, then freeze the answer ──────────────────────────
     #
-    # The model is refit every hour, and the standings model behind it is
+    # The model is refit on every run, and the standings model behind it is
     # recomputed from *current* standings. Left alone, that means a finished
     # game's probability keeps moving, and the team it names as the favourite
     # can flip once the result is in the standings — the model reading back its
@@ -275,6 +276,15 @@ def load_pool(league_key, cfg, http):
     cache_path = os.path.join(config.DATA_DIR, f'{league_key}_players.json')
     status = 'live'
     pool = {}
+    # Season statistics only move when games end, so a fetch from the last
+    # forty minutes is as good as a new one and spares the feed a full
+    # roster pull four times an hour.
+    cached = read_json(cache_path, {})
+    if cached.get('status', 'live') == 'live' and cached.get('pool') and pool_is_fresh(cached.get('updated')):
+        pool = cached['pool']
+        if league_key == 'mlb':
+            _TEAM_ERA['mlb'] = team_era_from_pool(pool)
+        return pool, 'live'
     try:
         pool = espn.fetch_athlete_stats(http, sport, league)
     except Exception:                        # noqa: BLE001
@@ -287,13 +297,12 @@ def load_pool(league_key, cfg, http):
         except Exception:                    # noqa: BLE001
             pool = {}
     if not pool:
-        cached = read_json(cache_path, {})
         pool = cached.get('pool') or {}
         status = 'cached' if pool else 'unavailable'
     else:
         fill_games_played(league_key, pool)
         attach_prior_season(league_key, cfg, pool, http)
-        write_json(cache_path, {'updated': now_iso(), 'pool': pool}, indent=None)
+        write_json(cache_path, {'updated': now_iso(), 'status': status, 'pool': pool}, indent=None)
     if league_key == 'mlb' and pool:
         _TEAM_ERA['mlb'] = team_era_from_pool(pool)
     return pool, status
@@ -371,6 +380,15 @@ def attach_prior_season(league_key, cfg, pool, http, today=None):
                 n += 1
     print(f'  [{cfg["name"]}] previous season ({season}) as prior for {n} players')
     return n
+
+
+def pool_is_fresh(updated, now=None, ttl_min=None):
+    """Was the cached player pool written within the reuse window?"""
+    ts = parse_iso(updated)
+    if ts is None:
+        return False
+    now = now or datetime.now(timezone.utc)
+    return 0 <= (now - ts).total_seconds() <= 60 * (POOL_TTL_MIN if ttl_min is None else ttl_min)
 
 
 def fill_games_played(league_key, pool):
@@ -568,7 +586,7 @@ def frozen_boards_for(records, boards, ledger, live_boards):
                 continue
             boards.store(game, board, frozen=True)
         boards.freeze(gid)
-        boards.annotate(gid, ledger.rows.values())
+        boards.annotate(gid, ledger.rows.values(), is_void=ledger.is_void)
         board = dict(boards.get(gid))
         board['locked'] = True
         out[gid] = board
@@ -658,8 +676,9 @@ def build_payload(league_key, cfg, trained, memory, components, n_graded,
         if g['date'] > horizon:
             continue
         if g['date'] >= live_cut:
+            board = prop_board.get(g['game_id'])
             games.append(game_json(rec, cfg, league_key,
-                                   prop_board.get(g['game_id']), trained,
+                                   slim_board(board) if g['final'] else board, trained,
                                    injuries=injuries_for_game(g, injuries, _pool_cache(league_key))
                                    if not g['final'] else None,
                                    props_tally=tallies.get(g['game_id'])))
@@ -728,6 +747,35 @@ def _pool_cache(league_key):
         cached = read_json(os.path.join(config.DATA_DIR, f'{league_key}_players.json'), {})
         _POOL_CACHE[league_key] = cached.get('pool') or {}
     return _POOL_CACHE[league_key]
+
+
+# What a finished game's prop rows still need once the verdict is in. The
+# pricing detail (distributions, book prices, ranges of the model's own
+# probability) is the bulk of the payload and only matters before kickoff.
+SETTLED_PROP_FIELDS = ('key', 'label', 'unit', 'line', 'proj', 'season', 'delta', 'range', 'pick',
+                       'pick_prob', 'conf', 'line_source', 'book', 'books', 'edge_pts', 'stat',
+                       'actual', 'hit', 'push', 'played', 'void', 'season_prev')
+SETTLED_PLAYER_FIELDS = ('id', 'name', 'short', 'pos', 'group', 'gp', 'headshot', 'role', 'status')
+
+
+def slim_board(board):
+    """A finished game's board with only what the Results view shows:
+    graded props and their verdicts, no pending rows, no pricing detail."""
+    if not board:
+        return board
+    out = {k: v for k, v in board.items() if k not in ('away', 'home', 'away_out', 'home_out')}
+    for side in ('away', 'home'):
+        players = []
+        for pl in board.get(side) or []:
+            props = [{k: p[k] for k in SETTLED_PROP_FIELDS if k in p}
+                     for p in (pl.get('props') or []) if not p.get('pending') and p.get('line') is not None]
+            if not props:
+                continue
+            slim = {k: pl[k] for k in SETTLED_PLAYER_FIELDS if k in pl}
+            slim['props'] = props
+            players.append(slim)
+        out[side] = players
+    return out
 
 
 def game_json(rec, cfg, league_key, props, trained, injuries=None, props_tally=None):
@@ -872,6 +920,8 @@ def records_block(trained, props_ledger, memory):
 
     for r in props_ledger.rows.values():
         if r.get('graded') != '1' or r.get('played') != '1' or r.get('hit') not in ('0', '1'):
+            continue
+        if props_ledger.is_void(r):
             continue
         hit = int(r['hit'])
         away, home = game_teams.get(str(r.get('game_id')), ('', ''))

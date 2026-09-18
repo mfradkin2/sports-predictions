@@ -58,7 +58,7 @@
     var m = d.model || {}, st = m.settings || {}, o = m.optimizer || {};
     var out = '<div class="section-title">How the model tunes itself</div><div class="cards">';
     var lastMoves = o.last_change && o.last_change.moves ? o.last_change.moves.map(function (x) { return x.move; }).join(', ') : '';
-    out += card('Settings tried', o.tried || 0, 'over ' + (o.runs || 0) + ' hourly checks');
+    out += card('Settings tried', o.tried || 0, 'over ' + (o.runs || 0) + ' refreshes');
     out += card('Changes kept', o.runs_with_a_find || 0,
       o.last_change ? 'last: ' + esc((o.last_change.at || '').slice(0, 10)) + ' · ' + esc(lastMoves) : 'none yet');
     out += card('Random probes', o.probes || 0, (o.probe_wins || 0) + ' beat the current settings');
@@ -450,6 +450,7 @@
   function propOutcome(p) {
     var unit = p.unit ? ' ' + esc(p.unit.toLowerCase()) : '';
     var vs = p.line != null ? ' (line ' + p.line + ')' : '';
+    if (p.void) return '<span class="prop-live low" title="The statistics feed sent an impossible line for this player that day, so this prop is void and not counted, like a book voiding a bet on a bad line">VOID · bad feed data</span>';
     if (p.push) return '<span class="prop-live low">PUSH · had ' + p.actual + unit + vs + '</span>';
     if (p.hit != null) return '<span class="prop-live ' + (p.hit ? 'ok' : 'no') + '">' +
       (p.hit ? '✓ CORRECT' : '✗ INCORRECT') + ' · had ' + p.actual + unit + vs + '</span>';
@@ -619,7 +620,7 @@
     var age = (Date.now() - new Date(newest).getTime()) / 3600000;
     if (!(age > 3)) return '';
     return '<div class="note warn">⚠ These numbers were last refreshed ' + Math.round(age) + ' hours ago. ' +
-      'The site normally refreshes every half hour; this refresh is running late.</div>';
+      'The site normally refreshes every fifteen minutes; this refresh is running late.</div>';
   }
 
   function yesterdayRecap() {
@@ -776,7 +777,7 @@
       .sort(function (a, b) { return (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')); });
     var GROUP_LABEL = { pitcher: 'Pitchers', batter: 'Hitters', qb: 'Quarterbacks', rb: 'Running backs', wr: 'Receivers & tight ends', goalie: 'Goalies', skater: 'Skaters' };
     var statusOf = function (r) {
-      if (r.prop.hit != null || r.prop.push || r.prop.played === false) return 'graded';
+      if (r.prop.hit != null || r.prop.push || r.prop.played === false || r.prop.void) return 'graded';
       return r.g.props_locked ? 'live' : 'upcoming';
     };
 
@@ -857,9 +858,10 @@
       '<th class="num">Edge</th><th>Our pick</th><th class="num">Chance</th>' + (graded ? '<th>Result</th>' : '') + '<th>Game</th></tr></thead><tbody>' +
       list.map(function (r) {
         var p = r.prop;
-        var res = p.push ? '<span class="tag low">PUSH · had ' + p.actual + '</span>'
+        var res = p.void ? '<span class="tag low">VOID</span>'
+          : (p.push ? '<span class="tag low">PUSH · had ' + p.actual + '</span>'
           : (p.hit != null ? '<span class="tag ' + (p.hit ? 'ok' : 'no') + '">' + (p.hit ? '✓ correct' : '✗ wrong') + ' · had ' + p.actual + '</span>'
-          : (p.played === false ? '<span class="tag low">DID NOT PLAY</span>' : '<span class="prop-progress-slot"></span>'));
+          : (p.played === false ? '<span class="tag low">DID NOT PLAY</span>' : '<span class="prop-progress-slot"></span>')));
         return '<tr data-live="' + esc(r.league + '|' + r.g.id + '|' + r.player.id + '|' + p.key) + '"><td><b>' + esc(r.player.name) + '</b><br><span style="color:var(--faint)">' +
             esc(r.player.pos || '') + '</span></td>' +
           '<td>' + (isAll() ? '<span class="lg-chip">' + EMOJI[r.league] + '</span> ' : '') + esc(p.label) + '</td>' +
@@ -1383,7 +1385,7 @@
   window.addEventListener('popstate', function () { fromHash(true); });
 
   // ── live layer ───────────────────────────────────────────────────────────
-  // The site is rebuilt every half hour, but a game moves faster than that.
+  // The site is rebuilt every fifteen minutes, but a game moves faster than that.
   // While games are on, the page asks ESPN's public scoreboard and box score
   // feeds itself, every half minute, and:
   //   - shows the score and clock on each game row,
@@ -1660,7 +1662,7 @@
     document.querySelectorAll('[data-live]').forEach(function (node) {
       var hit = propByLive(node.dataset.live); if (!hit) return;
       var p = hit.prop;
-      if (p.hit != null || p.push || p.played === false) return;       // graded: the row already says so
+      if (p.hit != null || p.push || p.played === false || p.void) return;   // graded: the row already says so
       var k = liveKey(hit.league, hit.g.id), live = LIVE.games[k], box = LIVE.box[k];
       if (!live || live.state === 'pre' || !box) return;
       var entry = box[String(hit.player.id)];
