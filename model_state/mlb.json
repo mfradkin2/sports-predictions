@@ -850,6 +850,33 @@
     "won": false
    },
    "start": 0.6871
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-18T21:53:39Z",
+   "end": 0.6871,
+   "evals": 19,
+   "moves": [],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "margin_diff",
+     "venue_diff",
+     "rest_diff",
+     "b2b_diff",
+     "wpct_diff",
+     "off_diff",
+     "sos_diff"
+    ],
+    "form": {
+     "decay": 0.94,
+     "n": 16
+    },
+    "logloss": 0.6871,
+    "won": false
+   },
+   "start": 0.6871
   }
  ],
  "props": {
@@ -857,7 +884,7 @@
   "lines": {
    "games": 30,
    "mode": "book",
-   "status": "live"
+   "status": "cached"
   },
   "record": {
    "by_conf": {
@@ -1053,31 +1080,6 @@
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-09-15T21:14:20Z",
-   "metrics": {
-    "acc": 0.5472,
-    "brier": 0.2467,
-    "elo_only": {
-     "acc": 0.5529,
-     "brier": 0.2468,
-     "logloss": 0.6867,
-     "n": 709
-    },
-    "glm_only": {
-     "acc": 0.5402,
-     "brier": 0.2525,
-     "logloss": 0.6991,
-     "n": 709
-    },
-    "logloss": 0.6865,
-    "n": 709
-   },
-   "model_version": 3,
-   "notes": "799 completed games",
-   "reason": "kept incumbent (challenger 0.6865 vs 0.6865)"
-  },
   {
    "adopted": false,
    "at": "2026-09-15T21:22:53Z",
@@ -2552,7 +2554,32 @@
    "model_version": 3,
    "notes": "838 completed games",
    "reason": "kept incumbent (challenger 0.6871 vs 0.6862)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-18T21:53:38Z",
+   "metrics": {
+    "acc": 0.5481,
+    "brier": 0.247,
+    "elo_only": {
+     "acc": 0.5481,
+     "brier": 0.2471,
+     "logloss": 0.6872,
+     "n": 748
+    },
+    "glm_only": {
+     "acc": 0.5334,
+     "brier": 0.254,
+     "logloss": 0.7024,
+     "n": 748
+    },
+    "logloss": 0.6871,
+    "n": 748
+   },
+   "model_version": 3,
+   "notes": "838 completed games",
+   "reason": "kept incumbent (challenger 0.6871 vs 0.6862)"
   }
  ],
- "updated": "2026-09-18T21:47:21Z"
+ "updated": "2026-09-18T21:54:03Z"
 }
