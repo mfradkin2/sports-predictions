@@ -41,7 +41,7 @@ LEAGUES = {
     'nhl': {
         'name': 'NHL', 'emoji': '🏒', 'accent': '#2dd4bf',
         'espn_path': 'hockey/nhl', 'sport': 'hockey',
-        'csv_file': 'nhl_2026_schedule_enriched.csv', 'season_label': '2025–26 Season',
+        'csv_file': 'nhl_2026_schedule_enriched.csv', 'season_label': '2026–27 Season',
         'elo': {'k': 6.0, 'hfa': 34.0, 'mov': 0.70, 'regress': 0.30, 'scale': 400.0},
         'home_edge': 0.55,
         'avg_total': 6.1,
@@ -58,7 +58,7 @@ LEAGUES = {
     'nba': {
         'name': 'NBA', 'emoji': '🏀', 'accent': '#fb923c',
         'espn_path': 'basketball/nba', 'sport': 'basketball',
-        'csv_file': 'nba_2026_schedule_enriched.csv', 'season_label': '2025–26 Season',
+        'csv_file': 'nba_2026_schedule_enriched.csv', 'season_label': '2026–27 Season',
         'elo': {'k': 18.0, 'hfa': 62.0, 'mov': 1.00, 'regress': 0.25, 'scale': 400.0},
         'home_edge': 0.58,
         'avg_total': 228.0,
