@@ -1674,11 +1674,12 @@
     document.querySelectorAll('.player[data-athlete]').forEach(function (pl) {
       var game = pl.closest('.game'); if (!game) return;
       var k = liveKey(game.dataset.league, game.dataset.id), live = LIVE.games[k], box = LIVE.box[k];
-      var chip = pl.querySelector('.plive'); if (!chip) return;
-      if (!live || live.state !== 'live' || !box) { chip.hidden = true; return; }
+      var chip = pl.querySelector('.plive'), best = pl.querySelector('.pbest'); if (!chip) return;
+      if (!live || live.state !== 'live' || !box) { chip.hidden = true; if (best) best.hidden = false; return; }
       var g = findGame(game.dataset.league, game.dataset.id); if (!g) return;
       var t = liveTally(game.dataset.league, g, String(pl.dataset.athlete));
       chip.hidden = !t.n;
+      if (best) best.hidden = !!t.n;              // the live count replaces the pre-game headline
       if (t.n) chip.textContent = '● ' + t.good + ' of ' + t.n + ' on track';
     });
   }
