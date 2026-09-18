@@ -195,6 +195,51 @@
     document.title = (d ? d.name + ' Predictions' : 'All Sports') + ' · Sports Predictions';
   }
 
+  // ── collapsible sections ─────────────────────────────────────────────────
+  // Secondary blocks fold behind a heading with an arrow; which ones a reader
+  // leaves open is remembered on their device.
+  var SEC = (function () { try { return JSON.parse(localStorage.getItem('sp.sec') || '{}'); } catch (e) { return {}; } })();
+  function sec(id, title, inner, openDefault) {
+    if (!inner) return '';
+    var open = SEC[id] == null ? !!openDefault : !!SEC[id];
+    return '<details class="sec" data-sec="' + esc(id) + '"' + (open ? ' open' : '') + '><summary>' +
+      '<span class="section-title">' + title + '</span><span class="chev" aria-hidden="true">▾</span></summary>' +
+      '<div class="sec-body">' + inner + '</div></details>';
+  }
+  document.addEventListener('toggle', function (ev) {
+    var d = ev.target;
+    if (!d || !d.classList || !d.classList.contains('sec')) return;
+    SEC[d.dataset.sec] = d.open;
+    try { localStorage.setItem('sp.sec', JSON.stringify(SEC)); } catch (e) { /* private mode */ }
+  }, true);
+
+  // ── sortable tables ──────────────────────────────────────────────────────
+  // Any column header sorts its table; a second click flips the direction.
+  function sortTable(th) {
+    var table = th.closest('table'), idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+    if (table.dataset.board === 'props') {
+      var f = state.filters.props || (state.filters.props = propDefaults()), key = th.dataset.key;
+      if (!key) return;
+      if (f.sort === key) f.dir = f.dir === 'asc' ? 'desc' : 'asc';
+      else { f.sort = key; f.dir = ['edge', 'chance', 'line', 'proj', 'result'].indexOf(key) >= 0 ? 'desc' : 'asc'; }
+      render(); return;
+    }
+    var was = th.getAttribute('aria-sort'), dir = was === 'ascending' ? -1 : 1;
+    table.querySelectorAll('th').forEach(function (h) { h.removeAttribute('aria-sort'); });
+    th.setAttribute('aria-sort', dir > 0 ? 'ascending' : 'descending');
+    var rows = Array.prototype.slice.call(table.tBodies[0].rows);
+    var cell = function (r) { var c = r.cells[idx]; return c ? c.textContent.trim() : ''; };
+    var numOf = function (t) { var m = t.replace(/,/g, '').match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; };
+    rows.sort(function (a, b) {
+      var ta = cell(a), tb = cell(b), na = numOf(ta), nb = numOf(tb);
+      if (na != null && nb != null && na !== nb) return (na - nb) * dir;
+      if (na != null && nb == null) return -1 * dir;
+      if (na == null && nb != null) return 1 * dir;
+      return ta.localeCompare(tb) * dir;
+    });
+    rows.forEach(function (r) { table.tBodies[0].appendChild(r); });
+  }
+
   // ── game rows ────────────────────────────────────────────────────────────
   function teamCell(name, short, rec, cls, right) {
     return '<div class="team' + (right ? ' right' : '') + (cls ? ' ' + cls : '') + '">' +
@@ -555,7 +600,7 @@
     return d;
   }
   function propDefaults() {
-    return { conf: 'all', pick: 'all', cat: 'all', sort: 'edge', when: 'all', team: 'all', game: 'all', pos: 'all', edge: 'all', status: 'open' };
+    return { conf: 'all', pick: 'all', cat: 'all', sort: 'edge', dir: 'desc', when: 'all', team: 'all', game: 'all', pos: 'all', edge: 'all', status: 'open' };
   }
   function activeFilterCount() {
     var f = state.filters[state.view] || {}, base = state.view === 'props' ? propDefaults() : defaults(state.view), n = 0;
@@ -636,11 +681,11 @@
       if (t) { pn += t.n; pc += t.hit; }
     });
     if (!gn && !pn) return '';
-    return '<div class="section-title">Yesterday</div><div class="cards">' +
+    return sec('today-yesterday', 'Yesterday', '<div class="cards">' +
       (gn ? card('Game picks', pct(gc / gn, 1), gc + ' of ' + gn + ' correct') : '') +
       (pn ? card('Player props', pct(pc / pn, 1), pc + ' of ' + pn + ' correct') : '') +
       card('Full record', '<a href="#' + state.league + '/record">Track Record →</a>', 'by confidence, team and player') +
-      '</div>';
+      '</div>', false);
   }
 
   function topProps() {
@@ -666,14 +711,14 @@
     var picks = [];
     rows.forEach(function (r) { var k = r.league + r.pl.id; if (!seen[k] && picks.length < 6) { seen[k] = 1; picks.push(r); } });
     if (!picks.length) return '';
-    return '<div class="section-title">Prop plays we like most</div><div class="strip">' + picks.map(function (r) {
+    return sec('today-props', 'Prop plays we like most', '<div class="strip">' + picks.map(function (r) {
       var g = r.g, p = r.p;
       return '<div class="pick-card" data-jump="' + r.league + '|' + esc(g.id) + '">' +
         '<div class="pc-top"><span class="lg-chip">' + EMOJI[r.league] + '</span><span class="tag ' + p.conf + '">' + pct(p.pick_prob) + '</span></div>' +
         '<div class="pc-team">' + esc(r.pl.short || r.pl.name) + '</div>' +
         '<div class="pc-sub">' + esc(p.label) + ' <b>' + p.pick.toUpperCase() + ' ' + p.line + '</b> · +' + p.edge_pts.toFixed(0) + ' pts vs book</div>' +
         '<div class="pc-sub">' + esc(g.away_s || g.away) + ' @ ' + esc(g.home_s || g.home) + ' · ' + esc(g.time || 'TBD') + '</div></div>';
-    }).join('') + '</div><div class="lookup-sub" style="margin:-2px 0 10px">Edge is how much likelier we think the pick is than the sportsbook\'s price implies.</div>';
+    }).join('') + '</div><div class="lookup-sub" style="margin:-2px 0 10px">Edge is how much likelier we think the pick is than the sportsbook\'s price implies.</div>', false);
   }
 
   function jumpBar(scope) {
@@ -690,13 +735,13 @@
     var picks = allGames('today').filter(function (x) { return x.g.date === x.t && !x.g.final && !x.g.preseason; })
       .sort(function (a, b) { return b.g.pick_prob - a.g.pick_prob; }).slice(0, 6);
     if (!picks.length) return '';
-    return '<div class="section-title">Strongest picks today</div><div class="strip">' + picks.map(function (x) {
+    return sec('today-best', 'Strongest picks today', '<div class="strip">' + picks.map(function (x) {
       var g = x.g, home = g.favored === g.home;
       return '<div class="pick-card" data-jump="' + x.league + '|' + esc(g.id) + '">' +
         '<div class="pc-top"><span class="lg-chip">' + EMOJI[x.league] + '</span><span class="tag ' + g.conf + '">' + pct(g.pick_prob) + '</span></div>' +
         '<div class="pc-team">' + esc(home ? (g.home_s || g.home) : (g.away_s || g.away)) + '</div>' +
         '<div class="pc-sub">' + (home ? 'vs ' : '@ ') + esc(home ? (g.away_s || g.away) : (g.home_s || g.home)) + ' · ' + esc(g.time || 'TBD') + '</div></div>';
-    }).join('') + '</div>';
+    }).join('') + '</div>', true);
   }
 
   // ── results ──────────────────────────────────────────────────────────────
@@ -807,9 +852,25 @@
         seen[key] = r.g.date;
       }
       return true;
-    }).sort(function (a, b) {
-      if (f.sort === 'conf') return b.prop.pick_prob - a.prop.pick_prob;
-      return edgeScore(b.prop) - edgeScore(a.prop);
+    });
+    var dir = f.dir === 'asc' ? 1 : -1;
+    var sortVal = function (r) {
+      switch (f.sort) {
+        case 'player': return r.player.name;
+        case 'prop': return r.prop.label;
+        case 'line': return r.prop.line;
+        case 'proj': return r.prop.proj;
+        case 'pick': return r.prop.pick;
+        case 'chance': case 'conf': return r.prop.pick_prob;
+        case 'result': return r.prop.hit == null ? (r.prop.push ? 0.5 : -1) : (r.prop.hit ? 1 : 0);
+        case 'game': return r.g.date + (r.g.start || '') + r.g.home;
+        default: return edgeScore(r.prop);
+      }
+    };
+    list.sort(function (a, b) {
+      var va = sortVal(a), vb = sortVal(b);
+      if (typeof va === 'string' || typeof vb === 'string') return String(va).localeCompare(String(vb)) * dir;
+      return ((va || 0) - (vb || 0)) * dir || (b.prop.pick_prob - a.prop.pick_prob);
     });
     var totalMatched = list.length;
     list = list.slice(0, 250);
@@ -841,7 +902,7 @@
         [['edge', 'Edge vs book'], ['conf', 'Confidence']].map(function (v) {
           return '<button class="chip" data-filter="sort" data-value="' + v[0] + '" aria-pressed="' +
             (f.sort === v[0]) + '">' + v[1] + '</button>';
-        }).join('') + '</div>' +
+        }).join('') + '<span class="flabel" style="margin-left:4px">or click a column heading</span></div>' +
       '<div class="fgroup">' +
         selectOpts('cat', 'All props', Object.keys(cats).sort().map(function (c) { return [c, c]; }), f.cat) +
         selectOpts('pos', 'All positions', Object.keys(groups).sort().map(function (g) { return [g, GROUP_LABEL[g] || g]; }), f.pos) +
@@ -856,9 +917,13 @@
     // A result column once anything on the board is graded or in progress:
     // graded rows show the verdict, live rows show the number so far.
     var graded = list.some(function (r) { return r.prop.hit != null || r.prop.push || r.prop.played === false || r.g.props_locked; });
-    var body = '<div class="scroll-x"><table class="grid"><thead><tr>' +
-      '<th>Player</th><th>Prop</th><th class="num">Book line</th><th class="num">Our number</th>' +
-      '<th class="num">Edge</th><th>Our pick</th><th class="num">Chance</th>' + (graded ? '<th>Result</th>' : '') + '<th>Game</th></tr></thead><tbody>' +
+    var hdr = function (key, label, cls) {
+      var active = f.sort === key || (key === 'chance' && f.sort === 'conf');
+      return '<th' + (cls ? ' class="' + cls + '"' : '') + ' data-key="' + key + '"' + (active ? ' aria-sort="' + (f.dir === 'asc' ? 'ascending' : 'descending') + '"' : '') + '>' + label + '</th>';
+    };
+    var body = '<div class="scroll-x"><table class="grid" data-board="props"><thead><tr>' +
+      hdr('player', 'Player') + hdr('prop', 'Prop') + hdr('line', 'Book line', 'num') + hdr('proj', 'Our number', 'num') +
+      hdr('edge', 'Edge', 'num') + hdr('pick', 'Our pick') + hdr('chance', 'Chance', 'num') + (graded ? hdr('result', 'Result') : '') + hdr('game', 'Game') + '</tr></thead><tbody>' +
       list.map(function (r) {
         var p = r.prop;
         var res = p.void ? '<span class="tag low">VOID</span>'
@@ -1051,11 +1116,11 @@
     });
     var w7 = windowOf(gCurve, 7), w30 = windowOf(gCurve, 30);
     var streak = pickStreak();
-    out += '<div class="section-title">Game picks</div><div class="cards">' +
+    out += sec('rec-games', 'Game picks', '<div class="cards">' +
       recordCard('All time', gC, gN) + recordCard('Last 7 days', w7.correct, w7.n) + recordCard('Last 30 days', w30.correct, w30.n) +
       (streak.n ? card('Current streak', streak.n + ' ' + (streak.ok ? 'right' : 'wrong'), 'in a row · best run ' + streak.best + ' right') : '') +
       '</div>' + (perLeague ? '<div class="cards">' + perLeague + '</div>' : '') +
-      (gN ? tierRows(gTiers, 'Games') : '');
+      (gN ? tierRows(gTiers, 'Games') : ''), true);
     if (!isAll()) {
       var m = (cur() || {}).model || {};
       if (m.curve && m.curve.length > 3) out += curveSvg(m.curve, 'Game picks over time');
@@ -1067,7 +1132,7 @@
     });
     if (teamRows.length) {
       teamRows.sort(function (a, b) { return b.t.n - a.t.n || a.t.name.localeCompare(b.t.name); });
-      out += '<div><div class="section-title">By team</div><div class="scroll-x"><table class="grid"><thead><tr>' +
+      out += sec('rec-teams', 'By team', '<div class="scroll-x"><table class="grid"><thead><tr>' +
         '<th>Team</th><th class="num">Games</th><th class="num">Correct</th><th class="num">Hit rate</th>' +
         '<th class="num">Picked them</th><th class="num">Picked against</th></tr></thead><tbody>' +
         teamRows.map(function (x) {
@@ -1076,7 +1141,7 @@
             '<td class="num">' + t.n + '</td><td class="num">' + t.ok + '</td><td class="num ' + rateCls(t.ok, t.n) + '">' + rate(t.ok, t.n) + '</td>' +
             '<td class="num">' + (t.picked ? t.picked_ok + ' of ' + t.picked : '—') + '</td>' +
             '<td class="num">' + (t.faded ? t.faded_ok + ' of ' + t.faded : '—') + '</td></tr>';
-        }).join('') + '</tbody></table></div><div class="lookup-sub" style="margin-top:6px">Tap a team for its full record, or search a player above.</div></div>';
+        }).join('') + '</tbody></table></div><div class="lookup-sub" style="margin-top:6px">Tap a team for its full record, or search a player above. Click a column heading to sort.</div>', false);
     }
 
     // ── props ──
@@ -1095,20 +1160,20 @@
       if (isAll()) perLeagueP += recordCard(EMOJI[k] + ' ' + LABEL[k], pr.hit || 0, pr.total || 0);
     });
     var p7 = windowOf(pCurve, 7), p30 = windowOf(pCurve, 30);
-    out += '<div class="section-title">Player props</div><div class="cards">' +
+    out += sec('rec-props', 'Player props', '<div class="cards">' +
       recordCard('All time', pC, pN) + recordCard('Last 7 days', p7.correct, p7.n) + recordCard('Last 30 days', p30.correct, p30.n) +
       '</div>' + (perLeagueP ? '<div class="cards">' + perLeagueP + '</div>' : '') +
-      (pN ? tierRows(pTiers, 'Props') : '');
+      (pN ? tierRows(pTiers, 'Props') : ''), true);
     var types = Object.keys(byType).sort(function (a, b) { return byType[b].n - byType[a].n; });
     if (types.length) {
-      out += '<div><div class="section-title">By prop type</div><div class="scroll-x"><table class="grid"><thead><tr>' +
+      out += sec('rec-types', 'By prop type', '<div class="scroll-x"><table class="grid"><thead><tr>' +
         '<th>Prop</th><th class="num">Graded</th><th class="num">Correct</th><th class="num">Hit rate</th></tr></thead><tbody>' +
         types.map(function (t) {
           var r = byType[t];
           return '<tr><td>' + (isAll() ? esc(t) : esc(t.split(' · ').slice(1).join(' · '))) + '</td><td class="num">' + r.n + '</td>' +
             '<td class="num">' + r.hit + '</td><td class="num ' + (r.n >= 10 && r.hit / r.n >= 0.55 ? 'better' : (r.n >= 10 && r.hit / r.n < 0.48 ? 'worse' : '')) + '">' +
             pct(r.hit / r.n, 1) + '</td></tr>';
-        }).join('') + '</tbody></table></div></div>';
+        }).join('') + '</tbody></table></div>', false);
     }
     if (!isAll()) {
       var prc = ((cur() || {}).props_record || {}).curve || [];
@@ -1122,22 +1187,22 @@
     var best = playerRows.filter(function (x) { return x.p.n >= 5; })
       .sort(function (a, b) { return (b.p.hit / b.p.n) - (a.p.hit / a.p.n) || b.p.n - a.p.n; }).slice(0, 10);
     if (best.length) {
-      out += '<div><div class="section-title">Players we call best (5+ props)</div><div class="strip">' + best.map(function (x) {
+      out += sec('rec-best', 'Players we call best (5+ props)', '<div class="strip">' + best.map(function (x) {
         return '<div class="pick-card" data-lookup="' + x.league + '|player|' + esc(x.p.id) + '">' +
           '<div class="pc-top"><span class="lg-chip">' + EMOJI[x.league] + '</span><span class="tag ' + (x.p.hit / x.p.n >= 0.6 ? 'high' : 'med') + '">' + pct(x.p.hit / x.p.n) + '</span></div>' +
           '<div class="pc-team">' + esc(x.p.name) + '</div><div class="pc-sub">' + x.p.hit + ' of ' + x.p.n + ' props · ' + esc(x.p.team || '') + '</div></div>';
-      }).join('') + '</div></div>';
+      }).join('') + '</div>', false);
     }
     if (playerRows.length) {
       playerRows.sort(function (a, b) { return b.p.n - a.p.n || a.p.name.localeCompare(b.p.name); });
-      out += '<div><div class="section-title">By player (most graded first)</div><div class="scroll-x"><table class="grid"><thead><tr>' +
+      out += sec('rec-players', 'By player (most graded first)', '<div class="scroll-x"><table class="grid"><thead><tr>' +
         '<th>Player</th><th>Team</th><th class="num">Props</th><th class="num">Correct</th><th class="num">Hit rate</th></tr></thead><tbody>' +
         playerRows.slice(0, 40).map(function (x) {
           var p = x.p;
           return '<tr><td><button class="linkish" data-lookup="' + x.league + '|player|' + esc(p.id) + '">' + (isAll() ? EMOJI[x.league] + ' ' : '') + esc(p.name) + '</button></td>' +
             '<td style="color:var(--muted)">' + esc(p.team || '') + '</td><td class="num">' + p.n + '</td><td class="num">' + p.hit + '</td>' +
             '<td class="num ' + rateCls(p.hit, p.n) + '">' + rate(p.hit, p.n) + '</td></tr>';
-        }).join('') + '</tbody></table></div><div class="lookup-sub" style="margin-top:6px">Showing players with at least three graded props. Search above for anyone else.</div></div>';
+        }).join('') + '</tbody></table></div><div class="lookup-sub" style="margin-top:6px">Showing players with at least three graded props. Search above for anyone else. Click a column heading to sort.</div>', false);
     }
     if (!gN && !pN) out += '<div class="empty"><span class="icon">🏆</span>Nothing has been graded yet. The record starts with the first finished game.</div>';
 
@@ -1324,8 +1389,11 @@
       var scope = state.view;
       state.filters[scope] = state.filters[scope] || defaults(scope);
       state.filters[scope][chip.dataset.filter] = chip.dataset.value;
+      if (chip.dataset.filter === 'sort') state.filters[scope].dir = 'desc';
       render(); return;
     }
+    var th = ev.target.closest('table.grid thead th');
+    if (th) { sortTable(th); return; }
     var head = ev.target.closest('.game-head');
     if (head) {
       var game = head.closest('.game'), detail = game.querySelector('.detail');
