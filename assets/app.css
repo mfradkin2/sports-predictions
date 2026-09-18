@@ -154,6 +154,26 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .section-title { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); margin: 20px 0 8px; }
 .section-title:first-child { margin-top: 4px; }
 
+/* ── Collapsible sections ─────────────────────────────────────────────── */
+details.sec { margin: 0; }
+details.sec > summary {
+  list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+details.sec > summary::-webkit-details-marker { display: none; }
+details.sec > summary .section-title { margin: 0; }
+details.sec > summary .chev { color: var(--faint); font-size: 11px; transition: transform .15s; }
+details.sec > summary:hover .section-title { color: var(--muted); }
+details.sec[open] > summary .chev { transform: rotate(180deg); }
+details.sec > .sec-body { padding: 2px 0 10px; }
+details.sec:not([open]) { border-bottom: 1px solid var(--line-soft); }
+
+/* ── Sortable headings ────────────────────────────────────────────────── */
+table.grid th { cursor: pointer; user-select: none; white-space: nowrap; }
+table.grid th:hover { color: var(--text); }
+table.grid th[aria-sort="ascending"]::after { content: ' ▲'; font-size: 9px; }
+table.grid th[aria-sort="descending"]::after { content: ' ▼'; font-size: 9px; }
+
 /* ── Toolbar ──────────────────────────────────────────────────────────── */
 .toolbar {
   display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center;
