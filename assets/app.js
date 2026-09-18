@@ -248,6 +248,7 @@
       || (g.preseason ? '<span class="tag low">PRESEASON</span>'
       : (g.final && !g.counted && state.showCountBadge ? '<span class="tag low" title="This pick was made after the game had started, so it does not count toward the record">LATE PICK</span>' : ''));
     var lock = g.locked ? '<span class="lock" title="Locked at first pitch">🔒</span>' : '';
+    var confirming = g.provisional ? '<span class="tag low" title="Graded on this page from the live feed the moment the game ended; the site\'s next refresh writes the same result to the record">CONFIRMING</span>' : '';
     var lg = isAll() ? '<span class="lg-chip">' + EMOJI[league] + '</span>' : '';
 
     return '<article class="game' + (g.final ? ' done' : '') + '" data-id="' + esc(g.id) + '" data-league="' + league + '"' +
@@ -266,7 +267,7 @@
             '<span class="pick">' + (homePick ? '→' : '←') + ' <b>' +
               nameSpans(g.favored, homePick ? (g.home_s || g.home) : (g.away_s || g.away)) + '</b> ' + pct(g.pick_prob) + '</span>' +
             '<span class="tag ' + g.conf + '" title="' + confWord(g.conf) + ' confidence">' + g.conf.toUpperCase() + '</span>' + flag +
-            propTag + result +
+            propTag + result + confirming +
           '</span></span>' +
         '<span class="chev" aria-hidden="true">▾</span>' +
       '</button><div class="detail" hidden></div></article>';
@@ -285,8 +286,8 @@
     }).join('') + '</div>';
     var body = '<div class="panel" data-dpanel="matchup">' + matchupPanel(g, d) + '</div>';
     if (hasProps) {
-      body += '<div class="panel" data-dpanel="away" hidden>' + playersPanel(g, 'away') + '</div>';
-      body += '<div class="panel" data-dpanel="home" hidden>' + playersPanel(g, 'home') + '</div>';
+      body += '<div class="panel" data-dpanel="away" hidden>' + playersPanel(g, 'away', d.league) + '</div>';
+      body += '<div class="panel" data-dpanel="home" hidden>' + playersPanel(g, 'home', d.league) + '</div>';
     }
     return head + body;
   }
@@ -389,7 +390,7 @@
     return pool.slice().sort(function (a, b) { return b.pick_prob - a.pick_prob; })[0];
   }
 
-  function playersPanel(g, side) {
+  function playersPanel(g, side, league) {
     var players = (g.props && g.props[side]) || [];
     if (!players.length) return '<div class="empty"><span class="icon">👤</span>No player projections for this side.</div>';
     var locked = g.props_locked ? '<div class="note">🔒 Locked at first pitch. Each prop is checked against the box score and marked ' +
@@ -412,10 +413,10 @@
           '<span class="pinfo"><span class="pname">' + esc(p.name) +
             (p.status ? ' <span class="tag med" title="' + esc(p.status_detail || '') + '">' + esc(p.status).toUpperCase() + '</span>' : '') + '</span>' +
           '<span class="pmeta">' + [p.pos, p.role, p.gp ? p.gp + ' GP' : ''].filter(Boolean).map(esc).join(' · ') + '</span></span>' +
-          '<span class="pspacer"></span>' + record +
+          '<span class="pspacer"></span><span class="tag live-tag plive" hidden></span>' + record +
           (best && !hits.length ? '<span class="pbest"><b>' + esc(best.label) + '</b> ' + best.pick.toUpperCase() + ' ' + best.line + '<br>' + pct(best.pick_prob) + '</span>' : '') +
           '<span class="chev" aria-hidden="true">▾</span></button>' +
-        '<div class="prop-list" hidden>' + (p.props || []).map(propRow).join('') + '</div></div>';
+        '<div class="prop-list" hidden>' + (p.props || []).map(function (x) { return propRow(x, { league: league, game: g.id, athlete: p.id }); }).join('') + '</div></div>';
     }).join('') + '</div>';
   }
 
@@ -456,7 +457,8 @@
     return '';
   }
 
-  function propRow(p) {
+  function propRow(p, ctx) {
+    var liveAttr = ctx ? ' data-live="' + esc(ctx.league + '|' + ctx.game + '|' + ctx.athlete + '|' + p.key) + '"' : '';
     var lo = p.range ? p.range[0] : p.proj, hi = p.range ? p.range[1] : p.proj;
     var span = Math.max(hi - lo, 1e-6), pad = span * 0.35, min = lo - pad, max = hi + pad;
     var toPct = function (v) { return ((v - min) / (max - min)) * 100; };
@@ -477,15 +479,16 @@
     var outcome = propOutcome(p);
     var dot = p.actual != null && !p.push ? '<b class="live-dot" style="left:' + Math.max(0, Math.min(100, toPct(p.actual))).toFixed(1) + '%"></b>' : '';
     return '<div class="prop' + (p.hit != null ? (p.hit ? ' right' : ' wrong') : '') + '" data-stat="' + esc(boxKey) + '" data-line="' + p.line +
-      '" data-pick="' + p.pick + '" data-lo="' + lo + '" data-hi="' + hi + '">' +
-      '<span class="prop-name">' + esc(p.label) + (outcome || '<span class="prop-live" hidden></span>') + sub + '</span>' +
+      '" data-pick="' + p.pick + '" data-lo="' + lo + '" data-hi="' + hi + '"' + liveAttr + '>' +
+      '<span class="prop-name">' + esc(p.label) + outcome + sub + '</span>' +
       '<span class="prop-nums"><span class="prop-num"><span class="lbl">' + (p.line_source === 'book' ? 'Book line' : 'Line') + '</span>' + p.line + lineSource(p) + '</span>' +
         '<span class="prop-num"><span class="lbl">Our number</span>' + p.proj + '</span></span>' +
       '<span class="prop-range" title="Likely range ' + lo + '–' + hi + '">' +
         '<i style="left:' + toPct(lo).toFixed(1) + '%;width:' + (toPct(hi) - toPct(lo)).toFixed(1) + '%"></i>' +
         '<u style="left:' + toPct(p.line).toFixed(1) + '%"></u>' + dot + '</span>' +
       '<span class="prop-pick"><span class="pickdir ' + p.pick + '">' + p.pick.toUpperCase() + '</span>' +
-        '<span class="tag ' + p.conf + '">' + pct(p.pick_prob) + '</span></span></div>';
+        '<span class="tag ' + p.conf + '">' + pct(p.pick_prob) + '</span></span>' +
+      (outcome ? '' : '<span class="prop-progress-slot"></span>') + '</div>';
   }
 
   // ── filtering ────────────────────────────────────────────────────────────
@@ -846,15 +849,18 @@
         (activeFilterCount() ? '<button class="chip" data-clear-filters>✕ Clear filters</button>' : '') + '</div>',
       (totalMatched > list.length ? 'top ' + list.length + ' of ' + totalMatched : totalMatched) + ' props');
 
-    var graded = list.some(function (r) { return r.prop.hit != null || r.prop.push; });
+    // A result column once anything on the board is graded or in progress:
+    // graded rows show the verdict, live rows show the number so far.
+    var graded = list.some(function (r) { return r.prop.hit != null || r.prop.push || r.prop.played === false || r.g.props_locked; });
     var body = '<div class="scroll-x"><table class="grid"><thead><tr>' +
       '<th>Player</th><th>Prop</th><th class="num">Book line</th><th class="num">Our number</th>' +
       '<th class="num">Edge</th><th>Our pick</th><th class="num">Chance</th>' + (graded ? '<th>Result</th>' : '') + '<th>Game</th></tr></thead><tbody>' +
       list.map(function (r) {
         var p = r.prop;
         var res = p.push ? '<span class="tag low">PUSH · had ' + p.actual + '</span>'
-          : (p.hit != null ? '<span class="tag ' + (p.hit ? 'ok' : 'no') + '">' + (p.hit ? '✓ correct' : '✗ wrong') + ' · had ' + p.actual + '</span>' : '');
-        return '<tr><td><b>' + esc(r.player.name) + '</b><br><span style="color:var(--faint)">' +
+          : (p.hit != null ? '<span class="tag ' + (p.hit ? 'ok' : 'no') + '">' + (p.hit ? '✓ correct' : '✗ wrong') + ' · had ' + p.actual + '</span>'
+          : (p.played === false ? '<span class="tag low">DID NOT PLAY</span>' : '<span class="prop-progress-slot"></span>'));
+        return '<tr data-live="' + esc(r.league + '|' + r.g.id + '|' + r.player.id + '|' + p.key) + '"><td><b>' + esc(r.player.name) + '</b><br><span style="color:var(--faint)">' +
             esc(r.player.pos || '') + '</span></td>' +
           '<td>' + (isAll() ? '<span class="lg-chip">' + EMOJI[r.league] + '</span> ' : '') + esc(p.label) + '</td>' +
           '<td class="num">' + p.line + '<br>' + lineSource(p) + '</td>' +
@@ -1255,7 +1261,7 @@
     else if (state.view === 'today') html = staleNotice() + yesterdayRecap() + (isAll() ? bestPicks() : '') + topProps() + (isAll() ? jumpBar('today') : '') + gamesView('today');
     else html = gamesView(state.view);
     root.innerHTML = html;
-    if (state.view === 'today') startLive(); else stopLive();
+    startLive();
   }
 
   function go(league, view, replace) {
@@ -1326,7 +1332,7 @@
       game.dataset.open = open ? '0' : '1';
       detail.hidden = open;
       head.setAttribute('aria-expanded', String(!open));
-      if (!open) maybeRefreshBox(game); else clearTimeout(boxTimers[game.dataset.id]);
+      if (!open) patchLive();
       return;
     }
     var dtab = ev.target.closest('.dtab');
@@ -1342,6 +1348,7 @@
       list.hidden = isOpen;
       ph.setAttribute('aria-expanded', String(!isOpen));
       ph.querySelector('.chev').style.transform = isOpen ? '' : 'rotate(180deg)';
+      if (!isOpen) patchLive();
     }
   });
   var searchTimer = null;
@@ -1375,220 +1382,418 @@
   });
   window.addEventListener('popstate', function () { fromHash(true); });
 
-  // ── live scores ──────────────────────────────────────────────────────────
-  function startLive() { stopLive(); if (document.querySelector('.game')) poll(); }
-  function stopLive() { clearTimeout(state.liveTimer); state.liveTimer = null; }
-  function poll() {
-    var stamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    var leagues = leaguesInView().filter(function (k) { return document.querySelector('.game[data-league="' + k + '"]'); });
-    var left = leagues.length, liveTotal = 0;
-    if (!left) return;
-    leagues.forEach(function (k) {
-      espnFetch(DATA[k].espn_path + '/scoreboard?dates=' + stamp)
-        .then(function (json) { liveTotal += applyLive(json, k); })
-        .catch(function () {})
-        .then(function () {
-          if (--left === 0) {
-            var pill = el('live-pill');
-            var clock = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            if (pill) { pill.textContent = liveTotal ? '● ' + liveTotal + ' live · ' + clock : 'Updated ' + clock; pill.className = 'live-pill' + (liveTotal ? ' on' : ''); }
-            state.liveTimer = setTimeout(poll, liveTotal ? 30000 : 300000);
-          }
-        });
+  // ── live layer ───────────────────────────────────────────────────────────
+  // The site is rebuilt every half hour, but a game moves faster than that.
+  // While games are on, the page asks ESPN's public scoreboard and box score
+  // feeds itself, every half minute, and:
+  //   - shows the score and clock on each game row,
+  //   - shows every chosen prop's progress against its line (the number so
+  //     far, how much is still needed, whether it has already cleared),
+  //   - the moment a game goes final, grades the game pick and every prop
+  //     from the final box score and moves the game to Results, marked
+  //     "confirming" until the next rebuild writes the same result down.
+  // Nothing here changes a pick: the line, the lean and the probability were
+  // frozen at kickoff and only the outcome is filled in.
+  var LIVE = { games: {}, box: {}, boxAt: {}, timer: null, settled: {}, reloadTimer: null };
+
+  function liveKey(league, id) { return league + ':' + id; }
+
+  function leaguesToWatch() {
+    var t = today(), y = addDays(t, -1);
+    return LEAGUES.filter(function (k) {
+      var d = DATA[k]; if (!d) return false;
+      return (d.games || []).some(function (g) {
+        if (g.date !== t && g.date !== y) return false;
+        if (!g.final) return true;                  // scheduled or in progress
+        return !!(g.props && countProps(g.props) > 0 && !propTally(g));   // finished, props not yet graded
+      });
     });
   }
-  function applyLive(json, league) {
-    var liveCount = 0;
+
+  function startLive() {
+    stopLive();
+    if (document.hidden) return;
+    poll();
+  }
+  function stopLive() { clearTimeout(LIVE.timer); LIVE.timer = null; }
+
+  function poll() {
+    var leagues = leaguesToWatch();
+    var t = today(), y = addDays(t, -1);
+    var range = y.replace(/-/g, '') + '-' + t.replace(/-/g, '');
+    var left = leagues.length, liveTotal = 0;
+    var finish = function () {
+      var pill = el('live-pill');
+      var clock = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      if (pill) {
+        pill.textContent = liveTotal ? '● ' + liveTotal + ' live · ' + clock : 'Updated ' + clock;
+        pill.className = 'live-pill' + (liveTotal ? ' on' : '');
+      }
+      patchLive();
+      LIVE.timer = setTimeout(poll, liveTotal ? 30000 : 180000);
+    };
+    if (!left) { finish(); return; }
+    leagues.forEach(function (k) {
+      espnFetch(DATA[k].espn_path + '/scoreboard?dates=' + range)
+        .then(function (json) { return ingestScoreboard(json, k); })
+        .then(function (n) { liveTotal += n || 0; })
+        .catch(function () {})
+        .then(function () { if (--left === 0) finish(); });
+    });
+  }
+
+  // Scoreboard → LIVE.games, then fetch box scores for the games that need one.
+  function ingestScoreboard(json, league) {
+    var liveCount = 0, wants = [];
     ((json && json.events) || []).forEach(function (ev) {
-      var row = document.querySelector('.game[data-league="' + league + '"][data-id="' + ev.id + '"]');
-      if (!row) return;
+      var g = findGame(league, ev.id); if (!g) return;
       var comp = (ev.competitions || [])[0]; if (!comp) return;
       var away = (comp.competitors || []).filter(function (c) { return c.homeAway === 'away'; })[0] || {};
       var home = (comp.competitors || []).filter(function (c) { return c.homeAway === 'home'; })[0] || {};
       var type = ((comp.status || {}).type || {});
-      var isLive = type.name === 'STATUS_IN_PROGRESS' || type.name === 'STATUS_HALFTIME';
-      var isFinal = type.name === 'STATUS_FINAL' || type.completed;
-      var center = row.querySelector('.center'); if (!center) return;
-      if (isLive) {
-        liveCount++;
-        var html = '<span class="score live">' + (away.score || 0) + '–' + (home.score || 0) + '</span><span class="gstatus">● ' + esc(type.shortDetail || 'LIVE') + '</span>';
-        if (center.innerHTML !== html) {
-          center.innerHTML = html; row.classList.add('live', 'flash');
-          setTimeout(function () { row.classList.remove('flash'); }, 700);
-          if (row.dataset.open === '1' && !boxTimers[ev.id]) maybeRefreshBox(row);
-        }
-      } else if (isFinal) {
-        var fin = '<span class="score">' + (away.score || 0) + '–' + (home.score || 0) + '</span><span class="slabel">FINAL</span>';
-        if (center.innerHTML !== fin) {
-          center.innerHTML = fin; row.classList.remove('live');
-          gradeRow(row, Number(away.score), Number(home.score));
-          if (row.dataset.open === '1') maybeRefreshBox(row);
-        }
-      } else if (ev.date && center.dataset.time) {
-        var t = new Date(ev.date).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' });
-        var span = center.querySelector('.gtime'); if (span) span.textContent = t + ' ET';
-      }
+      var name = type.name || '';
+      var st = (name === 'STATUS_FINAL' || type.completed) ? 'final'
+        : (['STATUS_IN_PROGRESS', 'STATUS_HALFTIME', 'STATUS_END_PERIOD', 'STATUS_DELAYED', 'STATUS_RAIN_DELAY'].indexOf(name) >= 0 ? 'live' : 'pre');
+      var rec = LIVE.games[liveKey(league, ev.id)] = {
+        state: st, detail: type.shortDetail || type.detail || '', start: ev.date || '',
+        away: Number(away.score), home: Number(home.score), at: Date.now()
+      };
+      if (st === 'live') liveCount++;
+      var hasProps = g.props && countProps(g.props, true) > 0;
+      if (st === 'live' && hasProps) wants.push({ g: g, league: league, every: 30000 });
+      else if (st === 'final' && !g.final && !LIVE.settled[liveKey(league, ev.id)]) wants.push({ g: g, league: league, every: 0 });
+      else if (st === 'final' && g.final && hasProps && !propTally(g) && !LIVE.settled[liveKey(league, ev.id)]) wants.push({ g: g, league: league, every: 0 });
+      if (st === 'final' && !g.final && !hasProps) settleGame(league, g, rec, {});
     });
-    return liveCount;
+    var chain = Promise.resolve();
+    wants.forEach(function (w) {
+      var k = liveKey(w.league, w.g.id);
+      if (w.every && LIVE.boxAt[k] && Date.now() - LIVE.boxAt[k] < w.every - 2000) return;
+      chain = chain.then(function () { return fetchBox(w.league, w.g); });
+    });
+    return chain.then(function () { return liveCount; });
   }
 
-  // ── live box score → prop progress ────────────────────────────────────────
-  // While a game is in progress and its props are open, each prop row shows
-  // the player's actual number so far next to the line it was priced against.
+  function fetchBox(league, g) {
+    var d = DATA[league]; if (!d) return Promise.resolve();
+    var sport = (d.espn_path || '').split('/')[0];
+    var k = liveKey(league, g.id);
+    return espnFetch(d.espn_path + '/summary?event=' + g.id).then(function (summary) {
+      if (!summary) return;
+      var box = parseBox(summary, sport);
+      LIVE.box[k] = box; LIVE.boxAt[k] = Date.now();
+      var status = (((summary.header || {}).competitions || [])[0] || {}).status || {};
+      var final = (status.type || {}).name === 'STATUS_FINAL' || (status.type || {}).completed;
+      var rec = LIVE.games[k];
+      if (final && rec && !LIVE.settled[k] && Object.keys(box).length) settleGame(league, g, rec, box);
+    }).catch(function () { /* feed unreachable: the static board stands */ });
+  }
+
+  // ── box score parsing (mirrors the server's column map) ──────────────────
   var BOX = {
     baseball: {
-      batting: { ab: 'ab', r: 'runs', h: 'hits', rbi: 'rbi', hr: 'hr', bb: 'bb', k: 'so', sb: 'sb',
-                 '2b': 'doubles', '3b': 'triples', tb: 'tb' },
-      pitching: { ip: 'ip', h: 'p_h', er: 'p_er', bb: 'p_bb', k: 'p_so' }
+      batting: { ab: 'ab', r: 'runs', h: 'hits', rbi: 'rbi', hr: 'hr', bb: 'bb', k: 'so', so: 'so', sb: 'sb',
+                 '2b': 'doubles', '3b': 'triples', tb: 'tb', atbats: 'ab', runs: 'runs', hits: 'hits', rbis: 'rbi',
+                 homeruns: 'hr', walks: 'bb', strikeouts: 'so', stolenbases: 'sb', doubles: 'doubles', triples: 'triples', totalbases: 'tb' },
+      pitching: { ip: 'ip', h: 'p_h', r: 'p_r', er: 'p_er', bb: 'p_bb', k: 'p_so', so: 'p_so', hr: 'p_hr', pc: 'pitches',
+                  inningspitched: 'ip', hits: 'p_h', earnedruns: 'p_er', walks: 'p_bb', strikeouts: 'p_so', pitches: 'pitches' }
     },
-    basketball: { '': { min: 'min', pts: 'pts', reb: 'reb', ast: 'ast', stl: 'stl', blk: 'blk',
-                        '3pt': 'fg3', to: 'tov' } },
+    basketball: { '': { min: 'min', pts: 'pts', reb: 'reb', ast: 'ast', stl: 'stl', blk: 'blk', to: 'tov', '3pt': 'fg3', fg: 'fgm', ft: 'ftm',
+                        oreb: 'oreb', dreb: 'dreb', pf: 'pf', minutes: 'min', points: 'pts', rebounds: 'reb', assists: 'ast', steals: 'stl',
+                        blocks: 'blk', turnovers: 'tov', threepointfieldgoalsmade: 'fg3',
+                        threepointfieldgoalsmadethreepointfieldgoalsattempted: 'fg3', fieldgoalsmadefieldgoalsattempted: 'fgm' } },
     football: {
-      passing: { 'c/att': 'pass_cmp', yds: 'pass_yds', td: 'pass_td', int: 'pass_int' },
-      rushing: { car: 'rush_att', yds: 'rush_yds', td: 'rush_td' },
-      receiving: { rec: 'rec', yds: 'rec_yds', td: 'rec_td', tgts: 'targets' },
-      defensive: { tot: 'tackles', sacks: 'sacks' }
+      passing: { catt: 'pass_cmp', yds: 'pass_yds', td: 'pass_td', int: 'pass_int', completionsattempts: 'pass_cmp',
+                 completionspassingattempts: 'pass_cmp', passingyards: 'pass_yds', passingtouchdowns: 'pass_td', interceptions: 'pass_int', sacks: 'sacked' },
+      rushing: { car: 'rush_att', yds: 'rush_yds', td: 'rush_td', long: 'rush_long', rushingattempts: 'rush_att', rushingyards: 'rush_yds', rushingtouchdowns: 'rush_td' },
+      receiving: { rec: 'rec', yds: 'rec_yds', td: 'rec_td', tgts: 'targets', long: 'rec_long', receptions: 'rec', receivingyards: 'rec_yds',
+                   receivingtouchdowns: 'rec_td', receivingtargets: 'targets' },
+      defensive: { tot: 'tackles', solo: 'solo', sacks: 'sacks', tfl: 'tfl', totaltackles: 'tackles' },
+      kicking: { fg: 'fgm', xp: 'xpm', pts: 'kick_pts' }
     },
     hockey: {
-      skaters: { g: 'goals', a: 'assists', pts: 'points', s: 'sog', sog: 'sog', bs: 'blocks' },
-      goalies: { sa: 'shots_against', ga: 'ga', sv: 'saves' }
+      skaters: { g: 'goals', a: 'assists', pts: 'points', s: 'sog', sog: 'sog', bs: 'blocks', hits: 'hits', toi: 'toi', goals: 'goals',
+                 assists: 'assists', points: 'points', shotsongoal: 'sog', shots: 'sog', blockedshots: 'blocks', timeonice: 'toi' },
+      goalies: { sa: 'shots_against', ga: 'ga', sv: 'saves', svpct: 'sv_pct', toi: 'toi', shotsagainst: 'shots_against', goalsagainst: 'ga', saves: 'saves', savepct: 'sv_pct' }
     }
   };
+  function normKey(s) { return String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
 
   function boxValue(raw) {
     var t = String(raw == null ? '' : raw).trim();
-    if (!t || t === '--') return null;
+    if (!t || t === '--' || t === '-') return null;
     if (t.indexOf(':') > 0) { var mm = t.split(':'); return +mm[0] + (+mm[1] || 0) / 60; }
+    if (t.indexOf('-') > 0) t = t.split('-')[0];
     if (t.indexOf('/') > 0) t = t.split('/')[0];
-    else if (t.indexOf('-') > 0) t = t.split('-')[0];
     var n = parseFloat(t);
     return isNaN(n) ? null : n;
   }
 
+  // {athleteId: {played: bool, stats: {...}}}
   function parseBox(summary, sport) {
     var table = BOX[sport] || {};
     var out = {};
     (((summary || {}).boxscore || {}).players || []).forEach(function (side) {
       (side.statistics || []).forEach(function (group) {
-        var cat = String(group.name || group.type || '').toLowerCase();
+        var cat = normKey(group.name || group.type || '');
         var cols = table[cat];
         if (!cols) {
-          if (sport === 'hockey' && cat !== 'goalies') cols = table.skaters;
+          if (sport === 'hockey' && cat !== 'goalies' && cat !== 'goalie') cols = table.skaters;
           else if (sport === 'basketball') cols = table[''];
           else return;
         }
-        var labels = (group.labels || group.names || []).map(function (x) { return String(x).toLowerCase(); });
+        var labels = (group.labels || group.names || []).map(normKey);
+        var names = (group.names || []).map(normKey);
         (group.athletes || []).forEach(function (a) {
           var id = String(((a.athlete || {}).id) || '');
           if (!id) return;
-          var st = out[id] = out[id] || {};
-          (a.stats || []).forEach(function (raw, i) {
-            var key = cols[labels[i]];
-            if (!key || st[key] != null) return;
+          var values = a.stats || [];
+          var here = !(a.didNotPlay || a.active === false);
+          if (!here && values.some(function (v) { var x = boxValue(v); return x != null && x !== 0; })) here = true;
+          var rec = out[id] = out[id] || { played: false, stats: {} };
+          rec.played = rec.played || here;
+          if (!here) return;
+          values.forEach(function (raw, i) {
+            var key = (i < names.length ? cols[names[i]] : null) || (i < labels.length ? cols[labels[i]] : null);
+            if (!key || rec.stats[key] != null) return;
             var v = boxValue(raw);
-            if (v != null) st[key] = v;
+            if (v != null) rec.stats[key] = v;
           });
         });
       });
     });
     Object.keys(out).forEach(function (id) {
-      var st = out[id];
+      var st = out[id].stats;
       if (sport === 'baseball') {
         if (st.tb == null && st.hits != null) {
           var singles = st.hits - (st.doubles || 0) - (st.triples || 0) - (st.hr || 0);
           st.tb = Math.max(singles, 0) + 2 * (st.doubles || 0) + 3 * (st.triples || 0) + 4 * (st.hr || 0);
         }
         if (st.ip != null) { var w = Math.floor(st.ip); st.outs = w * 3 + Math.round((st.ip - w) * 10); }
-      } else if (sport === 'basketball' && st.pts != null) {
-        st.pra = st.pts + (st.reb || 0) + (st.ast || 0);
-        st.pr = st.pts + (st.reb || 0);
-        st.pa = st.pts + (st.ast || 0);
+      } else if (sport === 'basketball') {
+        if (st.pts != null) { st.pra = st.pts + (st.reb || 0) + (st.ast || 0); st.pr = st.pts + (st.reb || 0); st.pa = st.pts + (st.ast || 0); }
         st.stlblk = (st.stl || 0) + (st.blk || 0);
       } else if (sport === 'football') {
         st.scrim_yds = (st.rush_yds || 0) + (st.rec_yds || 0);
         st.td = (st.rush_td || 0) + (st.rec_td || 0);
-      } else if (sport === 'hockey' && st.points == null) {
+      } else if (sport === 'hockey' && st.points == null && (st.goals != null || st.assists != null)) {
         st.points = (st.goals || 0) + (st.assists || 0);
       }
     });
     return out;
   }
 
-  var boxTimers = {};
+  // ── progress against the line ────────────────────────────────────────────
+  function fmtStat(v) { return Math.round(v * 10) / 10; }
+  function needFor(line, v) {
+    // Over 4.5 needs 5; over 250 (a whole-number line) needs 251.
+    var target = Number.isInteger(line) ? line + 1 : Math.ceil(line);
+    return fmtStat(Math.max(0, target - v));
+  }
+  function spareFor(line, v) {
+    var ceiling = Number.isInteger(line) ? line - 1 : Math.floor(line);
+    return fmtStat(Math.max(0, ceiling - v));
+  }
+  // What the number so far means for this pick, in words and a class.
+  function progressState(p, v, final) {
+    var line = p.line, over = p.pick === 'over';
+    var above = v > line + 1e-9, push = Math.abs(v - line) < 1e-9;
+    if (final) {
+      if (push) return { cls: 'push', text: 'PUSH · landed on the line' };
+      var ok = above === over;
+      return { cls: ok ? 'win' : 'lose', text: ok ? '✓ CORRECT' : '✗ INCORRECT' };
+    }
+    if (over) {
+      if (above) return { cls: 'win', text: '✓ cleared the line' };
+      return { cls: 'wait', text: 'needs ' + needFor(line, v) + ' more' };
+    }
+    if (above) return { cls: 'lose', text: '✗ went over the line' };
+    if (push) return { cls: 'wait', text: 'on the line' };
+    return { cls: 'lead', text: spareFor(line, v) + ' to spare' };
+  }
+  function progressHtml(p, v, final, played) {
+    if (played === false) return '<span class="prop-progress push"><span class="ptext">DID NOT PLAY</span></span>';
+    if (v == null) return '';
+    var s = progressState(p, v, final);
+    var line = p.line;
+    var scale = Math.max(line * 1.6, v * 1.08, line + 1, 1e-6);
+    var unit = p.unit ? ' ' + esc(String(p.unit).toLowerCase()) : '';
+    return '<span class="prop-progress ' + s.cls + (final ? '' : ' live') + '">' +
+      '<span class="pbar"><i style="width:' + Math.min(100, (v / scale) * 100).toFixed(1) + '%"></i>' +
+      '<u style="left:' + Math.min(100, (line / scale) * 100).toFixed(1) + '%"></u></span>' +
+      '<span class="ptext"><b>' + fmtStat(v) + '</b> of ' + line + unit + ' · ' + s.text + '</span></span>';
+  }
 
-  function refreshBox(gameEl) {
-    var d = DATA[gameEl && gameEl.dataset.league];
-    if (!d || !gameEl) return;
-    var id = gameEl.dataset.id;
-    var sport = (d.espn_path || '').split('/')[0];
-    espnFetch(d.espn_path + '/summary?event=' + id)
-      .then(function (summary) {
-        if (!summary) return;
-        var box = parseBox(summary, sport);
-        var status = (((summary.header || {}).competitions || [])[0] || {}).status || {};
-        var final = (status.type || {}).name === 'STATUS_FINAL' || (status.type || {}).completed;
-        gameEl.querySelectorAll('.player[data-athlete]').forEach(function (pl) {
-          var st = box[pl.dataset.athlete];
-          if (!st) return;
-          pl.querySelectorAll('.prop[data-line]').forEach(function (row) {
-            var v = st[row.dataset.stat];
-            if (v == null) return;
-            var chip = row.querySelector('.prop-live');
-            var line = parseFloat(row.dataset.line);
-            if (!isFinite(line)) return;
-            var over = v > line, push = Math.abs(v - line) < 1e-9;
-            var ok = over === (row.dataset.pick === 'over');
-            chip.hidden = false;
-            var shown = Math.round(v * 10) / 10;
-            if (!final) { chip.className = 'prop-live live'; chip.textContent = 'Now: ' + shown + ' (line ' + line + ')'; }
-            else if (push) { chip.className = 'prop-live low'; chip.textContent = 'PUSH · had ' + shown + ' (line ' + line + ')'; }
-            else {
-              chip.className = 'prop-live ' + (ok ? 'ok' : 'no');
-              chip.textContent = (ok ? '✓ CORRECT' : '✗ INCORRECT') + ' · had ' + shown + ' (line ' + line + ')';
-              row.classList.add(ok ? 'right' : 'wrong');
-            }
-            var range = row.querySelector('.prop-range');
-            if (range) {
-              var lo = +row.dataset.lo, hi = +row.dataset.hi;
-              var span = Math.max(hi - lo, 1e-6), pad = span * 0.35;
-              var min = lo - pad, max = hi + pad;
-              var x = Math.max(0, Math.min(100, ((v - min) / (max - min)) * 100));
-              var dot = range.querySelector('.live-dot') || document.createElement('b');
-              dot.className = 'live-dot';
-              dot.style.left = x.toFixed(1) + '%';
-              if (!dot.parentNode) range.appendChild(dot);
-            }
-          });
-        });
-        if (!final && gameEl.dataset.open === '1') {
-          clearTimeout(boxTimers[id]);
-          boxTimers[id] = setTimeout(function () { refreshBox(gameEl); }, 30000);
+  // Everything on screen that shows a prop carries data-live="league|game|athlete|key".
+  function propByLive(attr) {
+    var parts = (attr || '').split('|');
+    var g = findGame(parts[0], parts[1]); if (!g || !g.props) return null;
+    var out = null;
+    ['away', 'home'].forEach(function (side) { (g.props[side] || []).forEach(function (pl) {
+      if (String(pl.id) !== parts[2]) return;
+      (pl.props || []).forEach(function (p) { if (p.key === parts[3]) out = { g: g, player: pl, prop: p, league: parts[0] }; });
+    }); });
+    return out;
+  }
+
+  // Paint the live state onto whatever is on screen, without re-rendering.
+  function patchLive() {
+    document.querySelectorAll('.game[data-id]').forEach(function (row) {
+      var k = liveKey(row.dataset.league, row.dataset.id), live = LIVE.games[k];
+      var center = row.querySelector('.center'); if (!live || !center) return;
+      if (live.state === 'live') {
+        var html = '<span class="score live">' + (live.away || 0) + '–' + (live.home || 0) + '</span><span class="gstatus">● ' + esc(live.detail || 'LIVE') + '</span>';
+        if (center.innerHTML !== html) {
+          center.innerHTML = html; row.classList.add('live', 'flash');
+          setTimeout(function () { row.classList.remove('flash'); }, 700);
         }
-      })
-      .catch(function () { /* feed unreachable: leave the static projection */ });
+        var g = findGame(row.dataset.league, row.dataset.id), tag = row.querySelector('.tag.props');
+        if (g && tag) tag.textContent = '● ' + liveTallyText(row.dataset.league, g);
+      } else if (live.state === 'final' && !row.classList.contains('done')) {
+        var fin = '<span class="score">' + (live.away || 0) + '–' + (live.home || 0) + '</span><span class="slabel">FINAL</span>';
+        if (center.innerHTML !== fin) { center.innerHTML = fin; row.classList.remove('live'); row.classList.add('done'); }
+      } else if (live.state === 'pre' && live.start && center.dataset.time) {
+        var t = new Date(live.start).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' });
+        var span = center.querySelector('.gtime'); if (span) span.textContent = t + ' ET';
+      }
+    });
+    document.querySelectorAll('[data-live]').forEach(function (node) {
+      var hit = propByLive(node.dataset.live); if (!hit) return;
+      var p = hit.prop;
+      if (p.hit != null || p.push || p.played === false) return;       // graded: the row already says so
+      var k = liveKey(hit.league, hit.g.id), live = LIVE.games[k], box = LIVE.box[k];
+      if (!live || live.state === 'pre' || !box) return;
+      var entry = box[String(hit.player.id)];
+      var v = entry ? entry.stats[(p.stat || '').replace(/_pg$/, '')] : null;
+      var slot = node.querySelector('.prop-progress-slot'); if (!slot) return;
+      var html = entry ? progressHtml(p, v == null && entry.played ? 0 : v, false, entry.played) : '';
+      if (slot.innerHTML !== html) slot.innerHTML = html;
+    });
+    document.querySelectorAll('.player[data-athlete]').forEach(function (pl) {
+      var game = pl.closest('.game'); if (!game) return;
+      var k = liveKey(game.dataset.league, game.dataset.id), live = LIVE.games[k], box = LIVE.box[k];
+      var chip = pl.querySelector('.plive'); if (!chip) return;
+      if (!live || live.state !== 'live' || !box) { chip.hidden = true; return; }
+      var g = findGame(game.dataset.league, game.dataset.id); if (!g) return;
+      var t = liveTally(game.dataset.league, g, String(pl.dataset.athlete));
+      chip.hidden = !t.n;
+      if (t.n) chip.textContent = '● ' + t.good + ' of ' + t.n + ' on track';
+    });
   }
 
-  function maybeRefreshBox(gameEl) {
-    var isLive = gameEl.classList.contains('live') || gameEl.dataset.status === 'final';
-    var center = gameEl.querySelector('.center');
-    var hasScore = center && center.querySelector('.score');
-    if ((isLive || hasScore) && gameEl.querySelector('.player[data-athlete]')) refreshBox(gameEl);
+  // How the chosen props stand right now: cleared or on track versus not.
+  function liveTally(league, g, athleteId) {
+    var k = liveKey(league, g.id), box = LIVE.box[k] || {};
+    var t = { n: 0, good: 0 };
+    ['away', 'home'].forEach(function (side) { (g.props[side] || []).forEach(function (pl) {
+      if (athleteId && String(pl.id) !== athleteId) return;
+      var entry = box[String(pl.id)]; if (!entry || !entry.played) return;
+      (pl.props || []).forEach(function (p) {
+        if (p.pending || p.line == null) return;
+        var v = entry.stats[(p.stat || '').replace(/_pg$/, '')]; if (v == null) v = 0;
+        t.n++;
+        var s = progressState(p, v, false);
+        if (s.cls === 'win' || s.cls === 'lead') t.good++;
+      });
+    }); });
+    return t;
+  }
+  function liveTallyText(league, g) {
+    var t = liveTally(league, g);
+    return t.n ? 'PROPS ' + t.good + '/' + t.n + ' ON TRACK' : 'PROPS LIVE';
   }
 
-  // The pick was frozen before kickoff, so the moment a final score lands we
-  // can say whether it was right without waiting for the next rebuild.
-  function gradeRow(row, awayScore, homeScore) {
-    if (!isFinite(awayScore) || !isFinite(homeScore) || awayScore === homeScore) return;
-    var meta = row.querySelector('.metarow');
-    if (!meta || meta.querySelector('.tag.ok, .tag.no')) return;
-    var winnerSide = awayScore > homeScore ? 'away' : 'home';
-    var ok = winnerSide === row.dataset.side;
-    var tag = document.createElement('span');
-    tag.className = 'tag ' + (ok ? 'ok' : 'no');
-    tag.textContent = ok ? '✓' : '✗';
-    meta.appendChild(tag);
-    row.dataset.result = ok ? 'correct' : 'wrong';
+  // ── settling a finished game on the page ────────────────────────────────
+  // Mirrors the server's grading so the Results tab can show the game the
+  // moment it ends. The next rebuild writes the same verdict to the ledger.
+  function settleGame(league, g, live, box) {
+    var k = liveKey(league, g.id);
+    if (LIVE.settled[k]) return;
+    LIVE.settled[k] = true;
+    var changed = false;
+    if (!g.final && isFinite(live.away) && isFinite(live.home)) {
+      g.final = true; g.away_score = live.away; g.home_score = live.home;
+      g.winner = live.away > live.home ? g.away : (live.home > live.away ? g.home : '');
+      g.correct = g.winner ? (g.favored === g.winner) : null;
+      g.locked = true; g.provisional = true;
+      changed = true;
+    }
+    if (g.props && box && Object.keys(box).length) {
+      ['away', 'home'].forEach(function (side) { (g.props[side] || []).forEach(function (pl) {
+        (pl.props || []).forEach(function (p) {
+          if (p.pending || p.line == null || p.hit != null || p.push) return;
+          var entry = box[String(pl.id)];
+          if (!entry || !entry.played) { p.played = false; p.actual = null; changed = true; return; }
+          var v = entry.stats[(p.stat || '').replace(/_pg$/, '')];
+          if (v == null) return;
+          p.actual = Math.round(v * 100) / 100; p.played = true;
+          if (Math.abs(v - p.line) < 1e-9) { p.push = true; p.hit = null; }
+          else { p.push = false; p.hit = (v > p.line) === (p.pick === 'over'); }
+          changed = true;
+        });
+      }); });
+      g.props_locked = true; g.provisional = true;
+    }
+    if (changed) rerenderKeepingPlace();
   }
+
+  // Re-render the current view but keep what the reader had open and where
+  // they were on the page.
+  function rerenderKeepingPlace() {
+    var openGames = [], openPlayers = [];
+    document.querySelectorAll('.game[data-open="1"]').forEach(function (r) {
+      openGames.push(r.dataset.league + '|' + r.dataset.id);
+      r.querySelectorAll('.player').forEach(function (pl) {
+        var list = pl.querySelector('.prop-list');
+        if (list && !list.hidden) openPlayers.push(r.dataset.league + '|' + r.dataset.id + '|' + pl.dataset.athlete);
+      });
+      var tab = r.querySelector('.dtab[aria-selected="true"]');
+      if (tab) openGames[openGames.length - 1] += '|' + tab.dataset.dtab;
+    });
+    var y = window.scrollY;
+    render();
+    openGames.forEach(function (key) {
+      var parts = key.split('|');
+      var row = document.querySelector('.game[data-league="' + parts[0] + '"][data-id="' + parts[1] + '"]');
+      if (!row) return;
+      row.querySelector('.game-head').click();
+      if (parts[2]) { var tab = row.querySelector('.dtab[data-dtab="' + parts[2] + '"]'); if (tab) tab.click(); }
+      row.querySelectorAll('.player').forEach(function (pl) {
+        if (openPlayers.indexOf(parts[0] + '|' + parts[1] + '|' + pl.dataset.athlete) >= 0) pl.querySelector('.player-head').click();
+      });
+    });
+    window.scrollTo(0, y);
+  }
+
+  // ── fresh data without a reload ─────────────────────────────────────────
+  // Every ten minutes, re-fetch each league's data file; when the site has
+  // been rebuilt since, swap it in (keeping the page where it was). Games the
+  // page settled itself are confirmed by the rebuilt file.
+  function reloadData() {
+    var loaded = LEAGUES.filter(function (k) { return DATA[k]; });
+    if (!loaded.length || document.hidden) { scheduleReload(); return; }
+    var stamp = Date.now(), left = loaded.length, before = {};
+    loaded.forEach(function (k) { before[k] = DATA[k].generated; });
+    loaded.forEach(function (k) {
+      loadScript(k + ':reload:' + stamp, 'data/' + k + '.js?v=' + stamp, function () {
+        if (--left === 0) {
+          var changed = loaded.some(function (x) { return DATA[x] && DATA[x].generated !== before[x]; });
+          if (changed) {
+            LIVE.settled = {};
+            loaded.forEach(function (x) { delete HISTORY[x]; delete RECORDS[x]; });
+            rerenderKeepingPlace();
+          }
+          scheduleReload();
+        }
+      });
+    });
+  }
+  function scheduleReload() { clearTimeout(LIVE.reloadTimer); LIVE.reloadTimer = setTimeout(reloadData, 600000); }
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { stopLive(); return; }
+    startLive(); reloadData();
+  });
+  scheduleReload();
 
   // ── boot ─────────────────────────────────────────────────────────────────
   function fromHash(replace) {
