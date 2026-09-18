@@ -364,6 +364,64 @@ class TestRefreshPolicy(unittest.TestCase):
         self.assertEqual(set(k[0] for k in lines['1']), {'aaronjudge', 'juansoto'})
 
 
+class TestFarAheadFootball(unittest.TestCase):
+    """Football lines are worth having days early, refreshed daily until
+    kickoff is near; the daily sports keep the short window."""
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.old = os.environ.get('ODDS_API_KEY')
+        os.environ['ODDS_API_KEY'] = 'k'
+
+    def tearDown(self):
+        self.tmp.cleanup()
+        if self.old is None:
+            os.environ.pop('ODDS_API_KEY', None)
+        else:
+            os.environ['ODDS_API_KEY'] = self.old
+
+    def _set_fetched(self, league, gid, hours_ago):
+        path = os.path.join(self.tmp.name, f'{league}_lines.json')
+        with open(path) as f:
+            cache = json.load(f)
+        cache[gid]['fetched'] = (datetime.now(timezone.utc) - timedelta(hours=hours_ago)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        with open(path, 'w') as f:
+            json.dump(cache, f)
+
+    def test_football_lines_come_days_early_and_refresh_daily(self):
+        payload = {'bookmakers': [_book('DraftKings', 'player_pass_yds', [('Josh Allen', 249.5, -110, -110)])]}
+        games = [_game('1', 'Buffalo Bills', 'Miami Dolphins', hours_ahead=96)]
+        events = [{'id': 'ev1', 'home_team': 'Buffalo Bills', 'away_team': 'Miami Dolphins',
+                   'commence_time': games[0]['row']['game_start_utc']}]
+        http = FakeHttp({'/events?': events, '/odds': payload}, remaining=5000)
+        lines, status = odds.load_lines('nfl', games, http, cache_dir=self.tmp.name)
+        self.assertEqual(status, 'live')
+        self.assertEqual(lines['1'][('joshallen', 'pass_yds')]['line'], 249.5)
+        # Five hours later: far from kickoff, still fresh enough.
+        self._set_fetched('nfl', '1', 5)
+        http = FakeHttp({'/events?': events, '/odds': payload})
+        lines, status = odds.load_lines('nfl', games, http, cache_dir=self.tmp.name)
+        self.assertEqual(status, 'cached')
+        self.assertEqual(http.urls, [])
+        # A day later it is refreshed.
+        self._set_fetched('nfl', '1', 25)
+        http = FakeHttp({'/events?': events, '/odds': payload}, remaining=5000)
+        lines, status = odds.load_lines('nfl', games, http, cache_dir=self.tmp.name)
+        self.assertEqual(status, 'live')
+        # Within the short window the usual refresh applies.
+        near = [_game('1', 'Buffalo Bills', 'Miami Dolphins', hours_ahead=10)]
+        events = [dict(events[0], commence_time=near[0]['row']['game_start_utc'])]
+        self._set_fetched('nfl', '1', 5)
+        http = FakeHttp({'/events?': events, '/odds': payload}, remaining=5000)
+        lines, status = odds.load_lines('nfl', near, http, cache_dir=self.tmp.name)
+        self.assertEqual(status, 'live')
+        # Baseball four days out is still left alone.
+        mlb = [_game('9', 'New York Yankees', 'Boston Red Sox', hours_ahead=96)]
+        http = FakeHttp({'/events?': [], '/odds': payload})
+        lines, status = odds.load_lines('mlb', mlb, http, cache_dir=self.tmp.name)
+        self.assertEqual(status, 'cached')
+        self.assertEqual(http.urls, [])
+
+
 class TestMainLineAndNames(unittest.TestCase):
     def test_alternate_long_shot_lines_do_not_replace_the_main_line(self):
         payload = {'bookmakers': [{'title': 'DraftKings', 'markets': [{'key': 'batter_home_runs', 'outcomes': [

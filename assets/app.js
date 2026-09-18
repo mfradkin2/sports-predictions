@@ -532,6 +532,8 @@
     items.sort(function (a, b) {
       if (scope === 'results') return a.g.date < b.g.date ? 1 : (a.g.date > b.g.date ? -1 : 0);
       if (a.g.date !== b.g.date) return a.g.date < b.g.date ? -1 : 1;
+      var sa = a.g.start || '', sb = b.g.start || '';           // real kickoff order, not text order
+      if (sa !== sb) return sa < sb ? -1 : 1;
       return (a.g.time || '') < (b.g.time || '') ? -1 : 1;
     });
     return items;
@@ -553,7 +555,7 @@
     return d;
   }
   function propDefaults() {
-    return { conf: 'all', pick: 'all', cat: 'all', sort: 'edge', when: 'all', team: 'all', game: 'all', pos: 'all', edge: 'all', status: 'all' };
+    return { conf: 'all', pick: 'all', cat: 'all', sort: 'edge', when: 'all', team: 'all', game: 'all', pos: 'all', edge: 'all', status: 'open' };
   }
   function activeFilterCount() {
     var f = state.filters[state.view] || {}, base = state.view === 'props' ? propDefaults() : defaults(state.view), n = 0;
@@ -774,7 +776,7 @@
       games[r.g.id] = r.g; if (r.player.group) groups[r.player.group] = 1;
     });
     var gameList = Object.keys(games).map(function (id) { return games[id]; })
-      .sort(function (a, b) { return (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')); });
+      .sort(function (a, b) { return (a.date + (a.start || a.time || '')).localeCompare(b.date + (b.start || b.time || '')); });
     var GROUP_LABEL = { pitcher: 'Pitchers', batter: 'Hitters', qb: 'Quarterbacks', rb: 'Running backs', wr: 'Receivers & tight ends', goalie: 'Goalies', skater: 'Skaters' };
     var statusOf = function (r) {
       if (r.prop.hit != null || r.prop.push || r.prop.played === false || r.prop.void) return 'graded';
@@ -796,7 +798,8 @@
       if (f.game !== 'all' && r.g.id !== f.game) return false;
       if (f.pos !== 'all' && r.player.group !== f.pos) return false;
       if (f.edge !== 'all' && !(r.prop.edge_pts != null && r.prop.edge_pts >= +f.edge)) return false;
-      if (f.status !== 'all' && statusOf(r) !== f.status) return false;
+      if (f.status === 'open') { if (statusOf(r) === 'graded') return false; }
+      else if (f.status !== 'all' && statusOf(r) !== f.status) return false;
       if (q && (r.player.name + ' ' + r.g.away + ' ' + r.g.home).toLowerCase().indexOf(q) < 0) return false;
       if (dedupe) {
         var key = r.player.id + '|' + r.player.name + '|' + r.prop.key;
@@ -827,7 +830,7 @@
           return '<button class="chip" data-filter="when" data-value="' + v[0] + '" aria-pressed="' + (f.when === v[0]) + '">' + v[1] + '</button>';
         }).join('') + '</div>' +
       '<div class="fgroup"><span class="flabel">Status</span>' +
-        [['all', 'All'], ['upcoming', 'Upcoming'], ['live', 'In progress'], ['graded', 'Graded']].map(function (v) {
+        [['open', 'Open'], ['upcoming', 'Upcoming'], ['live', 'In progress'], ['graded', 'Graded'], ['all', 'All']].map(function (v) {
           return '<button class="chip" data-filter="status" data-value="' + v[0] + '" aria-pressed="' + (f.status === v[0]) + '">' + v[1] + '</button>';
         }).join('') + '</div>' +
       '<div class="fgroup"><span class="flabel">Edge</span>' +

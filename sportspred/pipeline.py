@@ -618,7 +618,12 @@ def record_props(ledger, records, prop_board, boards=None):
 def grade_props(league_key, cfg, ledger, records, http):
     """Grade finished games' props from their box scores, a bounded batch per run."""
     sport, league = cfg['espn_path'].split('/')
-    finished = {r['game']['game_id'] for r in records if r['game']['final'] and r['game']['game_id']}
+    # Exhibition games never count: rows priced for one before the rule
+    # existed are dropped rather than graded.
+    ledger.drop_ungraded({r['game']['game_id'] for r in records
+                          if r['game'].get('preseason') and r['game']['game_id']})
+    finished = {r['game']['game_id'] for r in records
+                if r['game']['final'] and r['game']['game_id'] and not r['game'].get('preseason')}
     pending = ledger.ungraded_games(finished)[:GRADE_CAP]
     graded = 0
     for gid in pending:
@@ -821,6 +826,7 @@ def game_json(rec, cfg, league_key, props, trained, injuries=None, props_tally=N
         'counted': bool(rec.get('pregame')) and not g.get('preseason'),
         'time': format_eastern(row.get('game_start_utc') or row.get('game_time'),
                                str(g['date'])),
+        'start': (row.get('game_start_utc') or '')[:16],       # for ordering a day's games
         'away': g['away'],
         'home': g['home'],
         'away_s': short_name(g['away']),

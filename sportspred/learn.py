@@ -443,6 +443,18 @@ class PropsLedger:
                   if r.get('game_id') == game_id and r.get('graded') != '1']:
             del self.rows[k]
 
+    def drop_ungraded(self, game_ids):
+        """Forget never-graded rows for these games (exhibition games priced
+        before the site learned to skip them). A graded row is never touched."""
+        ids = {str(g) for g in game_ids}
+        if not ids:
+            return 0
+        doomed = [k for k, r in self.rows.items()
+                  if str(r.get('game_id')) in ids and r.get('graded') != '1']
+        for k in doomed:
+            del self.rows[k]
+        return len(doomed)
+
     def has_game(self, game_id):
         return any(r.get('game_id') == game_id for r in self.rows.values())
 

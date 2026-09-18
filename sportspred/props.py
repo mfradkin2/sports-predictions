@@ -386,12 +386,34 @@ def likely_range(spec, projection):
 
 
 def confidence(prob):
-    edge = abs(prob - 0.5)
-    if edge >= 0.18:
+    """The same tiers as game picks: 66% and up is high, 57% medium."""
+    p = max(prob, 1 - prob)
+    if p >= 0.66:
         return 'high'
-    if edge >= 0.09:
+    if p >= 0.57:
         return 'med'
     return 'low'
+
+
+# A lone book's line far from the projection is an alternate line (3.5 outs
+# against a 14-out starter, 1.5 strikeouts against a 5-strikeout one), not
+# the market: more than this share of the number, or this many of our
+# standard deviations. It is left blank until a real line appears.
+ALT_LINE_SHARE = 0.6
+ALT_LINE_SD = 2.5
+
+
+def looks_like_alternate(spec, projection, book):
+    if not book or book.get('line') is None or int(book.get('books') or 0) > 1:
+        return False
+    line = float(book['line'])
+    if line < 1.5:
+        return False                     # 0.5 lines are the market for counts
+    gap = abs(line - projection)
+    if gap / max(projection, line, 1e-6) > ALT_LINE_SHARE:
+        return True
+    sd = _spread(spec, projection)
+    return sd > 0 and gap > ALT_LINE_SD * sd
 
 
 # A player's per-game rate is shrunk toward the typical rate for his position
@@ -872,6 +894,8 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                 base = p.get('_base', p['season'])
                 projection = base * f * bias
                 book = line_for(lines, player.get('name', ''), p['key'])
+                if book and looks_like_alternate(spec, projection, book):
+                    book = None
                 if book:
                     priced.append(_price(spec, base, projection, book, season=p['season'],
                                          sample=p.get('_gp', gp), sport=sport, tuning=tuning))

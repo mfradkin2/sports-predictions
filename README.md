@@ -151,6 +151,20 @@ what the last one learned:
   with the standings as they stood that morning — the leak-free version of a
   season-statistics model.
 
+### Sportsbook lines: what counts as the market
+
+The line shown is the median across books of each book's main line (the
+two-sided point with the most balanced prices). A line posted by a single
+book that sits far from our projection (more than 60% of the number away, or
+two and a half standard deviations) is an alternate line, not the market,
+and the prop stays blank until a real line appears. Lines are fetched within
+36 hours of kickoff for the daily sports and refreshed every four hours;
+football lines are fetched from five days out and refreshed daily until the
+game is within 36 hours, since the books post them early in the week.
+
+Confidence tiers are the same for game picks and props: 66% and up is high,
+57% to 65% medium, anything closer to a coin flip low.
+
 ### Voided props
 
 A statistics feed occasionally sends a corrupt row (a hitter at sixteen hits
