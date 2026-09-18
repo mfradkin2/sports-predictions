@@ -468,10 +468,14 @@
   // How strong a lean is. Against a book price it is our probability minus
   // the book's implied probability, in points; without one, the distance the
   // matchup moved the player off his baseline, scaled to compare.
+  //
+  // Signed, so the board leads with the props where we are keenest relative
+  // to the market. A negative edge means we lean the same way the book does
+  // but less strongly, which is the opposite of a play.
   function edgeScore(p) {
-    if (p.edge_pts != null) return Math.abs(p.edge_pts);
+    if (p.edge_pts != null) return p.edge_pts;
     if (p.line_source === 'book') return 0;   // a one-sided alternate line: nothing to disagree with
-    return Math.abs(p.edge || 0) * 10;
+    return (p.edge || 0) * 10;
   }
   function edgeText(p) {
     if (p.edge_pts != null) return (p.edge_pts > 0 ? '+' : '') + p.edge_pts.toFixed(1) + ' pts';

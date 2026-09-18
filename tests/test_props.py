@@ -230,6 +230,72 @@ class TestPositionGroups(unittest.TestCase):
                                 f'{sport}/{group} has no props defined')
 
 
+
+class TestBookPricedPlayersMakeTheBoard(unittest.TestCase):
+    """A player the sportsbooks price belongs on the board, whatever our own
+    relevance filter would have said. Before this, a team's fourth receiver
+    and change-of-pace back were missing even though every book listed them."""
+
+    def _reserve(self):
+        # Two games, one catch for nine yards: below every football minimum.
+        return {'id': 'r1', 'name': 'Deep Reserve', 'pos': 'WR',
+                'stats': {'gp': 2, 'receptions': 1, 'receivingYards': 9, 'receivingTouchdowns': 0}}
+
+    def _blank(self):
+        # Played, but the stat sheet is empty for him.
+        return {'id': 'r2', 'name': 'Blank Slate', 'pos': 'TE',
+                'stats': {'gp': 2, 'receptions': 0, 'receivingYards': 0, 'receivingTouchdowns': 0}}
+
+    def test_without_a_book_line_the_minimum_still_applies(self):
+        for player in (self._reserve(), self._blank()):
+            priced, _ = props.project_player(player, 'football', 'wr', 1.0)
+            self.assertEqual(priced, [], player['name'])
+
+    def test_a_booked_market_is_priced_however_small_the_projection(self):
+        for player in (self._reserve(), self._blank()):
+            priced, gp = props.project_player(player, 'football', 'wr', 1.0,
+                                              booked={'rec', 'anytd'})
+            keys = {p['key'] for p in priced}
+            self.assertEqual(keys, {'rec', 'anytd'}, player['name'])
+            self.assertEqual(gp, 2)
+            for p in priced:
+                self.assertGreaterEqual(p['proj'], 0)
+                self.assertIn(p['pick'], ('over', 'under'))
+
+    def test_a_player_who_has_not_played_is_still_left_alone(self):
+        # No games and no last season to lean on: a book line is not enough
+        # to invent a projection from nothing.
+        rookie = {'id': 'r3', 'name': 'Not Yet', 'pos': 'WR', 'stats': {'gp': 0}}
+        priced, _ = props.project_player(rookie, 'football', 'wr', 1.0, booked={'rec', 'anytd'})
+        self.assertEqual(priced, [])
+
+    def test_the_board_carries_every_player_the_books_price(self):
+        pool = {'buffalobills': [
+            {'id': 'qb', 'name': 'Star Passer', 'pos': 'QB',
+             'stats': {'gp': 2, 'passingYards': 540, 'completions': 46, 'passingAttempts': 70,
+                       'passingTouchdowns': 4, 'interceptions': 1}},
+            self._reserve(), self._blank(),
+        ]}
+        lines = {}
+        for name, key, line in (('deepreserve', 'rec', 1.5), ('deepreserve', 'anytd', 0.5),
+                                ('blankslate', 'anytd', 0.5), ('starpasser', 'pass_yds', 250.5)):
+            lines[(name, key)] = {'line': line, 'books': 4, 'book': '4 books', 'over': -110, 'under': -110}
+        game = {'home': 'Buffalo Bills', 'away': 'Miami Dolphins', 'game_id': 'g1'}
+        env = {'league_avg': 22.0, 'teams': {}}
+        board = props.build_for_game(game, pool, env, config.LEAGUES['nfl'], 'football', 0.55,
+                                         lines=lines, book_mode=True)
+        names = [p['name'] for p in board['home']]
+        self.assertIn('Deep Reserve', names)
+        self.assertIn('Blank Slate', names)
+        self.assertEqual(names[0], 'Star Passer')      # the stars still lead the board
+        reserve = next(p for p in board['home'] if p['name'] == 'Deep Reserve')
+        priced = [p for p in reserve['props'] if not p.get('pending')]
+        self.assertEqual({p['key'] for p in priced}, {'rec', 'anytd'})
+        for p in priced:
+            self.assertEqual(p['line_source'], 'book')
+            self.assertLess(abs(p.get('edge_pts', 0)), 40)   # no manufactured edge
+
+
 if __name__ == '__main__':
     unittest.main()
 
