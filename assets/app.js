@@ -13,16 +13,36 @@
   var LEAGUES = window.SP_LEAGUES || ['mlb', 'nfl', 'nba', 'nhl'];
   var EMOJI = { mlb: '⚾', nfl: '🏈', nba: '🏀', nhl: '🏒', all: '🎯' };
   var LABEL = { mlb: 'MLB', nfl: 'NFL', nba: 'NBA', nhl: 'NHL', all: 'All' };
+  // Three sections, one per question a reader actually has: what is on,
+  // which player props to look at, and how the picks have done. Today and
+  // Upcoming were two views of one list, and Results and Track Record two
+  // views of one record; each pair is now a single section with a rail
+  // across the top, so everything is still one tap away and nothing is gone.
   var VIEWS = [
-    ['today', 'Today', 'Today', '📅'],
-    ['upcoming', 'Upcoming', 'Next', '⏭'],
+    ['games', 'Games', 'Games', '📅'],
     ['props', 'Player Props', 'Props', '👤'],
-    ['results', 'Results', 'Results', '✓'],
-    ['record', 'Track Record', 'Record', '🏆']
+    ['results', 'Results', 'Results', '🏆']
   ];
+  // Links published before the sections merged still land where they meant to.
+  var VIEW_ALIAS = {
+    today: ['games', { when: 'today' }],
+    upcoming: ['games', { when: 'week' }],
+    record: ['results', { tab: 'record' }],
+    model: ['results', { tab: 'record' }]
+  };
+  // label, then the short form a phone has room for.
+  var DAYS = [['today', 'Today', 'Today'], ['tomorrow', 'Tomorrow', 'Tomorrow'],
+              ['week', 'Next 7 days', '7 days'], ['all', 'All upcoming', 'All']];
+  var RESULT_TABS = [['recent', 'Recent games', 'Recent'], ['record', 'Track record', 'Record']];
+  var PROP_TABS = [['open', 'Open', 'Open'], ['live', 'In progress', 'Live'],
+                   ['graded', 'Graded', 'Graded'], ['all', 'All', 'All']];
 
-  var state = { league: null, view: 'today', filters: {}, filtersOpen: false,
-                showCountBadge: false, search: '', loading: {}, liveTimer: null };
+  function remembered(key, fallback) {
+    try { var v = localStorage.getItem(key); return v == null ? fallback : v === '1'; } catch (e) { return fallback; }
+  }
+  var state = { league: null, view: 'games', tab: { results: 'recent' }, filters: {},
+                filtersOpen: remembered('sp.filters', false), showCountBadge: false,
+                search: '', loading: {}, liveTimer: null };
 
   // ── helpers ──────────────────────────────────────────────────────────────
   function esc(s) {
@@ -562,9 +582,16 @@
     var q = state.search.trim().toLowerCase();
     var items = allGames(scope).filter(function (x) {
       var g = x.g, t = x.t;
-      if (scope === 'today') return g.date === t;
-      if (scope === 'upcoming') return g.date > t && !g.final;
       if (scope === 'results') return g.final && !g.preseason;
+      // Games: today's board keeps the games that have already finished
+      // today, so the day reads as a whole; later days are what is still to
+      // come.
+      if (g.date < t) return false;
+      var when = (state.filters.games || {}).when || 'today';
+      if (when === 'today') return g.date === t;
+      if (g.final) return false;
+      if (when === 'tomorrow') return g.date === addDays(t, 1);
+      if (when === 'week') return g.date <= addDays(t, 7);
       return true;
     });
     if (f.conf && f.conf !== 'all') items = items.filter(function (x) { return x.g.conf === f.conf; });
@@ -589,26 +616,40 @@
   }
 
   var FILTERS = {
-    today: [['conf', 'Confidence', [['all', 'All'], ['high', 'High'], ['med', 'Med'], ['low', 'Low']]],
+    games: [['conf', 'Confidence', [['all', 'All'], ['high', 'High'], ['med', 'Med'], ['low', 'Low']]],
             ['side', 'Favoured', [['all', 'All'], ['home', 'Home'], ['away', 'Away']]]],
-    upcoming: [['days', 'Window', [['3', 'Next 3 days'], ['7', 'Next week'], ['all', 'All']]],
-               ['conf', 'Confidence', [['all', 'All'], ['high', 'High'], ['med', 'Med'], ['low', 'Low']]]],
     results: [['days', 'Period', [['7', 'Last 7 days'], ['14', 'Last 14'], ['all', 'All']]],
               ['result', 'Result', [['all', 'All'], ['correct', '✓ Correct'], ['wrong', '✗ Wrong']]],
               ['conf', 'Confidence', [['all', 'All'], ['high', 'High'], ['med', 'Med'], ['low', 'Low']]]]
   };
   function defaults(scope) {
     var d = { conf: 'all', side: 'all', result: 'all' };
-    if (scope === 'upcoming') d.days = '7';
+    if (scope === 'games') d.when = 'today';
     if (scope === 'results') d.days = '14';
     return d;
+  }
+  // The filters on screen belong to the section being shown; the track
+  // record has none of its own.
+  function filterScope() {
+    if (state.view === 'props') return 'props';
+    if (state.view === 'results') return state.tab.results === 'record' ? '' : 'results';
+    return 'games';
+  }
+  function gameFilters() {
+    return state.filters.games || (state.filters.games = defaults('games'));
   }
   function propDefaults() {
     return { conf: 'all', pick: 'all', cat: 'all', sort: 'edge', dir: 'desc', when: 'all', team: 'all', game: 'all', pos: 'all', edge: 'all', status: 'open' };
   }
   function activeFilterCount() {
-    var f = state.filters[state.view] || {}, base = state.view === 'props' ? propDefaults() : defaults(state.view), n = 0;
-    Object.keys(f).forEach(function (k) { if (f[k] !== (base[k] === undefined ? 'all' : base[k])) n++; });
+    var scope = filterScope();
+    if (!scope) return 0;
+    var f = state.filters[scope] || {}, base = scope === 'props' ? propDefaults() : defaults(scope), n = 0;
+    // The day is chosen on the rail above, so it is not one of the folded
+    // filters and does not belong in their count.
+    Object.keys(f).forEach(function (k) {
+      if (k !== 'when' && f[k] !== (base[k] === undefined ? 'all' : base[k])) n++;
+    });
     if (state.search.trim()) n++;
     return n;
   }
@@ -650,15 +691,84 @@
     var d = cur() || {}, games = d.games || [], t = today();
     if (!games.length) return 'No ' + esc(d.name || '') + ' games are on the schedule yet. Picks appear as soon as the league posts games.';
     var next = games.filter(function (g) { return g.date > t && !g.final; }).sort(function (a, b) { return a.date.localeCompare(b.date); })[0];
-    if (state.view === 'today' && next) {
-      return 'No ' + esc(d.name || '') + ' games today. Next up: ' + shortDate(next.date) + (next.preseason ? ' (preseason)' : '') +
-        ' · <a href="#' + state.league + '/upcoming">see upcoming</a>';
+    if (state.view === 'games' && (state.filters.games || {}).when === 'today' && next) {
+      return 'No ' + esc(d.name || '') + ' games today. Next up: ' + shortDate(next.date) +
+        (next.preseason ? ' (preseason)' : '') + ' · <a href="#' + state.league + '/upcoming">see what is coming</a>';
     }
     return 'No games match these filters.';
   }
   function gamesView(scope) {
     var items = filteredGames(scope);
     return toolbar(scope, items.length) + gameList(items);
+  }
+
+  // ── section rails ────────────────────────────────────────────────────────
+  // One row of tabs at the top of a section: which day on Games, which half
+  // of the record on Results. It is the control that decides what the page
+  // is about, so it sits above everything and never folds away.
+  function rail(items) {
+    return '<div class="rail" role="tablist">' + items.map(function (it) {
+      return '<button class="rail-tab" role="tab" aria-selected="' + (it.on ? 'true' : 'false') + '"' +
+        (it.filter ? ' data-filter="' + it.filter + '" data-value="' + it.value + '"' : '') +
+        (it.tab ? ' data-tab="' + it.tab + '"' : '') + '>' +
+        '<span class="t-full">' + esc(it.label) + '</span>' +
+        '<span class="t-short">' + esc(it.short || it.label) + '</span>' +
+        (it.n == null ? '' : '<span class="n">' + it.n + '</span>') + '</button>';
+    }).join('') + '</div>';
+  }
+
+  function dayRail() {
+    var f = gameFilters();
+    var t = today(), tom = addDays(t, 1), wk = addDays(t, 7);
+    var pool = allGames('games').filter(function (x) { return x.g.date >= x.t; });
+    var count = function (when) {
+      return pool.filter(function (x) {
+        var g = x.g;
+        if (when === 'today') return g.date === t;
+        if (g.final) return false;
+        if (when === 'tomorrow') return g.date === tom;
+        if (when === 'week') return g.date <= wk;
+        return true;
+      }).length;
+    };
+    return rail(DAYS.map(function (d) {
+      return { label: d[1], short: d[2], filter: 'when', value: d[0], on: f.when === d[0], n: count(d[0]) };
+    }));
+  }
+
+  function resultsRail() {
+    return rail(RESULT_TABS.map(function (t) {
+      return { label: t[1], short: t[2], tab: t[0], on: state.tab.results === t[0] };
+    }));
+  }
+
+  function gamesSection() {
+    var f = gameFilters();
+    var out = staleNotice() + dayRail();
+    // The strips are about tonight; on a later day they would be stale.
+    if (f.when === 'today') out += yesterdayRecap() + (isAll() ? bestPicks() : '') + topProps();
+    return out + (isAll() ? jumpBar('games') : '') + gamesView('games');
+  }
+
+  function resultsSection() {
+    return resultsRail() + (state.tab.results === 'record' ? recordView() : resultsView());
+  }
+
+  // Where the address bar should be for what is on screen.
+  function hashFor() {
+    var h = '#' + state.league + '/' + state.view;
+    if (state.view === 'games') {
+      var when = (state.filters.games || {}).when || 'today';
+      return when === 'today' ? h : h + '/' + when;
+    }
+    if (state.view === 'results') {
+      if (state.lookup) {
+        return h + '/track/' + state.lookup.league + ':' + state.lookup.kind +
+          '/' + encodeURIComponent(state.lookup.id);
+      }
+      if (state.tab.results === 'record') return h + '/track';
+    }
+    return h;
   }
 
   // ── overview strip (All · Today) ─────────────────────────────────────────
@@ -688,7 +798,7 @@
     return sec('today-yesterday', 'Yesterday', '<div class="cards">' +
       (gn ? card('Game picks', pct(gc / gn, 1), gc + ' of ' + gn + ' correct') : '') +
       (pn ? card('Player props', pct(pc / pn, 1), pc + ' of ' + pn + ' correct') : '') +
-      card('Full record', '<a href="#' + state.league + '/record">Track Record →</a>', 'by confidence, team and player') +
+      card('Full record', '<a href="#' + state.league + '/results/track">Track record →</a>', 'by confidence, team and player') +
       '</div>', false);
   }
 
@@ -777,7 +887,7 @@
     var scoped = filteredGames('results');
     state.showCountBadge = scoped.some(function (x) { return x.g.counted; }) && scoped.some(function (x) { return !x.g.counted; });
     var list = gamesView('results');
-    return head + '<div class="note">See the <a href="#' + state.league + '/record">Track Record</a> page for the full breakdown by confidence, sport and prop type.</div>' +
+    return head + '<div class="note">See <a href="#' + state.league + '/results/track">Track record</a> for the full breakdown by confidence, sport, team, player and prop type.</div>' +
       '<div class="section-title">Completed games</div>' + list;
   }
 
@@ -894,10 +1004,6 @@
         [['all', 'All'], ['today', 'Today'], ['tomorrow', 'Tomorrow']].map(function (v) {
           return '<button class="chip" data-filter="when" data-value="' + v[0] + '" aria-pressed="' + (f.when === v[0]) + '">' + v[1] + '</button>';
         }).join('') + '</div>' +
-      '<div class="fgroup"><span class="flabel">Status</span>' +
-        [['open', 'Open'], ['upcoming', 'Upcoming'], ['live', 'In progress'], ['graded', 'Graded'], ['all', 'All']].map(function (v) {
-          return '<button class="chip" data-filter="status" data-value="' + v[0] + '" aria-pressed="' + (f.status === v[0]) + '">' + v[1] + '</button>';
-        }).join('') + '</div>' +
       '<div class="fgroup"><span class="flabel">Edge</span>' +
         [['all', 'Any'], ['3', '3+ pts'], ['5', '5+ pts'], ['10', '10+ pts']].map(function (v) {
           return '<button class="chip" data-filter="edge" data-value="' + v[0] + '" aria-pressed="' + (f.edge === v[0]) + '">' + v[1] + '</button>';
@@ -957,7 +1063,18 @@
         'A prop with no book line yet stays blank until a book posts one.</div>'
       : '<div class="note">No sportsbook lines are connected, so the <b>Line</b> shown is based on each player\'s ' +
         'season average and <b>Our number</b> is what we expect tonight given the matchup.</div>';
-    return note + bar + body;
+    // The same rail every section has: which slice of the board this is.
+    var counts = { open: 0, live: 0, graded: 0, all: rows.length };
+    rows.forEach(function (r) {
+      var st = statusOf(r);
+      if (st === 'graded') counts.graded++;
+      else { counts.open++; if (st === 'live') counts.live++; }
+    });
+    var statusRail = rail(PROP_TABS.map(function (v) {
+      return { label: v[1], short: v[2], filter: 'status', value: v[0],
+               on: f.status === v[0], n: counts[v[0]] };
+    }));
+    return statusRail + note + bar + body;
   }
 
 
@@ -1310,38 +1427,31 @@
       root.innerHTML = '<div class="games"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
       return;
     }
-    if (state.view === 'record' || state.view === 'model') {
-      var needR = leaguesInView().filter(function (k) { return !RECORDS[k]; });
-      if (needR.length) {
-        root.innerHTML = '<div class="games"><div class="skeleton"></div><div class="skeleton"></div></div>';
-        var wantR = state.league;
-        loadRecords(needR, function () { if (state.league === wantR && (state.view === 'record' || state.view === 'model')) render(); });
-        return;
-      }
-    }
+    // Both halves of Results are fetched together, so switching between
+    // them is instant and the rail stays put while they load.
     if (state.view === 'results') {
-      var need = leaguesInView().filter(function (k) { return !HISTORY[k]; });
-      if (need.length) {
-        root.innerHTML = '<div class="games"><div class="skeleton"></div><div class="skeleton"></div></div>';
+      var needH = leaguesInView().filter(function (k) { return !HISTORY[k]; });
+      var needR = leaguesInView().filter(function (k) { return !RECORDS[k]; });
+      if (needH.length || needR.length) {
+        root.innerHTML = resultsRail() + '<div class="games"><div class="skeleton"></div><div class="skeleton"></div></div>';
         var want = state.league;
-        loadHistory(need, function () { if (state.league === want && state.view === 'results') render(); });
+        var after = function () { if (state.league === want && state.view === 'results') render(); };
+        if (needH.length) loadHistory(needH, function () { needR.length ? loadRecords(needR, after) : after(); });
+        else loadRecords(needR, after);
         return;
       }
     }
     var html;
-    if (state.view === 'results') html = resultsView();
-    else if (state.view === 'props') html = propsView();
-    else if (state.view === 'record' || state.view === 'model') html = recordView();
-    else if (state.view === 'today') html = staleNotice() + yesterdayRecap() + (isAll() ? bestPicks() : '') + topProps() + (isAll() ? jumpBar('today') : '') + gamesView('today');
-    else html = gamesView(state.view);
+    if (state.view === 'props') html = propsView();
+    else if (state.view === 'results') html = resultsSection();
+    else html = gamesSection();
     root.innerHTML = html;
     startLive();
   }
 
   function go(league, view, replace) {
     state.league = league; state.view = view; state.search = '';
-    var hash = '#' + league + '/' + view;
-    if (view === 'record' && state.lookup) hash += '/' + state.lookup.league + ':' + state.lookup.kind + '/' + encodeURIComponent(state.lookup.id);
+    var hash = hashFor();
     if (location.hash !== hash) { if (replace) history.replaceState(null, '', hash); else history.pushState(null, '', hash); }
     render();
     load(league, function () { if (state.league === league) render(); });
@@ -1361,15 +1471,18 @@
       var lp = pick.dataset.lookup.split('|');
       state.lookup = { league: lp[0], kind: lp[1], id: lp.slice(2).join('|') };
       state.lookupQuery = '';
-      state.view = 'record';
+      state.view = 'results';
+      state.tab.results = 'record';
       if (state.league !== 'all') state.league = lp[0];
-      history.replaceState(null, '', '#' + state.league + '/record/' + lp[0] + ':' + lp[1] + '/' + encodeURIComponent(state.lookup.id));
+      history.replaceState(null, '', hashFor());
       render();
       var panel = document.querySelector('.lookup-panel');
       if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    if (ev.target.closest('[data-lookup-close]')) { state.lookup = null; history.replaceState(null, '', '#' + state.league + '/record'); render(); return; }
+    if (ev.target.closest('[data-lookup-close]')) {
+      state.lookup = null; history.replaceState(null, '', hashFor()); render(); return;
+    }
     var jump = ev.target.closest('[data-jump]');
     if (jump) {
       var parts = jump.dataset.jump.split('|');
@@ -1382,15 +1495,37 @@
       state.filtersOpen = !state.filtersOpen;
       toggle.closest('.toolbar').classList.toggle('open', state.filtersOpen);
       toggle.setAttribute('aria-expanded', String(state.filtersOpen));
+      try { localStorage.setItem('sp.filters', state.filtersOpen ? '1' : '0'); } catch (e) { /* private mode */ }
       return;
     }
     if (ev.target.closest('[data-clear-filters]')) {
-      state.filters[state.view] = state.view === 'props' ? propDefaults() : defaults(state.view);
+      var cs = filterScope();
+      if (cs) {
+        var keepDay = (state.filters[cs] || {}).when;
+        state.filters[cs] = cs === 'props' ? propDefaults() : defaults(cs);
+        if (cs === 'games' && keepDay) state.filters[cs].when = keepDay;
+      }
       state.search = ''; render(); return;
+    }
+    var railTab = ev.target.closest('.rail-tab');
+    if (railTab) {
+      if (railTab.dataset.tab) {
+        state.tab.results = railTab.dataset.tab;
+        if (railTab.dataset.tab === 'recent') state.lookup = null;
+      } else if (railTab.dataset.filter) {
+        var rs = filterScope();
+        if (rs) {
+          state.filters[rs] = state.filters[rs] || (rs === 'props' ? propDefaults() : defaults(rs));
+          state.filters[rs][railTab.dataset.filter] = railTab.dataset.value;
+        }
+      }
+      history.replaceState(null, '', hashFor());
+      render(); return;
     }
     var chip = ev.target.closest('.chip');
     if (chip) {
-      var scope = state.view;
+      var scope = filterScope();
+      if (!scope) return;
       state.filters[scope] = state.filters[scope] || defaults(scope);
       state.filters[scope][chip.dataset.filter] = chip.dataset.value;
       if (chip.dataset.filter === 'sort') state.filters[scope].dir = 'desc';
@@ -1458,6 +1593,9 @@
     }
   });
   window.addEventListener('popstate', function () { fromHash(true); });
+  // A link that only changes the hash fires hashchange, not popstate, so the
+  // in-page links between sections need this one to be followed at all.
+  window.addEventListener('hashchange', function () { fromHash(true); });
 
   // ── live layer ───────────────────────────────────────────────────────────
   // The site is rebuilt every fifteen minutes, but a game moves faster than that.
@@ -1879,13 +2017,36 @@
     var known = ['all'].concat(LEAGUES);
     var league = known.indexOf(parts[0]) >= 0 ? parts[0] : (window.SP_DEFAULT_LEAGUE || 'all');
     var viewNames = VIEWS.map(function (v) { return v[0]; });
-    var view = viewNames.indexOf(parts[1]) >= 0 ? parts[1] : 'today';
-    // #mlb/record/mlb:player/33192 opens that player's page directly.
+    var raw = parts[1] || '';
+    var view = viewNames.indexOf(raw) >= 0 ? raw : '';
+    var rest = parts.slice(2);
+    if (!view) {
+      var alias = VIEW_ALIAS[raw];
+      view = alias ? alias[0] : 'games';
+      if (alias && alias[1].when) gameFilters().when = alias[1].when;
+      if (alias && alias[1].tab) state.tab.results = alias[1].tab;
+    }
     state.lookup = null;
-    if (view === 'record' && parts[2] && parts[3]) {
-      var lk = parts[2].split(':');
-      if (lk.length === 2 && LEAGUES.indexOf(lk[0]) >= 0 && (lk[1] === 'team' || lk[1] === 'player')) {
-        state.lookup = { league: lk[0], kind: lk[1], id: decodeURIComponent(parts.slice(3).join('/')) };
+    // An address says exactly what to show, so a link is worth sharing: a
+    // bare section name means its opening state, not wherever this browser
+    // happened to leave it.
+    var literal = viewNames.indexOf(raw) >= 0;
+    if (view === 'games') {
+      if (DAYS.some(function (d) { return d[0] === rest[0]; })) gameFilters().when = rest[0];
+      else if (literal) gameFilters().when = 'today';
+    }
+    if (view === 'results') {
+      if (rest[0] === 'track') { state.tab.results = 'record'; rest = rest.slice(1); }
+      else if (literal) state.tab.results = 'recent';
+      // #mlb/results/track/mlb:player/33192 opens that player's page
+      // directly, as does #mlb/record/mlb:player/33192, the address it had
+      // before the sections merged.
+      if (rest[0] && rest[0].indexOf(':') > 0 && rest[1]) {
+        var lk = rest[0].split(':');
+        if (lk.length === 2 && LEAGUES.indexOf(lk[0]) >= 0 && (lk[1] === 'team' || lk[1] === 'player')) {
+          state.lookup = { league: lk[0], kind: lk[1], id: decodeURIComponent(rest.slice(1).join('/')) };
+          state.tab.results = 'record';
+        }
       }
     }
     go(league, view, replace !== false);

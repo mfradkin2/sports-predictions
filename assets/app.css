@@ -119,6 +119,28 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .view-tab:hover { color: var(--text); }
 .view-tab[aria-selected="true"] { background: var(--bg1); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, .25); }
 
+/* Section rail: the one control at the top of a section — which day on
+   Games, which half of the record on Results. Reads as tabs, not filters,
+   and never folds away. */
+.rail {
+  display: flex; gap: 4px; margin: 2px 0 14px; padding: 3px; border-radius: 10px;
+  background: var(--bg2); border: 1px solid var(--line);
+  width: max-content; max-width: 100%; overflow-x: auto; scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail-tab {
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  color: var(--muted); transition: background .15s, color .15s;
+}
+.rail-tab:hover { color: var(--text); }
+.rail-tab[aria-selected="true"] { background: var(--bg1); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, .18); }
+.rail-tab .n {
+  font-size: 11px; font-weight: 700; color: var(--faint); background: var(--bg3);
+  border-radius: 999px; padding: 1px 7px; min-width: 20px; text-align: center;
+}
+.rail-tab[aria-selected="true"] .n { background: var(--accent); color: #fff; }
+
 /* Jump bar (All · Today) and back-to-top. */
 .jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
 .jump .chip { gap: 6px; }
@@ -180,9 +202,23 @@ table.grid th[aria-sort="descending"]::after { content: ' ▼'; font-size: 9px; 
   background: var(--bg1); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 9px 12px; margin-bottom: 12px;
 }
-.toolbar-body { display: contents; }
-.filter-toggle { display: none; }
-.count-mobile { display: none; }
+/* Filters fold away at every width now: the rail above decides what the
+   page is about, and these only narrow it. The badge says how many are on. */
+.toolbar-body { display: none; }
+.toolbar.open .toolbar-body { display: contents; }
+.filter-toggle {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 34px;
+  padding: 0 12px; border-radius: 8px; font-size: 12.5px; font-weight: 600;
+  color: var(--muted); background: var(--bg2); border: 1px solid var(--line);
+}
+.filter-toggle:hover { color: var(--text); }
+.toolbar.open .filter-toggle { background: var(--bg3); color: var(--text); }
+.ft-badge {
+  background: var(--accent); color: #fff; border-radius: 999px;
+  font-size: 10.5px; padding: 1px 6px; font-weight: 700;
+}
+.count-mobile { display: inline; margin-left: auto; }
+.count-wide { display: none; }
 .fgroup { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 .flabel { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--faint); margin-right: 2px; }
 .chip {
@@ -459,23 +495,14 @@ table.grid .prop-progress .pbar { flex-basis: 90px; }
   .view-tab[aria-selected="true"] { background: none; color: var(--accent); }
   .wrap { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; }
   .strip { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .rail { width: auto; }
+  .rail-tab { flex: 1 1 0; justify-content: center; padding: 8px 6px; font-size: 12.5px; gap: 5px; }
+  .rail-tab .n { padding: 1px 5px; min-width: 0; }
 
-  /* Filters fold away: they were taller than the first game on the board. */
-  .filter-toggle {
-    display: inline-flex; align-items: center; gap: 7px; min-height: 40px;
-    padding: 0 12px; margin: -4px 0; border-radius: 8px;
-    font-size: 13px; font-weight: 600; color: var(--muted); background: var(--bg2);
-    border: 1px solid var(--line);
-  }
-  .toolbar.open .filter-toggle { background: var(--bg3); color: var(--text); }
-  .ft-badge {
-    background: var(--accent); color: #fff; border-radius: 999px;
-    font-size: 10.5px; padding: 1px 6px; font-weight: 700;
-  }
+  .filter-toggle { min-height: 40px; margin: -4px 0; font-size: 13px; }
   .toolbar { gap: 8px; padding: 8px 10px; }
-  .toolbar-body { display: none; width: 100%; flex-direction: column; align-items: stretch; gap: 10px; }
+  .toolbar-body { width: 100%; flex-direction: column; align-items: stretch; gap: 10px; }
   .toolbar.open .toolbar-body { display: flex; }
-  .count-mobile { display: inline; margin-left: auto; }
   .count-wide { display: none; }
   .fgroup { gap: 6px; }
   .chip { min-height: 38px; padding: 0 14px; display: inline-flex; align-items: center; }

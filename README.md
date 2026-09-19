@@ -10,6 +10,16 @@ Live site: open `index.html` (or the per-sport pages `mlb.html`, `nfl.html`,
 
 ## What it does
 
+**Three sections.** *Games* is what is on, with a rail across the top for
+today, tomorrow, the next seven days or everything scheduled. *Player Props*
+is the whole slate's prop board, with a rail for open, in-progress, graded or
+all. *Results* holds the past, with a rail for the recent games and the full
+track record. Each section has one rail deciding what it is about and a
+fold-away Filters bar for narrowing it. Addresses say exactly what to show,
+so `#mlb/games/week` and `#mlb/results/track` are worth sharing, and the
+older `#mlb/today`, `#mlb/upcoming` and `#mlb/record` links still land in the
+right place.
+
 **Game predictions.** Every scheduled game gets a win probability, a
 confidence tier, and a plain-language breakdown of what is driving the pick —
 Elo edge, recent form, scoring margin, rest, home/road splits, head-to-head.
@@ -34,11 +44,12 @@ is written to a ledger and is what the site shows from then on, so a finished
 game's probability never drifts and the favourite can never quietly change to
 the team that won.
 
-**Honest accuracy reporting.** The Results tab shows the *verified* record:
-games whose forecast was published before they started. Exhibition games are
+**Honest accuracy reporting.** Results shows the *verified* record: games
+whose forecast was published before they started. Exhibition games are
 excluded everywhere, and so are games the site first saw after the final
-whistle. The Model tab adds out-of-sample accuracy, Brier score, log loss and a
-calibration table.
+whistle. Track record adds the breakdown by confidence, sport, team, player
+and prop type, and, under "Under the hood", out-of-sample accuracy, Brier
+score, log loss and a calibration table.
 
 ---
 
@@ -206,7 +217,7 @@ were frozen at kickoff; only the outcome fills in.
   each player's actual number so far next to the line it was priced against,
   refreshed every thirty seconds; when the game ends, each prop is marked as
   having gone over or under.
-- **Live scores** on the Today board refresh every thirty seconds during
+- **Live scores** on the Games board refresh every thirty seconds during
   games, and a frozen pick is graded the moment its final score lands.
 
 ---
