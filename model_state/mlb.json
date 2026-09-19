@@ -161,7 +161,7 @@
   "trust": null
  },
  "model_version": 3,
- "new_games_this_run": 1,
+ "new_games_this_run": 0,
  "optimizer": [
   {
    "adopted": false,
@@ -1094,12 +1094,38 @@
     "won": false
    },
    "start": 0.6867
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-19T05:45:09Z",
+   "end": 0.6867,
+   "evals": 19,
+   "moves": [],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "form_diff",
+     "margin_diff",
+     "venue_diff",
+     "b2b_diff",
+     "h2h_diff",
+     "sos_diff"
+    ],
+    "form": {
+     "decay": 0.97,
+     "n": 20
+    },
+    "logloss": 0.6866,
+    "won": false
+   },
+   "start": 0.6867
   }
  ],
  "props": {
-  "graded_this_run": 452,
+  "graded_this_run": 338,
   "lines": {
-   "games": 15,
+   "games": 20,
    "mode": "book",
    "status": "live"
   },
@@ -1289,31 +1315,6 @@
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-09-16T01:28:50Z",
-   "metrics": {
-    "acc": 0.5463,
-    "brier": 0.2465,
-    "elo_only": {
-     "acc": 0.552,
-     "brier": 0.2467,
-     "logloss": 0.6865,
-     "n": 712
-    },
-    "glm_only": {
-     "acc": 0.5393,
-     "brier": 0.2526,
-     "logloss": 0.6993,
-     "n": 712
-    },
-    "logloss": 0.6863,
-    "n": 712
-   },
-   "model_version": 3,
-   "notes": "802 completed games",
-   "reason": "kept incumbent (challenger 0.6863 vs 0.6863)"
-  },
   {
    "adopted": true,
    "at": "2026-09-16T01:57:24Z",
@@ -2788,7 +2789,32 @@
    "model_version": 3,
    "notes": "853 completed games",
    "reason": "kept incumbent (challenger 0.6867 vs 0.6862)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-19T05:45:09Z",
+   "metrics": {
+    "acc": 0.5505,
+    "brier": 0.2468,
+    "elo_only": {
+     "acc": 0.5465,
+     "brier": 0.247,
+     "logloss": 0.6871,
+     "n": 763
+    },
+    "glm_only": {
+     "acc": 0.536,
+     "brier": 0.2546,
+     "logloss": 0.7038,
+     "n": 763
+    },
+    "logloss": 0.6867,
+    "n": 763
+   },
+   "model_version": 3,
+   "notes": "853 completed games",
+   "reason": "kept incumbent (challenger 0.6867 vs 0.6862)"
   }
  ],
- "updated": "2026-09-19T05:04:53Z"
+ "updated": "2026-09-19T05:45:41Z"
 }
