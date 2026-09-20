@@ -364,7 +364,17 @@
 
   function matchupPanel(g, d) {
     var c = g.components || {};
-    var out = '<div class="cards">' +
+    var out = '';
+    // A game old enough to have left the live payload keeps its tally but
+    // not its board. Say so, rather than showing a props count the reader
+    // cannot open.
+    var tally = propTally(g);
+    if (tally && tally.n && !(g.props && countProps(g.props, true))) {
+      out += '<div class="note">' + tally.hit + ' of ' + tally.n + ' player props were correct in this game. ' +
+        'The board itself is only kept for a couple of days; each player\'s own props are on their page under ' +
+        '<a href="#' + state.league + '/results/track">Track record</a>.</div>';
+    }
+    out += '<div class="cards">' +
       card('Our pick', nameSpans(g.favored, g.favored === g.home ? (g.home_s || g.home) : (g.away_s || g.away)),
            pct(g.pick_prob, 1) + ' chance · ' + confWord(g.conf) + ' confidence' + (g.locked ? ' · locked' : '')) +
       card('Team strength', pct(c.elo, 1), 'home win chance by ratings') +
@@ -871,6 +881,18 @@
 
   function resultsSection() {
     return resultsRail() + (state.tab.results === 'record' ? recordView() : resultsView());
+  }
+
+  // A section's own tab is its front door: it lands where the section's bare
+  // address points, not wherever this browser last left it. Without this, one
+  // visit to Track record made the Results tab keep showing the record — a
+  // page with no finished games on it at all.
+  function resetSection(view) {
+    if (view === 'results') { state.tab.results = 'recent'; state.lookup = null; }
+    else if (view === 'games') gameFilters().when = 'today';
+    else if (view === 'props' && state.filters.props) {
+      state.filters.props.status = propDefaults().status;
+    }
   }
 
   // Where the address bar should be for what is on screen.
@@ -1606,7 +1628,7 @@
     var sport = ev.target.closest('.sport');
     if (sport) { go(sport.dataset.league, state.view); return; }
     var view = ev.target.closest('.view-tab');
-    if (view) { go(state.league, view.dataset.view); return; }
+    if (view) { resetSection(view.dataset.view); go(state.league, view.dataset.view); return; }
     var scrollTo = ev.target.closest('[data-scroll]');
     if (scrollTo) { var sec = el(scrollTo.dataset.scroll); if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     if (ev.target.closest('.totop')) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }

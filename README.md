@@ -212,6 +212,27 @@ already on disk: the test suite runs before the pipeline, so judging the
 previous build there would mean the first change that adds a new block would
 fail the tests, stop the run, and leave the site unable to rebuild out of it.
 
+### The pages themselves are checked in a browser
+
+The gate above judges the data. `scripts/check_pages.py` judges the pages it
+is poured into: it opens the built site in a real browser at desktop and
+phone width, visits every league and section, and fails if a page throws,
+renders nothing, shows `undefined` where a value should be, scrolls
+sideways, claims a count on a rail that the list underneath does not match,
+or opens a section somewhere other than its own front door. That last one is
+the check that would have caught the Results tab remembering Track record
+and so showing no finished games at all.
+
+```bash
+python3 scripts/check_pages.py            # the site in this directory
+python3 scripts/check_pages.py --dir out  # a site built somewhere else
+```
+
+It needs Playwright and a browser, which the hourly refresh deliberately
+does not — that build is standard-library Python with nothing to install —
+so it is run by hand, or by the daily review, after a change to the front
+end. Without Playwright it says so and exits 0.
+
 ### Publishing never overwrites newer code
 
 A refresh takes about five minutes. If a change to the site's code lands
@@ -301,6 +322,7 @@ SP_LOOKBACK_DAYS=120 python3 run_pipeline.py mlb
 | `history/` | Game archive, prediction ledger, props ledger, team-stat snapshots — the long-term memory |
 | `model_state/` | Tuned parameters, Elo snapshot, run log |
 | `tests/` | Test suite |
+| `scripts/check_pages.py` | Browser check of the built pages (run by hand) |
 
 ---
 
