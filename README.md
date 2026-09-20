@@ -233,6 +233,40 @@ does not — that build is standard-library Python with nothing to install —
 so it is run by hand, or by the daily review, after a change to the front
 end. Without Playwright it says so and exits 0.
 
+### When something does go wrong
+
+`docs/RUNBOOK.md` is the operating manual: the five promises the site makes
+to a reader, how the pieces fit together, the instruments, the standing
+conditions that look like faults but are not, and every failure mode that
+has actually happened with its cause and its fix.
+
+`scripts/health_check.py` is the instrument it points at first. The build
+gate asks whether a build holds together; this asks the different question —
+is what readers are looking at right now current, correct, and still
+honouring those promises. It checks that the boards are fresh, that no pick
+was first recorded after its game started, that finished games can actually
+be reached in Results, that the ledgers hold no duplicates or verdicts
+without results, that a board for a game under way is frozen, that no market
+is being published which can never be scored, and that the refresh is still
+pushing.
+
+```bash
+python3 scripts/health_check.py           # everything
+python3 scripts/health_check.py mlb nfl   # only these leagues
+```
+
+Findings come at two levels: a PROBLEM is something a reader would be wrong
+to trust, and exits non-zero; a WATCH is worth knowing and not worth waking
+anyone for. Its first check is whether the checkout matches what is
+published, because every other check reads the working tree — a stale
+checkout reports a stale site, which is the easiest way to spend an hour
+chasing a fault that does not exist.
+
+The `site-doctor` agent (`.claude/agents/site-doctor.md`) does this
+end to end: it reads the runbook, runs the instruments, diagnoses, fixes,
+tests and confirms, and is deliberately scoped to breakage rather than to
+features or model accuracy.
+
 ### Publishing never overwrites newer code
 
 A refresh takes about five minutes. If a change to the site's code lands
@@ -336,6 +370,9 @@ SP_LOOKBACK_DAYS=120 python3 run_pipeline.py mlb
 | `tests/` | Test suite |
 | `scripts/check_pages.py` | Browser check of the built pages (run by hand) |
 | `scripts/merge_history.py` | Folds an overlapping refresh's ledger rows into this one's |
+| `scripts/health_check.py` | Is the published site current, correct and honest right now |
+| `docs/RUNBOOK.md` | Operating manual: promises, instruments, failure modes |
+| `.claude/agents/site-doctor.md` | The agent that diagnoses and fixes breakage |
 
 ---
 

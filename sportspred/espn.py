@@ -570,6 +570,26 @@ BOX_COLUMNS = {
 }
 
 
+# Some box-score cells carry two numbers: "20/31" is completions and
+# attempts, "8-15" is field goals made and attempted. Only the first was ever
+# read, so a market priced on the second could be published every week and
+# never graded — which is exactly what happened to pass attempts. These name
+# the internal key the second number belongs to.
+BOX_PAIRS = {'pass_cmp': 'pass_att', 'fgm': 'fga', 'ftm': 'fta', 'fg3': 'fg3a'}
+
+
+def _box_pair(raw):
+    """The second number in a combined cell: '20/31' -> 31. None if there is
+    no second number, which is the ordinary case."""
+    if raw is None:
+        return None
+    s = str(raw).strip()
+    for sep in ('/', '-'):
+        if sep in s[1:]:
+            return num(s[1:].split(sep, 1)[1] if s.startswith('-') else s.split(sep, 1)[1])
+    return None
+
+
 def _box_value(raw):
     """'12' -> 12; '3-7' -> 3 (made-attempted); '18:42' -> minutes; '' -> None."""
     if raw is None:
@@ -643,6 +663,11 @@ def boxscore_player_stats(summary, sport):
                     v = _box_value(raw)
                     if v is not None and key not in rec['stats']:
                         rec['stats'][key] = v
+                    pair = BOX_PAIRS.get(key)
+                    if pair and pair not in rec['stats']:
+                        second = _box_pair(raw)
+                        if second is not None:
+                            rec['stats'][pair] = second
     # Derived lines the props are priced on.
     for rec in out.values():
         st = rec['stats']

@@ -765,3 +765,43 @@ class TestPitcherListedAsNonBatter(unittest.TestCase):
         self.assertFalse(box['b1']['played'])
         self.assertTrue(box['h1']['played'])
         self.assertEqual(box['h1']['stats']['hits'], 2)
+
+
+class TestCombinedBoxColumns(unittest.TestCase):
+    """A box-score cell holding two numbers must give up both.
+
+    "20/31" is completions and attempts, but only completions were ever read.
+    So the pass-attempts market was priced and published every week and could
+    never be graded: its picks sat in the ledger with no verdict, counting
+    towards nothing and teaching the model nothing.
+    """
+    def line(self, value):
+        summary = {'boxscore': {'players': [{
+            'team': {'displayName': 'Detroit Lions'},
+            'statistics': [{'name': 'passing', 'labels': ['C/ATT'],
+                            'athletes': [{'athlete': {'id': '7', 'displayName': 'A Passer'},
+                                          'stats': [value]}]}]}]}}
+        return espn.boxscore_player_stats(summary, 'football')['7']['stats']
+
+    def test_completions_and_attempts_both_land(self):
+        line = self.line('20/31')
+        self.assertEqual((line.get('pass_cmp'), line.get('pass_att')), (20.0, 31.0))
+
+    def test_a_single_number_still_reads_as_itself(self):
+        line = self.line('20')
+        self.assertEqual(line.get('pass_cmp'), 20.0)
+        self.assertNotIn('pass_att', line)
+
+    def test_an_empty_cell_gives_nothing(self):
+        line = self.line('--')
+        self.assertNotIn('pass_cmp', line)
+        self.assertNotIn('pass_att', line)
+
+    def test_made_and_attempted_split_on_a_dash(self):
+        self.assertEqual(espn._box_pair('8-15'), 15.0)
+
+    def test_a_negative_number_is_not_a_pair(self):
+        self.assertIsNone(espn._box_pair('-3'))
+
+    def test_a_clock_is_not_a_pair(self):
+        self.assertIsNone(espn._box_pair('18:42'))
