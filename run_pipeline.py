@@ -6,10 +6,16 @@
     python3 run_pipeline.py --no-ingest     # build from the CSVs already on disk
     python3 run_pipeline.py --no-props      # skip the player-stat fetch
     python3 run_pipeline.py --no-tune       # reuse the stored Elo parameters
+    python3 run_pipeline.py --no-verify     # build even if the checks fail
 
 Each league is independent: one failing does not stop the others, and the site
 is rewritten from whatever succeeded. An ingest that cannot reach ESPN keeps
 the previous CSV, so a feed outage degrades to stale data rather than no site.
+
+The last thing every build does is read its own output back and check that it
+holds together (see ``sportspred.verify``). A build that fails those checks
+exits non-zero, and the workflow publishes nothing, so a broken site costs one
+skipped refresh rather than showing wrong numbers until somebody notices.
 """
 from __future__ import annotations
 
@@ -17,7 +23,7 @@ import os
 import sys
 import traceback
 
-from sportspred import ingest, pipeline, render
+from sportspred import ingest, pipeline, render, verify as verify_site
 from sportspred.config import LEAGUE_ORDER, LEAGUES
 from sportspred.util import Http
 
@@ -38,6 +44,7 @@ def main(argv):
     fetch_props = '--no-props' not in flags
     do_ingest = '--no-ingest' not in flags
     tune = '--no-tune' not in flags
+    check = '--no-verify' not in flags
 
     payloads, failures = {}, []
 
@@ -96,6 +103,16 @@ def main(argv):
     print(f'\nSite rebuilt (assets v{version}): {", ".join(written)}')
     if failures:
         print(f'Leagues that failed this run: {", ".join(failures)}')
+
+    if check:
+        # Read the site back the way a browser will and refuse to hand over a
+        # build that does not hold together. Only the leagues rebuilt this run
+        # are judged: the others keep whatever they had.
+        problems = verify_site.verify(leagues=sorted(payloads))
+        print('\n' + verify_site.report(problems))
+        if problems:
+            print('Publishing nothing: the next refresh will try again.')
+            return 2
     return 0
 
 

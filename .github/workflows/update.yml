@@ -33,6 +33,11 @@ on:
         description: 'Replay picks: league start end (e.g. "nfl 2026-09-10 2026-09-15")'
         required: false
         default: ''
+      skip_verify:
+        description: 'Publish even if the build fails its own checks (escape hatch)'
+        type: boolean
+        required: false
+        default: false
 
 # Never let two refreshes race each other onto the same branch.
 concurrency:
@@ -45,6 +50,12 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: write
+    env:
+      # One place for the build's flags: the publish step re-runs the build
+      # when the code moves under it, and must run it the same way.
+      SP_PIPELINE_ARGS: >-
+        ${{ github.event.inputs.skip_props == 'true' && '--no-props' || '' }}
+        ${{ github.event.inputs.skip_verify == 'true' && '--no-verify' || '' }}
 
     steps:
       - name: Checkout repository
@@ -61,6 +72,8 @@ jobs:
 
       # Ingest from ESPN, learn, predict, price props, render. A league whose
       # feed is down keeps its previous data; the site is rebuilt regardless.
+      # The build reads its own output back at the end and exits non-zero if
+      # it does not hold together, so nothing broken reaches the publish step.
       - name: Ingest, train, project props and rebuild the site
         env:
           SP_LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days }}
@@ -70,33 +83,15 @@ jobs:
           # the key as a repository secret; without it lines are model-derived.
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: |
-          python3 run_pipeline.py ${{ github.event.inputs.skip_props == 'true' && '--no-props' || '' }}
+          python3 run_pipeline.py $SP_PIPELINE_ARGS
 
-      - name: Commit and push
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A -- \
-            index.html mlb.html nhl.html nba.html nfl.html \
-            assets data history model_state \
-            mlb_2026_schedule_enriched.csv \
-            nhl_2026_schedule_enriched.csv \
-            nba_2026_schedule_enriched.csv \
-            nfl_2026_schedule_enriched.csv
-          if git diff --cached --quiet; then
-            echo "Nothing changed this run."
-            exit 0
-          fi
-          git commit -m "Auto-refresh: predictions and player props $(date -u +'%Y-%m-%d %H:%M UTC')"
-          # The hourly schedule can collide with a push; rebase and retry.
-          for attempt in 1 2 3 4; do
-            if git push; then
-              echo "Pushed on attempt $attempt."
-              exit 0
-            fi
-            echo "Push failed (attempt $attempt); rebasing on origin."
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-            sleep $((2 ** attempt))
-          done
-          echo "Could not push after 4 attempts." >&2
-          exit 1
+      # Publish, rebuilding first if a code change landed on main while this
+      # refresh was running — otherwise the pages this run made from the older
+      # code would overwrite the newer ones. See .github/scripts/publish.sh.
+      - name: Publish
+        env:
+          SP_LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days }}
+          SP_LEAGUES: ${{ github.event.inputs.leagues }}
+          SP_REPLAY: ${{ github.event.inputs.replay }}
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: bash .github/scripts/publish.sh

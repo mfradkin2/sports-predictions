@@ -193,6 +193,35 @@ where a real line exists it is priced whatever the projection, because the
 market has already decided the player is worth pricing. A player who has not
 taken the field, with no previous season to lean on, is still left off.
 
+### A build that does not hold together is not published
+
+Every run reads its own output back before anything is pushed
+(`sportspred/verify.py`). It checks that each page loads the stylesheet and
+script that were built with it, that every league payload carries the blocks
+the page reads, that every game has a pick, a date and an identity, that
+every prop's lean is on the same side as its own projection, that no
+projection exceeds what a player could post, that a blank prop really has no
+line and a priced one has a real one, and that every market sits in exactly
+one category chip. A failure exits the build non-zero and the workflow
+publishes nothing, so a bad build costs one skipped refresh instead of
+showing wrong numbers until somebody notices. The `skip_verify` workflow
+input forces a publish if the gate is ever wrong.
+
+The checks run against the freshly built output, never against what is
+already on disk: the test suite runs before the pipeline, so judging the
+previous build there would mean the first change that adds a new block would
+fail the tests, stop the run, and leave the site unable to rebuild out of it.
+
+### Publishing never overwrites newer code
+
+A refresh takes about five minutes. If a change to the site's code lands
+while one is running, that run's pages were produced by the older code, and
+pushing them would overwrite the new ones; that happened once and left the
+pages a revision behind until the next refresh. `.github/scripts/publish.sh`
+now checks, before publishing, whether `main` has gained any code, and if it
+has, rebuilds on top of it while carrying over the ledgers and model state
+the run produced.
+
 ### Voided props
 
 A statistics feed occasionally sends a corrupt row (a hitter at sixteen hits
