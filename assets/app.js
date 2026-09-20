@@ -18,7 +18,10 @@
   // Upcoming were two views of one list, and Results and Track Record two
   // views of one record; each pair is now a single section with a rail
   // across the top, so everything is still one tap away and nothing is gone.
+  // Laid out the way a sportsbook is: a lobby, the full board of games, the
+  // player-prop board, and what has already settled.
   var VIEWS = [
+    ['featured', 'Featured', 'Featured', '🔥'],
     ['games', 'Games', 'Games', '📅'],
     ['props', 'Player Props', 'Props', '👤'],
     ['results', 'Results', 'Results', '🏆']
@@ -28,21 +31,23 @@
     today: ['games', { when: 'today' }],
     upcoming: ['games', { when: 'week' }],
     record: ['results', { tab: 'record' }],
-    model: ['results', { tab: 'record' }]
+    model: ['results', { tab: 'record' }],
+    lobby: ['featured', {}]
   };
   // label, then the short form a phone has room for.
-  var DAYS = [['today', 'Today', 'Today'], ['tomorrow', 'Tomorrow', 'Tomorrow'],
+  var DAYS = [['live', 'Live', 'Live'], ['today', 'Today', 'Today'], ['tomorrow', 'Tomorrow', 'Tomorrow'],
               ['week', 'Next 7 days', '7 days'], ['all', 'All upcoming', 'All']];
   var RESULT_TABS = [['recent', 'Recent games', 'Recent'], ['record', 'Track record', 'Record']];
   var PROP_TABS = [['open', 'Open', 'Open'], ['live', 'In progress', 'Live'],
                    ['graded', 'Graded', 'Graded'], ['all', 'All', 'All']];
+  var LOBBY_GAMES = 4;            // the lobby shows a taste, then links out
 
   function remembered(key, fallback) {
     try { var v = localStorage.getItem(key); return v == null ? fallback : v === '1'; } catch (e) { return fallback; }
   }
-  var state = { league: null, view: 'games', tab: { results: 'recent' }, filters: {},
+  var state = { league: null, view: 'featured', tab: { results: 'recent' }, filters: {},
                 filtersOpen: remembered('sp.filters', false), showCountBadge: false,
-                search: '', loading: {}, liveTimer: null };
+                search: '', loading: {}, liveTimer: null, cardCat: 'all' };
 
   // ── helpers ──────────────────────────────────────────────────────────────
   function esc(s) {
@@ -466,6 +471,16 @@
       locked += '<div class="note">' + blanks + ' prop' + (blanks === 1 ? '' : 's') + ' still waiting on a sportsbook line. ' +
         'The projection is ours; the line, lean and probability fill in automatically once a book posts one.</div>';
     }
+    var mkt = propGroups([league]);
+    var counts = { all: 0 };
+    players.forEach(function (pl) {
+      (pl.props || []).forEach(function (x) {
+        var c = categoryOf(mkt, x.key);
+        counts[c] = (counts[c] || 0) + 1; counts.all++;
+      });
+    });
+    // Every card opens showing everything; the chips narrow this panel only.
+    locked = catBar(mkt, 'all', 'data-card-cat', counts) + locked;
     return locked + '<div class="players">' + players.map(function (p, i) {
       var best = headlineProp(p.props);
       var hits = (p.props || []).filter(function (x) { return x.hit != null; });
@@ -481,7 +496,9 @@
           '<span class="pspacer"></span><span class="tag live-tag plive" hidden></span>' + record +
           (best && !hits.length ? '<span class="pbest"><b>' + esc(best.label) + '</b> ' + best.pick.toUpperCase() + ' ' + best.line + '<br>' + pct(best.pick_prob) + '</span>' : '') +
           '<span class="chev" aria-hidden="true">▾</span></button>' +
-        '<div class="prop-list" hidden>' + (p.props || []).map(function (x) { return propRow(x, { league: league, game: g.id, athlete: p.id }); }).join('') + '</div></div>';
+        '<div class="prop-list" hidden>' + (p.props || []).map(function (x) {
+          return propRow(x, { league: league, game: g.id, athlete: p.id, cat: categoryOf(mkt, x.key) });
+        }).join('') + '</div></div>';
     }).join('') + '</div>';
   }
 
@@ -528,7 +545,8 @@
   }
 
   function propRow(p, ctx) {
-    var liveAttr = ctx ? ' data-live="' + esc(ctx.league + '|' + ctx.game + '|' + ctx.athlete + '|' + p.key) + '"' : '';
+    var liveAttr = ctx ? ' data-live="' + esc(ctx.league + '|' + ctx.game + '|' + ctx.athlete + '|' + p.key) + '"' +
+      (ctx.cat ? ' data-cat="' + esc(ctx.cat) + '"' : '') : '';
     var lo = p.range ? p.range[0] : p.proj, hi = p.range ? p.range[1] : p.proj;
     var span = Math.max(hi - lo, 1e-6), pad = span * 0.35, min = lo - pad, max = hi + pad;
     var toPct = function (v) { return ((v - min) / (max - min)) * 100; };
@@ -586,8 +604,9 @@
       // Games: today's board keeps the games that have already finished
       // today, so the day reads as a whole; later days are what is still to
       // come.
-      if (g.date < t) return false;
       var when = (state.filters.games || {}).when || 'today';
+      if (when === 'live') return isLiveGame(x);
+      if (g.date < t) return false;
       if (when === 'today') return g.date === t;
       if (g.final) return false;
       if (when === 'tomorrow') return g.date === addDays(t, 1);
@@ -639,7 +658,55 @@
     return state.filters.games || (state.filters.games = defaults('games'));
   }
   function propDefaults() {
-    return { conf: 'all', pick: 'all', cat: 'all', sort: 'edge', dir: 'desc', when: 'all', team: 'all', game: 'all', pos: 'all', edge: 'all', status: 'open' };
+    return { conf: 'all', pick: 'all', cat: 'all', group: 'all', sort: 'edge', dir: 'desc',
+             when: 'all', team: 'all', game: 'all', pos: 'all', edge: 'all', status: 'open' };
+  }
+
+  // The market categories a sportsbook groups its props under — passing,
+  // rushing, receiving and so on. They ship with each league's payload, so
+  // the page and the model agree on what belongs where; across sports the
+  // same category key is merged.
+  var GROUP_CACHE = {};
+  function propGroups(leagues) {
+    var want = leagues || leaguesInView();
+    var ck = want.join(',');
+    if (GROUP_CACHE[ck]) return GROUP_CACHE[ck];
+    var seen = {}, out = [];
+    want.forEach(function (k) {
+      ((DATA[k] || {}).prop_groups || []).forEach(function (g) {
+        var slot = seen[g.key];
+        if (!slot) { slot = seen[g.key] = { key: g.key, label: g.label, markets: [] }; out.push(slot); }
+        (g.markets || []).forEach(function (m) { if (slot.markets.indexOf(m) < 0) slot.markets.push(m); });
+      });
+    });
+    // Only worth keeping once the league's payload has actually arrived.
+    if (want.every(function (k) { return DATA[k]; })) GROUP_CACHE[ck] = out;
+    return out;
+  }
+  // Built once per group list and cached on it: the board runs this over
+  // thousands of props on every render.
+  function categoryOf(groups, key) {
+    var index = groups._index;
+    if (!index) {
+      index = groups._index = {};
+      groups.forEach(function (g) {
+        (g.markets || []).forEach(function (m) { if (!(m in index)) index[m] = g.key; });
+      });
+    }
+    return index[key] || 'more';
+  }
+  // A scrollable strip of category chips, the row a sportsbook puts under
+  // its tabs. ``attr`` is the data attribute the click handler listens on.
+  function catBar(groups, current, attr, counts) {
+    if (groups.length < 2) return '';
+    var items = [{ key: 'all', label: 'All' }].concat(groups);
+    return '<div class="catbar">' + items.map(function (g) {
+      var n = counts ? counts[g.key] : null;
+      if (g.key !== 'all' && counts && !n) return '';
+      return '<button class="cat" ' + attr + '="' + g.key + '" aria-pressed="' +
+        (current === g.key) + '">' + esc(g.label) +
+        (n == null ? '' : '<span class="n">' + n + '</span>') + '</button>';
+    }).join('') + '</div>';
   }
   function activeFilterCount() {
     var scope = filterScope();
@@ -708,7 +775,7 @@
   // is about, so it sits above everything and never folds away.
   function rail(items) {
     return '<div class="rail" role="tablist">' + items.map(function (it) {
-      return '<button class="rail-tab" role="tab" aria-selected="' + (it.on ? 'true' : 'false') + '"' +
+      return '<button class="rail-tab' + (it.cls ? ' ' + it.cls : '') + '" role="tab" aria-selected="' + (it.on ? 'true' : 'false') + '"' +
         (it.filter ? ' data-filter="' + it.filter + '" data-value="' + it.value + '"' : '') +
         (it.tab ? ' data-tab="' + it.tab + '"' : '') + '>' +
         '<span class="t-full">' + esc(it.label) + '</span>' +
@@ -717,23 +784,49 @@
     }).join('') + '</div>';
   }
 
+  // Is this game under way? The scoreboard feed decides once it has
+  // answered; until then the kickoff time does, so a game that has started
+  // shows as live on the first paint rather than thirty seconds later.
+  var LIVE_WINDOW_H = 6;          // no game runs longer than this
+  function isLiveGame(x) {
+    var st = (LIVE.games[liveKey(x.league, x.g.id)] || {}).state;
+    if (st) return st === 'live';
+    // No word from the scoreboard yet: the clock stands in, but only for as
+    // long as a game can last, so one that never got its final score does
+    // not sit in the live list for days.
+    if (x.g.final || !x.g.start) return false;
+    var ago = (Date.now() - new Date(x.g.start + ':00Z').getTime()) / 3600000;
+    return ago >= 0 && ago <= LIVE_WINDOW_H;
+  }
+
+  // Every day's count in one pass over the schedule rather than one pass
+  // each. It has to agree exactly with what ``filteredGames`` will show:
+  // today keeps its finished games, later days do not.
+  function dayCounts() {
+    var n = { live: 0, today: 0, tomorrow: 0, week: 0, all: 0 }, todayOpen = 0;
+    var tomOf = {}, wkOf = {};
+    allGames('games').forEach(function (x) {
+      var g = x.g, t = x.t;
+      if (isLiveGame(x)) n.live++;
+      if (g.date < t) return;
+      if (g.date === t) { n.today++; if (!g.final) todayOpen++; return; }
+      if (g.final) return;
+      n.all++;
+      if (g.date === (tomOf[t] || (tomOf[t] = addDays(t, 1)))) n.tomorrow++;
+      if (g.date <= (wkOf[t] || (wkOf[t] = addDays(t, 7)))) n.week++;
+    });
+    n.all += todayOpen;
+    n.week += todayOpen;
+    return n;
+  }
+
   function dayRail() {
-    var f = gameFilters();
-    var t = today(), tom = addDays(t, 1), wk = addDays(t, 7);
-    var pool = allGames('games').filter(function (x) { return x.g.date >= x.t; });
-    var count = function (when) {
-      return pool.filter(function (x) {
-        var g = x.g;
-        if (when === 'today') return g.date === t;
-        if (g.final) return false;
-        if (when === 'tomorrow') return g.date === tom;
-        if (when === 'week') return g.date <= wk;
-        return true;
-      }).length;
-    };
-    return rail(DAYS.map(function (d) {
-      return { label: d[1], short: d[2], filter: 'when', value: d[0], on: f.when === d[0], n: count(d[0]) };
-    }));
+    var f = gameFilters(), n = dayCounts();
+    return rail(DAYS.filter(function (d) { return d[0] !== 'live' || n.live || f.when === 'live'; })
+      .map(function (d) {
+        return { label: d[1], short: d[2], filter: 'when', value: d[0],
+                 on: f.when === d[0], n: n[d[0]], cls: d[0] === 'live' ? 'live' : '' };
+      }));
   }
 
   function resultsRail() {
@@ -744,10 +837,36 @@
 
   function gamesSection() {
     var f = gameFilters();
-    var out = staleNotice() + dayRail();
-    // The strips are about tonight; on a later day they would be stale.
-    if (f.when === 'today') out += yesterdayRecap() + (isAll() ? bestPicks() : '') + topProps();
-    return out + (isAll() ? jumpBar('games') : '') + gamesView('games');
+    return staleNotice() + dayRail() + (isAll() ? jumpBar('games') : '') + gamesView('games');
+  }
+
+  // The lobby: what is on now, the picks we like most, and how yesterday
+  // went, each a door into the section that holds the rest.
+  function featuredSection() {
+    var out = staleNotice();
+    // A lobby leads with what is on now, a few of them, and points at the
+    // rest rather than reprinting the board.
+    var live = allGames('games').filter(function (x) { return x.g.date >= x.t; }).filter(isLiveGame);
+    if (live.length) {
+      out += '<div class="section-title live-title">● In progress <span class="count-inline">' + live.length + '</span></div>' +
+        '<div class="games">' + live.slice(0, LOBBY_GAMES).map(function (x) { return gameRow(x.g, x.league); }).join('') + '</div>' +
+        more('games', 'live', live.length > LOBBY_GAMES ? 'See all ' + live.length + ' live games' : 'Open the live board');
+    }
+    var picks = bestPicks(), props = topProps();
+    out += picks + (picks ? more('games', 'today', "See today's full board") : '');
+    out += props + (props ? more('props', '', 'See the whole prop board') : '');
+    out += yesterdayRecap();
+    if (!live.length && !picks && !props) {
+      out += '<div class="empty"><span class="icon">' + (EMOJI[state.league] || '🏟') + '</span>' +
+        'Nothing is on right now. ' + more('games', 'all', 'See what is coming') + '</div>';
+    }
+    return out;
+  }
+
+  // A link out of the lobby into the section that holds the full list.
+  function more(view, arg, label) {
+    var h = '#' + state.league + '/' + view + (arg ? '/' + arg : '');
+    return '<div class="more-link"><a href="' + h + '">' + esc(label) + ' →</a></div>';
   }
 
   function resultsSection() {
@@ -832,7 +951,7 @@
         '<div class="pc-team">' + esc(r.pl.short || r.pl.name) + '</div>' +
         '<div class="pc-sub">' + esc(p.label) + ' <b>' + p.pick.toUpperCase() + ' ' + p.line + '</b> · +' + p.edge_pts.toFixed(0) + ' pts vs book</div>' +
         '<div class="pc-sub">' + esc(g.away_s || g.away) + ' @ ' + esc(g.home_s || g.home) + ' · ' + esc(g.time || 'TBD') + '</div></div>';
-    }).join('') + '</div><div class="lookup-sub" style="margin:-2px 0 10px">Edge is how much likelier we think the pick is than the sportsbook\'s price implies.</div>', false);
+    }).join('') + '</div><div class="lookup-sub" style="margin:-2px 0 10px">Edge is how much likelier we think the pick is than the sportsbook\'s price implies.</div>', true);
   }
 
   function jumpBar(scope) {
@@ -929,9 +1048,10 @@
           return '<option value="' + esc(v[0]) + '"' + (current === v[0] ? ' selected' : '') + '>' + esc(v[1]) + '</option>';
         }).join('') + '</select>';
     };
-    var cats = {}, teams = {}, games = {}, groups = {};
+    var mktGroups = propGroups();
+    var teams = {}, games = {}, groups = {};
     rows.forEach(function (r) {
-      cats[r.prop.label] = 1; teams[r.g.away] = 1; teams[r.g.home] = 1;
+      teams[r.g.away] = 1; teams[r.g.home] = 1;
       games[r.g.id] = r.g; if (r.player.group) groups[r.player.group] = 1;
     });
     var gameList = Object.keys(games).map(function (id) { return games[id]; })
@@ -941,32 +1061,61 @@
       if (r.prop.hit != null || r.prop.push || r.prop.played === false || r.prop.void) return 'graded';
       return r.g.props_locked ? 'live' : 'upcoming';
     };
-
     var q = state.search.trim().toLowerCase();
+
+    // One predicate for the board and for every count above it, so a badge
+    // always equals the number of rows that choice would actually show.
     // One row per player and prop: a player on a three-game series would
     // otherwise fill the board with the same read three times over, unless
     // a date or game is chosen.
-    var seen = {}, dedupe = f.when === 'all' && f.game === 'all';
-    var list = rows.filter(function (r) {
-      if (f.conf !== 'all' && r.prop.conf !== f.conf) return false;
-      if (f.pick !== 'all' && r.prop.pick !== f.pick) return false;
-      if (f.cat !== 'all' && r.prop.label !== f.cat) return false;
-      if (f.when === 'today' && r.g.date !== t) return false;
-      if (f.when === 'tomorrow' && r.g.date !== tomorrow) return false;
-      if (f.team !== 'all' && r.g.away !== f.team && r.g.home !== f.team) return false;
-      if (f.game !== 'all' && r.g.id !== f.game) return false;
-      if (f.pos !== 'all' && r.player.group !== f.pos) return false;
-      if (f.edge !== 'all' && !(r.prop.edge_pts != null && r.prop.edge_pts >= +f.edge)) return false;
-      if (f.status === 'open') { if (statusOf(r) === 'graded') return false; }
-      else if (f.status !== 'all' && statusOf(r) !== f.status) return false;
-      if (q && (r.player.name + ' ' + r.g.away + ' ' + r.g.home).toLowerCase().indexOf(q) < 0) return false;
-      if (dedupe) {
-        var key = r.player.id + '|' + r.player.name + '|' + r.prop.key;
-        if (seen[key] && seen[key] <= r.g.date) return false;
-        seen[key] = r.g.date;
-      }
-      return true;
+    function matchProps(fx) {
+      var seen = {}, dedupe = fx.when === 'all' && fx.game === 'all';
+      return rows.filter(function (r) {
+        if (fx.conf !== 'all' && r.prop.conf !== fx.conf) return false;
+        if (fx.pick !== 'all' && r.prop.pick !== fx.pick) return false;
+        if (fx.group !== 'all' && categoryOf(mktGroups, r.prop.key) !== fx.group) return false;
+        if (fx.cat !== 'all' && r.prop.label !== fx.cat) return false;
+        if (fx.when === 'today' && r.g.date !== t) return false;
+        if (fx.when === 'tomorrow' && r.g.date !== tomorrow) return false;
+        if (fx.team !== 'all' && r.g.away !== fx.team && r.g.home !== fx.team) return false;
+        if (fx.game !== 'all' && r.g.id !== fx.game) return false;
+        if (fx.pos !== 'all' && r.player.group !== fx.pos) return false;
+        if (fx.edge !== 'all' && !(r.prop.edge_pts != null && r.prop.edge_pts >= +fx.edge)) return false;
+        if (fx.status === 'open') { if (statusOf(r) === 'graded') return false; }
+        else if (fx.status !== 'all' && statusOf(r) !== fx.status) return false;
+        if (q && (r.player.name + ' ' + r.g.away + ' ' + r.g.home).toLowerCase().indexOf(q) < 0) return false;
+        if (dedupe) {
+          var key = r.player.id + '|' + r.player.name + '|' + r.prop.key;
+          if (seen[key] && seen[key] <= r.g.date) return false;
+          seen[key] = r.g.date;
+        }
+        return true;
+      });
+    }
+    function withFilters(base, over) {
+      var o = {};
+      Object.keys(base).forEach(function (k) { o[k] = base[k]; });
+      Object.keys(over).forEach(function (k) { o[k] = over[k]; });
+      return o;
+    }
+
+    var list = matchProps(f);
+    // What each rail option and each category chip would give you.
+    var statusCounts = {};
+    PROP_TABS.forEach(function (v) {
+      statusCounts[v[0]] = v[0] === f.status ? list.length
+        : matchProps(withFilters(f, { status: v[0] })).length;
     });
+    var catBase = f.group === 'all' && f.cat === 'all' ? list
+      : matchProps(withFilters(f, { group: 'all', cat: 'all' }));
+    var catCounts = { all: catBase.length }, cats = {};
+    catBase.forEach(function (r) {
+      var c = categoryOf(mktGroups, r.prop.key);
+      catCounts[c] = (catCounts[c] || 0) + 1;
+      // The market dropdown only offers what the chosen category contains.
+      if (f.group === 'all' || c === f.group) cats[r.prop.label] = 1;
+    });
+
     var dir = f.dir === 'asc' ? 1 : -1;
     var sortVal = function (r) {
       switch (f.sort) {
@@ -1064,17 +1213,11 @@
       : '<div class="note">No sportsbook lines are connected, so the <b>Line</b> shown is based on each player\'s ' +
         'season average and <b>Our number</b> is what we expect tonight given the matchup.</div>';
     // The same rail every section has: which slice of the board this is.
-    var counts = { open: 0, live: 0, graded: 0, all: rows.length };
-    rows.forEach(function (r) {
-      var st = statusOf(r);
-      if (st === 'graded') counts.graded++;
-      else { counts.open++; if (st === 'live') counts.live++; }
-    });
     var statusRail = rail(PROP_TABS.map(function (v) {
       return { label: v[1], short: v[2], filter: 'status', value: v[0],
-               on: f.status === v[0], n: counts[v[0]] };
+               on: f.status === v[0], n: statusCounts[v[0]] };
     }));
-    return statusRail + note + bar + body;
+    return statusRail + catBar(mktGroups, f.group, 'data-group', catCounts) + note + bar + body;
   }
 
 
@@ -1444,6 +1587,7 @@
     var html;
     if (state.view === 'props') html = propsView();
     else if (state.view === 'results') html = resultsSection();
+    else if (state.view === 'featured') html = featuredSection();
     else html = gamesSection();
     root.innerHTML = html;
     startLive();
@@ -1506,6 +1650,34 @@
         if (cs === 'games' && keepDay) state.filters[cs].when = keepDay;
       }
       state.search = ''; render(); return;
+    }
+    // A category chip on a board: narrows the whole list.
+    var groupChip = ev.target.closest('[data-group]');
+    if (groupChip) {
+      var gf = state.filters.props || (state.filters.props = propDefaults());
+      gf.group = groupChip.dataset.group;
+      gf.cat = 'all';                       // the market dropdown's options change with it
+      render(); return;
+    }
+    // A category chip inside a game: narrows that panel, nothing else, and
+    // without rebuilding it, so open players stay open.
+    var cardChip = ev.target.closest('[data-card-cat]');
+    if (cardChip) {
+      var panel = cardChip.closest('.panel') || cardChip.parentNode.parentNode;
+      var want = cardChip.dataset.cardCat;
+      panel.querySelectorAll('[data-card-cat]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b === cardChip));
+      });
+      panel.querySelectorAll('.player').forEach(function (pl) {
+        var any = false;
+        pl.querySelectorAll('.prop').forEach(function (row) {
+          var show = want === 'all' || row.dataset.cat === want;
+          row.hidden = !show;
+          if (show) any = true;
+        });
+        pl.hidden = !any;
+      });
+      return;
     }
     var railTab = ev.target.closest('.rail-tab');
     if (railTab) {
@@ -2022,7 +2194,7 @@
     var rest = parts.slice(2);
     if (!view) {
       var alias = VIEW_ALIAS[raw];
-      view = alias ? alias[0] : 'games';
+      view = alias ? alias[0] : 'featured';
       if (alias && alias[1].when) gameFilters().when = alias[1].when;
       if (alias && alias[1].tab) state.tab.results = alias[1].tab;
     }

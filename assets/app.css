@@ -119,6 +119,30 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .view-tab:hover { color: var(--text); }
 .view-tab[aria-selected="true"] { background: var(--bg1); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, .25); }
 
+/* Category strip: the scrollable row of market groups a sportsbook puts
+   under its tabs — passing, rushing, receiving, touchdowns. */
+.catbar {
+  display: flex; gap: 6px; margin: -6px 0 12px; padding-bottom: 2px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.catbar::-webkit-scrollbar { display: none; }
+.cat {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+  color: var(--muted); background: var(--bg2); border: 1px solid var(--line);
+}
+.cat:hover { color: var(--text); }
+.cat[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.cat .n { font-size: 10.5px; font-weight: 700; color: var(--faint); }
+.cat[aria-pressed="true"] .n { color: rgba(255, 255, 255, .75); }
+
+/* Lobby: each block is a door into the section holding the rest. */
+.more-link { margin: -2px 0 16px; font-size: 12.5px; }
+.more-link a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.more-link a:hover { text-decoration: underline; }
+.live-title { color: var(--good); }
+
+
 /* Section rail: the one control at the top of a section — which day on
    Games, which half of the record on Results. Reads as tabs, not filters,
    and never folds away. */
@@ -140,6 +164,8 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   border-radius: 999px; padding: 1px 7px; min-width: 20px; text-align: center;
 }
 .rail-tab[aria-selected="true"] .n { background: var(--accent); color: #fff; }
+.rail-tab.live .n, .rail-tab.live[aria-selected="true"] .n { background: var(--good); color: #fff; }
+.rail-tab.live[aria-selected="true"] { color: var(--good); }
 
 /* Jump bar (All · Today) and back-to-top. */
 .jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }

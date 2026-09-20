@@ -296,6 +296,38 @@ class TestBookPricedPlayersMakeTheBoard(unittest.TestCase):
             self.assertLess(abs(p.get('edge_pts', 0)), 40)   # no manufactured edge
 
 
+
+class TestMarketCategories(unittest.TestCase):
+    """The categories the page groups markets under, sportsbook style."""
+
+    def test_every_market_lands_in_exactly_one_category(self):
+        for sport, by_group in config.PROPS.items():
+            markets = sorted({s['key'] for specs in by_group.values() for s in specs})
+            placed = [m for g in config.prop_groups_for(sport) for m in g['markets']]
+            self.assertEqual(sorted(placed), markets, sport)      # all of them
+            self.assertEqual(len(placed), len(set(placed)), sport)  # once each
+
+    def test_a_new_market_shows_up_under_more_rather_than_vanishing(self):
+        saved = config.PROPS['football']['qb']
+        try:
+            config.PROPS['football'] = dict(config.PROPS['football'],
+                                            qb=saved + [{'key': 'pass_longest', 'label': 'Longest Pass'}])
+            groups = config.prop_groups_for('football')
+            more = [g for g in groups if g['key'] == 'more']
+            self.assertEqual(len(more), 1)
+            self.assertIn('pass_longest', more[0]['markets'])
+        finally:
+            config.PROPS['football'] = dict(config.PROPS['football'], qb=saved)
+        self.assertFalse([g for g in config.prop_groups_for('football') if g['key'] == 'more'])
+
+    def test_the_categories_ship_with_the_payload(self):
+        for key, cfg in config.LEAGUES.items():
+            groups = config.prop_groups_for(cfg['sport'])
+            self.assertTrue(groups, key)
+            for g in groups:
+                self.assertTrue(g['key'] and g['label'] and g['markets'], (key, g))
+
+
 if __name__ == '__main__':
     unittest.main()
 

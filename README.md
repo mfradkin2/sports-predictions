@@ -10,15 +10,24 @@ Live site: open `index.html` (or the per-sport pages `mlb.html`, `nfl.html`,
 
 ## What it does
 
-**Three sections.** *Games* is what is on, with a rail across the top for
-today, tomorrow, the next seven days or everything scheduled. *Player Props*
-is the whole slate's prop board, with a rail for open, in-progress, graded or
-all. *Results* holds the past, with a rail for the recent games and the full
-track record. Each section has one rail deciding what it is about and a
-fold-away Filters bar for narrowing it. Addresses say exactly what to show,
-so `#mlb/games/week` and `#mlb/results/track` are worth sharing, and the
-older `#mlb/today`, `#mlb/upcoming` and `#mlb/record` links still land in the
-right place.
+**Laid out like a sportsbook.** A row of sport pills across the top, then
+four sections. *Featured* is the lobby: what is in progress, the strongest
+game picks, the prop plays with the biggest edge, and how yesterday went,
+each pointing at the section that holds the rest. *Games* is the full board,
+with a rail for live, today, tomorrow, the next seven days or everything
+scheduled. *Player Props* is the whole slate's board, with a rail for open,
+in-progress, graded or all, and under it the market categories a book groups
+its props by — passing, rushing, receiving, touchdowns in football; batting
+and pitching in baseball. Open a game and the same category chips narrow
+that game's props. *Results* holds the past, with a rail for the recent games
+and the full track record.
+
+Every section has one rail deciding what it is about, a category strip where
+markets need grouping, and a fold-away Filters bar for narrowing further.
+Every count on a rail or chip is the number of rows that choice will show.
+Addresses say exactly what is on screen, so `#mlb/games/live` and
+`#mlb/results/track` are worth sharing, and the older `#mlb/today`,
+`#mlb/upcoming` and `#mlb/record` links still land in the right place.
 
 **Game predictions.** Every scheduled game gets a win probability, a
 confidence tier, and a plain-language breakdown of what is driving the pick —
@@ -259,7 +268,7 @@ SP_LOOKBACK_DAYS=120 python3 run_pipeline.py mlb
 | `sportspred/` | The engine (see the pipeline steps above) |
 | `assets/app.css`, `assets/app.js` | Shared front end, cached across all four sports |
 | `data/<league>.js` | Per-league payload the page renders from — one JSON object behind a `window.SP_DATA[...] =` assignment |
-| `data/<league>-history.js` | Older graded games, loaded only when the Results tab is opened |
+| `data/<league>-history.js` | Older graded games, loaded only when Results is opened |
 | `history/` | Game archive, prediction ledger, props ledger, team-stat snapshots — the long-term memory |
 | `model_state/` | Tuned parameters, Elo snapshot, run log |
 | `tests/` | Test suite |

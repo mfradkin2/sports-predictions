@@ -322,6 +322,60 @@ GROUP_QUOTA = {
 }
 
 
+# Market categories, the way a sportsbook groups them: the props board and
+# each game's prop panel offer these as chips. Every market belongs to
+# exactly one; anything not named here is collected under "More", so a new
+# market can never go missing from the page.
+PROP_GROUPS = {
+    'baseball': [
+        ('bat', 'Batting', ['hits', 'hits2', 'tb', 'hr', 'rbi', 'runs', 'sb']),
+        ('pitch', 'Pitching', ['k', 'outs', 'er', 'p_hits']),
+    ],
+    'football': [
+        ('pass', 'Passing', ['pass_yds', 'pass_td', 'pass_cmp', 'pass_att', 'pass_int']),
+        ('rush', 'Rushing', ['rush_yds', 'rush_att', 'qb_rush']),
+        ('rec', 'Receiving', ['rec', 'rec_yds']),
+        ('td', 'Touchdowns', ['anytd']),
+        ('combo', 'Combos', ['scrim']),
+    ],
+    'basketball': [
+        ('pts', 'Points', ['pts']),
+        ('reb', 'Rebounds', ['reb']),
+        ('ast', 'Assists', ['ast']),
+        ('three', 'Threes', ['fg3']),
+        ('combo', 'Combos', ['pra', 'pr', 'pa']),
+        ('def', 'Defence', ['stlblk']),
+    ],
+    'hockey': [
+        ('sog', 'Shots', ['sog']),
+        ('goal', 'Goals', ['goal']),
+        ('pts', 'Points', ['points', 'points2', 'assists']),
+        ('block', 'Blocks', ['blocks']),
+        ('goalie', 'Goalie', ['saves', 'ga']),
+    ],
+}
+
+
+def prop_groups_for(sport):
+    """``[{'key', 'label', 'markets'}]`` for a sport, every market of it
+    covered exactly once."""
+    groups = PROP_GROUPS.get(sport) or []
+    named, out = set(), []
+    for key, label, markets in groups:
+        mine = [m for m in markets if m not in named]
+        named.update(mine)
+        if mine:
+            out.append({'key': key, 'label': label, 'markets': mine})
+    rest = []
+    for specs in (PROPS.get(sport) or {}).values():
+        for spec in specs:
+            if spec['key'] not in named and spec['key'] not in rest:
+                rest.append(spec['key'])
+    if rest:
+        out.append({'key': 'more', 'label': 'More', 'markets': rest})
+    return out
+
+
 def props_for(sport, group):
     return PROPS.get(sport, {}).get(group, [])
 
