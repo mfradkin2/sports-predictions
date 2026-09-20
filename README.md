@@ -243,6 +243,18 @@ now checks, before publishing, whether `main` has gained any code, and if it
 has, rebuilds on top of it while carrying over the ledgers and model state
 the run produced.
 
+Two refreshes can also overlap and both try to push. Rebasing one over the
+other conflicted on every generated file they had both written, and the
+conflict left the checkout detached mid-rebase, so all four retries died and
+the refresh published nothing. Publishing no longer rebases: this run's
+pages and payloads are the fresher build and simply win, and only the
+ledgers are merged, by `scripts/merge_history.py`. That matters because a
+pick is written once, when it is first published, and never rewritten — a
+row only the other run has is one this run cannot reproduce, and losing it
+would mean republishing that pick later, possibly after kickoff, which is
+the one thing the ledger exists to prevent. A board the other run froze also
+wins over an open one, for the same reason.
+
 ### Voided props
 
 A statistics feed occasionally sends a corrupt row (a hitter at sixteen hits
@@ -323,6 +335,7 @@ SP_LOOKBACK_DAYS=120 python3 run_pipeline.py mlb
 | `model_state/` | Tuned parameters, Elo snapshot, run log |
 | `tests/` | Test suite |
 | `scripts/check_pages.py` | Browser check of the built pages (run by hand) |
+| `scripts/merge_history.py` | Folds an overlapping refresh's ledger rows into this one's |
 
 ---
 

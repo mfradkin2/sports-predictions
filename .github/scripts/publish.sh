@@ -27,6 +27,11 @@ STATE=(data history model_state)
 NOT_CODE=(':(exclude)data' ':(exclude)history' ':(exclude)model_state'
           ':(exclude)*.html' ':(exclude)*_schedule_enriched.csv')
 
+die() {
+  echo "Publishing nothing: $1." >&2
+  exit 1
+}
+
 git config user.name  "github-actions[bot]"
 git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -40,28 +45,81 @@ rebuild_if_code_moved() {
   head="$(git rev-parse "origin/$BRANCH")" || return 1
   [ "$head" = "$built_from" ] && return 1
   if git diff --quiet "$built_from" "$head" -- . "${NOT_CODE[@]}"; then
-    return 1                      # only data moved; a plain rebase covers it
+    return 1                      # only data moved; the resync below covers it
   fi
   echo "::notice::main gained code while this refresh was running; rebuilding on it"
-  local keep
-  keep="$(mktemp -d)" || return 1
-  cp -r "${STATE[@]}" "$keep"/ || return 1
-  git reset --hard "$head" || return 1
+  # Past this point the rebuild is not optional. Falling back to publishing
+  # would push pages built by code main has moved past, which is the whole
+  # reason this function exists; a skipped refresh costs fifteen minutes and
+  # the next one starts clean. So a failure here stops the script.
+  local keep present=() path
+  keep="$(mktemp -d)" || die "could not make room to preserve this run's ledgers"
+  for path in "${STATE[@]}"; do
+    [ -e "$path" ] && present+=("$path")
+  done
+  if [ ${#present[@]} -gt 0 ]; then
+    cp -r "${present[@]}" "$keep"/ || die "could not preserve this run's ledgers"
+  fi
+  git reset --hard "$head" || die "could not move onto the new code"
   rm -rf "${STATE[@]}"
-  cp -r "$keep"/. . || return 1
+  cp -r "$keep"/. . || die "could not restore this run's ledgers onto the new code"
   rm -rf "$keep"
   built_from="$head"
   # shellcheck disable=SC2086
-  python3 run_pipeline.py ${SP_PIPELINE_ARGS:-}
+  python3 run_pipeline.py ${SP_PIPELINE_ARGS:-} \
+    || die "the rebuild on the new code failed"
+}
+
+# Move onto whatever origin has now, without rebasing.
+#
+# Two refreshes overlap often enough that this is the normal case. A rebase
+# replays this run's commit over the other's and conflicts on every generated
+# file they both wrote; the conflict leaves HEAD detached with a half-finished
+# rebase on disk, and every later attempt dies on "not currently on a branch".
+# That is what once burned four attempts and published nothing. There is
+# nothing to resolve anyway: the pages and payloads this run built are the
+# fresher ones and simply win. Only the ledgers need care — they are written
+# once and never rewritten, so a row only the other run has is a row this run
+# cannot reproduce. Those are folded in; everything else stays as built.
+resync_onto_origin() {
+  git rebase --abort >/dev/null 2>&1
+  git merge --abort  >/dev/null 2>&1
+  rm -rf .git/rebase-merge .git/rebase-apply
+  git symbolic-ref -q HEAD >/dev/null || git checkout -q -B "$BRANCH"
+  git fetch -q origin "$BRANCH" || return 1
+  local theirs
+  theirs="$(mktemp -d)" || return 1
+  if git archive "origin/$BRANCH" history 2>/dev/null | tar -x -C "$theirs"; then
+    python3 scripts/merge_history.py "$theirs/history" history || true
+  fi
+  rm -rf "$theirs"
+  # Keep every file as this run left it; only move the branch under them, so
+  # what gets staged next is this run's output on top of origin.
+  git reset -q --mixed "origin/$BRANCH"
+}
+
+# Stage what the pipeline wrote. A path that is not there — a league whose
+# page has never been built — makes git add abort and stage nothing at all,
+# which then reads exactly like "nothing changed" and publishes nothing. So
+# only paths that exist, here or in the last commit, are named.
+stage_generated() {
+  local present=() path
+  for path in "${GENERATED[@]}"; do
+    if [ -e "$path" ] || git cat-file -e "HEAD:$path" 2>/dev/null; then
+      present+=("$path")
+    fi
+  done
+  [ ${#present[@]} -gt 0 ] || return 0
+  git add -A -- "${present[@]}"
 }
 
 for attempt in 1 2 3 4; do
   rebuild_if_code_moved
-  git add -A -- "${GENERATED[@]}"
+  stage_generated
   if git diff --cached --quiet; then
     # Nothing new to stage. That is only "nothing to do" when there is also
-    # nothing already committed and unpushed — after a rebase on a failed
-    # push, this run's commit is sitting right here waiting to go.
+    # nothing already committed and unpushed — after a failed push, this
+    # run's commit can be sitting right here waiting to go.
     if [ "$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || echo 0)" -eq 0 ]; then
       echo "Nothing changed this run."
       exit 0
@@ -75,7 +133,7 @@ for attempt in 1 2 3 4; do
     exit 0
   fi
   echo "Push failed (attempt $attempt); syncing with origin."
-  git pull --rebase --autostash origin "$BRANCH" || true
+  resync_onto_origin || echo "Could not sync with origin; trying the push again anyway."
   sleep $((2 ** attempt))
 done
 
