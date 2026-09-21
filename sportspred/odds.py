@@ -45,7 +45,7 @@ MONTHLY_CREDITS = 20000
 # unit of quota per game, so the list is the popular markets only.
 MARKETS = {
     'mlb': {'hits': 'batter_hits', 'tb': 'batter_total_bases', 'hr': 'batter_home_runs',
-            'rbi': 'batter_rbis', 'runs': 'batter_runs_scored', 'sb': 'batter_stolen_bases',
+            'rbi': 'batter_rbis', 'runs': 'batter_runs_scored',
             'hits2': 'batter_hits', 'k': 'pitcher_strikeouts', 'outs': 'pitcher_outs',
             'er': 'pitcher_earned_runs', 'p_hits': 'pitcher_hits_allowed'},
     'nba': {'pts': 'player_points', 'reb': 'player_rebounds', 'ast': 'player_assists',

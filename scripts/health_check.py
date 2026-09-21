@@ -46,14 +46,13 @@ ODDS_LOW = 500
 # it lights up within about one slate of a market breaking, and goes out as
 # soon as a fix actually grades something, instead of staying lit for a week
 # over damage already done and unfixable.
-# Known and understood, so they are reported as watches rather than as news.
-# Anything not on this list is a market that has newly stopped being
-# gradeable, which is worth waking up for.
 RECENT_PICKS = 10
-KNOWN_UNGRADEABLE = {
-    ('mlb', 'sb'): 'the ESPN box score carries no stolen-base column, so this '
-                   'market can be priced but never scored',
-}
+# Markets that cannot be graded, are still published anyway, and are
+# understood — reported as watches rather than as news. Empty at present:
+# the one case, MLB stolen bases, was retired rather than lived with. Kept
+# because the next such market should be a deliberate entry here rather than
+# a permanently red alarm.
+KNOWN_UNGRADEABLE = {}
 
 
 def now():
@@ -197,9 +196,15 @@ def check_gradeability(league, report):
               and r.get('push') != '1']
     if not played:
         return
+    # Only markets the site still publishes. A retired one keeps its rows in
+    # the ledger for ever, and nagging about picks that can no longer be made
+    # is how a monitor teaches people to ignore it.
+    sport = config.LEAGUES[league]['sport']
+    live = {spec['key'] for specs in (config.PROPS.get(sport) or {}).values() for spec in specs}
     recent = collections.defaultdict(list)
     for row in played:                       # the ledger is written in order
-        recent[row.get('key')].append(row)
+        if row.get('key') in live:
+            recent[row.get('key')].append(row)
     for key in sorted(recent):
         last = recent[key][-RECENT_PICKS:]
         if len(last) < RECENT_PICKS or any(r.get('hit') in ('0', '1') for r in last):

@@ -84,11 +84,14 @@ Do not "fix" these. They are understood, and chasing them wastes a call-out.
   `book`. Out-of-season leagues and games outside the 36-hour pricing window
   legitimately have no sportsbook lines; the board falls back to lines
   derived from season baselines and says so on the page.
-- **MLB stolen bases (`sb`) are never graded.** The ESPN box score carries no
-  stolen-base column, so the market can be priced but never scored. Roughly
-  900 picks sit in the ledger with no verdict. Fixing this means either
-  sourcing the stat elsewhere or no longer publishing the market — a product
-  decision for the owner, not an incident.
+- **MLB stolen bases (`sb`) are retired.** The ESPN box score carries no
+  stolen-base column, so the market could be priced but never scored:
+  roughly 900 picks reached the ledger and none of them ever got a verdict.
+  It is no longer published or priced. The old picks stay in the ledger,
+  because that is an audit trail and they really were published, and the
+  Batting chip still lists the market so those picks keep their category on
+  past boards. The health check ignores markets that are no longer
+  published, so none of this shows up as a fault.
 - **A prop row with `played=0` has no verdict.** The player did not take the
   field. Ordinary.
 - **A prop row marked void** came from a corrupt feed day (a hitter at

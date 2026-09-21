@@ -215,8 +215,6 @@ PROPS = {
              'dist': 'poisson', 'rank': 5, 'min_proj': 0.2, 'unit': 'R'},
             {'key': 'hits2',  'label': 'Hits (2+)',   'stat': 'hits_pg', 'line': 1.5,
              'dist': 'binomial', 'rank': 6, 'min_proj': 0.7, 'unit': 'H'},
-            {'key': 'sb',     'label': 'Stolen Base', 'stat': 'sb_pg',   'line': 0.5,
-             'dist': 'poisson', 'rank': 7, 'min_proj': 0.08, 'unit': 'SB'},
         ],
         'pitcher': [
             {'key': 'k',      'label': 'Strikeouts',   'stat': 'p_so_pg', 'line': None,
@@ -328,6 +326,9 @@ GROUP_QUOTA = {
 # market can never go missing from the page.
 PROP_GROUPS = {
     'baseball': [
+        # 'sb' is retired and no longer priced, but stays listed here so the
+        # stolen-base picks already frozen into past boards keep their chip
+        # instead of being reachable only under "All".
         ('bat', 'Batting', ['hits', 'hits2', 'tb', 'hr', 'rbi', 'runs', 'sb']),
         ('pitch', 'Pitching', ['k', 'outs', 'er', 'p_hits']),
     ],

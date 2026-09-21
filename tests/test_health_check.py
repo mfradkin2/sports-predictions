@@ -192,11 +192,15 @@ class TestGradeability(HealthCase):
         self.props(*self.market('rbi', 20))
         self.assertFlags('problems', 'published but cannot be graded')
 
-    def test_a_known_ungradeable_market_is_only_a_watch(self):
+    def test_a_retired_market_is_not_judged_at_all(self):
+        # Stolen bases were retired rather than lived with. Their rows stay
+        # in the ledger for ever, and nagging about picks that can no longer
+        # be made is how a monitor teaches people to ignore it.
         self.build()
         self.props(*self.market('sb', 20))
-        self.assertFlags('watches', 'were scored')
-        self.assertQuiet()
+        report = self.run_check()
+        self.assertEqual(report.problems, [])
+        self.assertEqual([w for w in report.watches if 'sb' in w], [])
 
     def test_one_recent_success_clears_it(self):
         # The shape right after a fix lands: a long tail of picks that were

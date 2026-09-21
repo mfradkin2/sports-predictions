@@ -302,10 +302,20 @@ class TestMarketCategories(unittest.TestCase):
 
     def test_every_market_lands_in_exactly_one_category(self):
         for sport, by_group in config.PROPS.items():
-            markets = sorted({s['key'] for specs in by_group.values() for s in specs})
+            markets = {s['key'] for specs in by_group.values() for s in specs}
             placed = [m for g in config.prop_groups_for(sport) for m in g['markets']]
-            self.assertEqual(sorted(placed), markets, sport)      # all of them
+            self.assertFalse(markets - set(placed), sport)          # all of them
             self.assertEqual(len(placed), len(set(placed)), sport)  # once each
+
+    def test_a_retired_market_may_keep_its_category(self):
+        # A chip listing something no longer priced is allowed, and on
+        # purpose: picks frozen into past boards keep their category rather
+        # than being reachable only under "All". What is not allowed is a
+        # live market with no chip, or one listed twice — both tested above.
+        placed = [m for g in config.prop_groups_for('baseball') for m in g['markets']]
+        live = {s['key'] for specs in config.PROPS['baseball'].values() for s in specs}
+        self.assertIn('sb', placed)
+        self.assertNotIn('sb', live)
 
     def test_a_new_market_shows_up_under_more_rather_than_vanishing(self):
         saved = config.PROPS['football']['qb']
@@ -607,3 +617,24 @@ class TestTotalBasesAtLeastOne(unittest.TestCase):
         # Other lines still come from the count distribution.
         _, p3 = props.over_probability(dict(spec, line=2.5), 1.2)
         self.assertLess(p3, p2)
+
+
+class TestRetiredMarkets(unittest.TestCase):
+    """Stolen bases were published for a season and never once scored: the
+    ESPN box score carries no such column, so every pick sat in the ledger
+    with no verdict, counting towards nothing. The market is retired rather
+    than left to keep producing picks nobody can settle."""
+
+    def test_stolen_bases_are_no_longer_priced(self):
+        keys = {s['key'] for specs in config.PROPS['baseball'].values() for s in specs}
+        self.assertNotIn('sb', keys)
+
+    def test_no_sportsbook_credit_is_spent_on_them(self):
+        from sportspred import odds
+        self.assertNotIn('sb', odds.MARKETS['mlb'])
+
+    def test_the_batting_chip_still_covers_the_ones_already_published(self):
+        # Retired, but not erased: picks frozen into past boards keep their
+        # category instead of being reachable only under "All".
+        groups = {g['key']: g['markets'] for g in config.prop_groups_for('baseball')}
+        self.assertIn('sb', groups['bat'])
