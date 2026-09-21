@@ -45,6 +45,14 @@ through GitHub Actions.
   or documentation.
 - Keep the site's plain-English tone. Explain what a number means, not just
   what it is.
+- When reporting to the owner, state times in US Eastern, not UTC. Commit
+  timestamps, GitHub Actions times and the payload's `generated` field are
+  all UTC, so convert them. Write "ET" and use whichever offset is actually
+  in effect on the day — EDT is UTC-4 from the second Sunday in March to the
+  first Sunday in November, EST is UTC-5 otherwise — rather than assuming
+  one: `datetime.now(timezone.utc).astimezone(ZoneInfo('America/New_York'))`.
+  Code, commit messages, log output and the data itself stay in UTC; this is
+  only about what a person reads.
 
 ## Agents
 

@@ -84,3 +84,7 @@ Lead with the verdict: healthy, or what is broken. Then, for each problem:
 what a reader would have seen, the cause, what you changed, how you know it
 worked. Keep anything you chose not to fix in a short list at the end with the
 reason. Plain English, no hedging.
+
+State times in US Eastern, not UTC — everything you are reading from is in
+UTC, so convert it. See the timekeeping rule in `CLAUDE.md`: work the offset
+out from the date rather than assuming EDT or EST.
