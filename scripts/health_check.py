@@ -119,14 +119,18 @@ def check_locks(league, data, report):
     late = []
     for game in data.get('games') or []:
         start = parse_time(game.get('start'))
+        if not start:
+            continue
+        # Checked before the ledger lookup on purpose: a game that was never
+        # locked is exactly the case where its ledger row may be missing too.
+        if start < now() and game.get('final') and not game.get('locked'):
+            report.problem(league, f'game {game.get("id")} has finished but was never locked')
         row = ledger.get(str(game.get('id')))
-        if not start or not row:
+        if not row:
             continue
         predicted = parse_time(row.get('predicted_at'))
         if predicted and predicted > start + dt.timedelta(minutes=5) and row.get('replay') != '1':
             late.append(f'{game.get("id")} ({predicted:%Y-%m-%d %H:%M} vs a {start:%H:%M} start)')
-        if start < now() and game.get('final') and not game.get('locked'):
-            report.problem(league, f'game {game.get("id")} has finished but was never locked')
     if late:
         report.problem(league, f'{len(late)} pick(s) were first recorded after the game started: '
                                + ', '.join(late[:3]))
@@ -230,7 +234,8 @@ def check_feeds(league, data, report):
     status = data.get('props_status')
     if status and status != 'live':
         report.watch(league, f'the player-statistics feed is {status!r}, not live')
-    lines = data.get('lines_status') or {}
+    lines = data.get('lines_status')
+    lines = lines if isinstance(lines, dict) else {}
     if lines.get('mode') and lines['mode'] != 'book':
         report.watch(league, f'prop lines are {lines["mode"]!r} — the sportsbook feed is not being used')
 
@@ -297,6 +302,17 @@ def check_publishing(report):
         report.watch('publishing', f'nothing has been committed for {age:.0f} minutes')
 
 
+def _guard(check, report, where, *args):
+    """Run one check. A monitor that throws is a monitor that sees nothing,
+    so a check that breaks is reported as a broken check rather than taking
+    every other check down with it."""
+    try:
+        check(*args)
+    except Exception as exc:                            # noqa: BLE001
+        report.problem(where, f'the {check.__name__} check could not run '
+                              f'({type(exc).__name__}: {exc})')
+
+
 def run(leagues):
     report = Report()
     check_checkout(report)
@@ -313,15 +329,13 @@ def run(leagues):
         except Exception as exc:                        # noqa: BLE001
             report.problem(league, f'the payload cannot be read back: {exc}')
             continue
-        check_freshness(league, data, report)
-        check_locks(league, data, report)
-        check_results_reachable(league, data, report)
-        check_ledgers(league, report)
-        check_gradeability(league, report)
-        check_boards(league, data, report)
-        check_feeds(league, data, report)
-    check_odds_budget(report)
-    check_publishing(report)
+        for check in (check_freshness, check_locks, check_results_reachable,
+                      check_boards, check_feeds):
+            _guard(check, report, league, league, data, report)
+        for check in (check_ledgers, check_gradeability):
+            _guard(check, report, league, league, report)
+    _guard(check_odds_budget, report, 'odds', report)
+    _guard(check_publishing, report, 'publishing', report)
     return report
 
 
