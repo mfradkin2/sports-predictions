@@ -173,30 +173,54 @@ class TestLedgerIntegrity(HealthCase):
 
 class TestGradeability(HealthCase):
     """A market published but never scored: quiet damage, because the picks
-    look right on the page and simply never reach the record."""
-    def market(self, key, n, scored):
+    look right on the page and simply never reach the record.
+
+    Judged on the most recent handful, in ledger order, so the alarm lights
+    within about one slate of a market breaking and goes out as soon as a fix
+    actually grades something — rather than staying lit for a week over
+    damage already done and no longer fixable.
+    """
+    def market(self, key, n, scored_from=None):
+        """``scored_from`` is the index at and after which picks got a
+        verdict, so the scored ones are the most recent."""
+        cut = n if scored_from is None else scored_from
         return [f'g{i},9{i},{key},A Player,0.5,1.0,over,1,1,'
-                f'{"1" if i < scored else ""},0,hits_pg' for i in range(n)]
+                f'{"1" if i >= cut else ""},0,hits_pg' for i in range(n)]
 
     def test_a_market_that_is_never_scored_is_caught(self):
         self.build()
-        self.props(*self.market('rbi', 20, 0))
+        self.props(*self.market('rbi', 20))
         self.assertFlags('problems', 'published but cannot be graded')
 
     def test_a_known_ungradeable_market_is_only_a_watch(self):
         self.build()
-        self.props(*self.market('sb', 20, 0))
-        self.assertFlags('watches', 'never scored')
+        self.props(*self.market('sb', 20))
+        self.assertFlags('watches', 'were scored')
         self.assertQuiet()
+
+    def test_one_recent_success_clears_it(self):
+        # The shape right after a fix lands: a long tail of picks that were
+        # never scored and never can be, and one that just was.
+        self.build()
+        self.props(*self.market('rbi', 20, scored_from=19))
+        self.assertQuiet()
+
+    def test_old_successes_do_not_excuse_a_market_that_broke(self):
+        self.build()
+        self.props(*self.market('rbi', 30, scored_from=0)[:10],
+                   *self.market('rbi', 30)[10:])
+        self.assertFlags('problems', 'published but cannot be graded')
 
     def test_an_occasional_gap_is_not_a_fault(self):
         self.build()
-        self.props(*self.market('rbi', 20, 18))
+        rows = self.market('rbi', 20, scored_from=0)
+        rows[5] = rows[5].replace(',1,0,hits_pg', ',,0,hits_pg')
+        self.props(*rows)
         self.assertQuiet()
 
     def test_too_few_picks_to_judge_says_nothing(self):
         self.build()
-        self.props(*self.market('rbi', 4, 0))
+        self.props(*self.market('rbi', 4))
         self.assertQuiet()
 
     def test_a_player_who_did_not_play_owes_no_verdict(self):

@@ -40,15 +40,16 @@ STALE_PROBLEM_MIN = 150
 # Below this many Odds API credits the board starts falling back to lines
 # derived from season baselines.
 ODDS_LOW = 500
-# A market where almost no played pick ever gets a verdict is one the site
-# publishes but cannot score: the picks never reach the record and never
-# teach the model anything. Judged only once there are enough of them to
-# mean something.
-UNGRADEABLE_SHARE = 0.9
-UNGRADEABLE_MIN = 12
+# A market the site publishes but cannot score: its picks never reach the
+# record and never teach the model anything. Judged on the most recent
+# handful rather than all time, which is what makes it useful as an alarm —
+# it lights up within about one slate of a market breaking, and goes out as
+# soon as a fix actually grades something, instead of staying lit for a week
+# over damage already done and unfixable.
 # Known and understood, so they are reported as watches rather than as news.
 # Anything not on this list is a market that has newly stopped being
 # gradeable, which is worth waking up for.
+RECENT_PICKS = 10
 KNOWN_UNGRADEABLE = {
     ('mlb', 'sb'): 'the ESPN box score carries no stolen-base column, so this '
                    'market can be priced but never scored',
@@ -196,13 +197,16 @@ def check_gradeability(league, report):
               and r.get('push') != '1']
     if not played:
         return
-    total = collections.Counter(r.get('key') for r in played)
-    blank = collections.Counter(r.get('key') for r in played if r.get('hit') not in ('0', '1'))
-    for key, n in sorted(blank.items()):
-        if total[key] < UNGRADEABLE_MIN or n / total[key] < UNGRADEABLE_SHARE:
-            continue
+    recent = collections.defaultdict(list)
+    for row in played:                       # the ledger is written in order
+        recent[row.get('key')].append(row)
+    for key in sorted(recent):
+        last = recent[key][-RECENT_PICKS:]
+        if len(last) < RECENT_PICKS or any(r.get('hit') in ('0', '1') for r in last):
+            continue                         # one scored pick proves it can be
         known = KNOWN_UNGRADEABLE.get((league, key))
-        where = f'{n} of {total[key]} {key} picks were played but never scored'
+        where = (f'none of the last {len(last)} {key} picks were scored, though every '
+                 'one of those players took the field')
         if known:
             report.watch(league, f'{where} — {known}')
         else:

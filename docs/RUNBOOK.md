@@ -140,8 +140,8 @@ games at all, so every later visit showed an empty section. Fixed by
 each tab lands on its own front door.
 
 ### A market is published but never scored
-**Signature:** `health_check.py` reports `N of N <market> picks were played
-but never scored`.
+**Signature:** `health_check.py` reports `none of the last 10 <market> picks
+were scored`.
 **Why it matters:** silent. The picks look right on the page and simply never
 arrive in the record.
 **History:** NFL pass attempts. The box score gives completions and attempts
@@ -150,6 +150,11 @@ attempts pick went ungraded. Fixed by `BOX_PAIRS` in `sportspred/espn.py`.
 **Fix:** find where the stat is read from the box score. If the feed does
 carry it, map it; if it genuinely does not, say so and let the owner decide
 whether to keep publishing the market.
+**Note:** the check looks at the most recent handful, not all time, so it
+lights up within about one slate of a market breaking and goes out as soon
+as a fix actually grades something. Picks that went unscored before the fix
+stay unscored — a graded row is never rewritten — so the record keeps that
+gap permanently, and the alarm correctly stops nagging about it.
 
 ### A pick appears to have changed after kickoff
 **Treat this as the most serious thing in this document.**
