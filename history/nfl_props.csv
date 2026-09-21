@@ -873,66 +873,69 @@ game_id,game_date,athlete_id,player,side,key,label,stat,dist,line,line_source,bo
 401872946,2026-09-20,8439,Aaron Rodgers,away,pass_td,Passing TDs,pass_td_pg,poisson,0.5,book,6 books,1.31,1.0,0.6817,over,high,2026-09-20T16:55:44Z,0.0,1,1,0,0,0.7314,0.6651,0.6817,1
 401872946,2026-09-20,8439,Aaron Rodgers,away,pass_yds,Passing Yards,pass_yds_pg,normal,212.5,book,6 books,194.71,221.0,0.4745,under,low,2026-09-20T16:55:44Z,187.0,1,1,1,0,0.3951,0.501,0.4745,1
 401872946,2026-09-20,8439,Aaron Rodgers,away,qb_rush,Rushing Yards,rush_yds_pg,normal,0.5,book,3 books,2.95,0.0,0.515,over,low,2026-09-20T16:55:44Z,5.0,1,1,1,0,0.5911,0.4896,0.515,1
-401872947,2026-09-21,12483,Matthew Stafford,home,pass_att,Pass Attempts,pass_att_pg,normal,32.5,book,4 books,35.07,25.0,0.4635,over,low,2026-09-21T06:43:45Z,,,0,,,0.6283,0.4908,0.5252,1
-401872947,2026-09-21,12483,Matthew Stafford,home,pass_cmp,Completions,pass_cmp_pg,normal,21.5,book,6 books,22.58,15.0,0.4607,over,low,2026-09-21T06:43:45Z,,,0,,,0.5735,0.5052,0.5223,1
-401872947,2026-09-21,12483,Matthew Stafford,home,pass_int,Interceptions,pass_int_pg,poisson,0.5,book,5 books,1.04,1.0,0.4503,over,low,2026-09-21T06:43:45Z,,,0,,,0.6459,0.4669,0.5117,1
-401872947,2026-09-21,12483,Matthew Stafford,home,pass_td,Passing TDs,pass_td_pg,poisson,1.5,book,6 books,2.44,0.0,0.5762,over,med,2026-09-21T06:43:45Z,,,0,,,0.6996,0.6157,0.6367,1
-401872947,2026-09-21,12483,Matthew Stafford,home,pass_yds,Passing Yards,pass_yds_pg,normal,238.5,book,6 books,277.33,155.0,0.4829,over,low,2026-09-21T06:43:45Z,,,0,,,0.6761,0.501,0.5448,1
-401872947,2026-09-21,16733,Odell Beckham Jr.,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.2,0.0,0.0733,under,high,2026-09-21T06:43:45Z,,,0,,,0.1794,0.059,0.0891,1
-401872947,2026-09-21,16733,Odell Beckham Jr.,away,rec_yds,Receiving Yards,rec_yds_pg,normal,5.5,book,4 books,2.46,0.0,0.4265,under,med,2026-09-21T06:43:45Z,,,0,,,0.4238,0.5083,0.4872,1
-401872947,2026-09-21,16800,Davante Adams,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.6,0.0,0.4451,over,low,2026-09-21T06:43:45Z,,,0,,,0.4531,0.5241,0.5064,1
-401872947,2026-09-21,16800,Davante Adams,home,rec,Receptions,rec_pg,negbin,5.5,book,6 books,4.4,3.0,0.3453,under,med,2026-09-21T06:43:45Z,,,0,,,0.3013,0.4346,0.4013,1
-401872947,2026-09-21,16800,Davante Adams,home,rec_yds,Receiving Yards,rec_yds_pg,normal,62.5,book,5 books,55.61,26.0,0.4289,under,med,2026-09-21T06:43:45Z,,,0,,,0.4524,0.502,0.4896,1
-401872947,2026-09-21,2531358,Chris Manhertz,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.2,0.0,0.0557,under,high,2026-09-21T06:43:45Z,,,0,,,0.1794,0.0304,0.0677,1
-401872947,2026-09-21,2573401,Tyler Higbee,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.18,0.0,0.1353,under,high,2026-09-21T06:43:45Z,,,0,,,0.1656,0.1627,0.1634,1
-401872947,2026-09-21,2573401,Tyler Higbee,home,rec,Receptions,rec_pg,negbin,1.5,book,4 books,2.61,2.0,0.4721,over,low,2026-09-21T06:43:45Z,,,0,,,0.6357,0.5,0.5339,1
-401872947,2026-09-21,2573401,Tyler Higbee,home,rec_yds,Receiving Yards,rec_yds_pg,normal,14.5,book,4 books,27.56,12.0,0.474,over,low,2026-09-21T06:43:45Z,,,0,,,0.6434,0.5,0.5359,1
-401872947,2026-09-21,2975417,Patrick Ricard,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.37,0.0,0.0829,under,high,2026-09-21T06:43:45Z,,,0,,,0.3115,0.0304,0.1007,1
-401872947,2026-09-21,4040655,Darnell Mooney,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.04,0.0,0.0802,under,high,2026-09-21T06:43:45Z,,,0,,,0.036,0.1179,0.0974,1
-401872947,2026-09-21,4040655,Darnell Mooney,away,rec,Receptions,rec_pg,negbin,1.5,book,FanDuel,2.14,2.0,0.3546,over,low,2026-09-21T06:43:45Z,,,0,,,0.5424,0.3676,0.4113,1
-401872947,2026-09-21,4040655,Darnell Mooney,away,rec_yds,Receiving Yards,rec_yds_pg,normal,11.5,book,FanDuel,28.72,27.0,0.4835,over,low,2026-09-21T06:43:45Z,,,0,,,0.6818,0.5,0.5454,1
-401872947,2026-09-21,4040761,Devin Singletary,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.27,1.0,0.1562,under,high,2026-09-21T06:43:45Z,,,0,,,0.2377,0.1715,0.1881,1
-401872947,2026-09-21,4040761,Devin Singletary,away,rush_yds,Rushing Yards,rush_yds_pg,normal,14.5,book,FanDuel,23.1,16.0,0.4718,over,low,2026-09-21T06:43:45Z,,,0,,,0.6346,0.5,0.5336,1
-401872947,2026-09-21,4242557,Colby Parkinson,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.32,0.0,0.2278,under,high,2026-09-21T06:43:45Z,,,0,,,0.2752,0.2695,0.271,1
-401872947,2026-09-21,4242557,Colby Parkinson,home,rec,Receptions,rec_pg,negbin,3.5,book,5 books,2.76,1.0,0.3265,under,high,2026-09-21T06:43:45Z,,,0,,,0.3062,0.4059,0.3809,1
-401872947,2026-09-21,4242557,Colby Parkinson,home,rec_yds,Receiving Yards,rec_yds_pg,normal,26.5,book,5 books,25.66,6.0,0.4373,under,low,2026-09-21T06:43:45Z,,,0,,,0.4901,0.501,0.4983,1
-401872947,2026-09-21,4243003,Ronnie Rivers,home,anytd,Anytime TD,td_pg,poisson,0.5,book,7 books,0.41,0.0,0.0894,under,high,2026-09-21T06:43:45Z,,,0,,,0.3364,0.0325,0.1085,1
-401872947,2026-09-21,4360516,Tyrone Tracy Jr.,away,anytd,Anytime TD,td_pg,poisson,0.5,book,5 books,0.15,0.0,0.101,under,high,2026-09-21T06:43:45Z,,,0,,,0.1362,0.1179,0.1225,1
-401872947,2026-09-21,4361050,Isaiah Likely,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.26,2.0,0.208,under,high,2026-09-21T06:43:45Z,,,0,,,0.2281,0.255,0.2483,1
-401872947,2026-09-21,4361050,Isaiah Likely,away,rec,Receptions,rec_pg,negbin,4.5,book,5 books,2.99,8.0,0.3574,under,med,2026-09-21T06:43:45Z,,,0,,,0.2217,0.4785,0.4143,1
-401872947,2026-09-21,4361050,Isaiah Likely,away,rec_yds,Receiving Yards,rec_yds_pg,normal,44.5,book,6 books,30.85,78.0,0.406,under,med,2026-09-21T06:43:45Z,,,0,,,0.3601,0.501,0.4658,1
-401872947,2026-09-21,4426553,Davis Allen,home,anytd,Anytime TD,td_pg,poisson,0.5,book,7 books,0.11,0.0,0.0738,under,high,2026-09-21T06:43:45Z,,,0,,,0.101,0.0858,0.0896,1
-401872947,2026-09-21,4429096,Blake Corum,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.21,0.0,0.2391,under,high,2026-09-21T06:43:45Z,,,0,,,0.1918,0.3145,0.2838,1
-401872947,2026-09-21,4429096,Blake Corum,home,rush_att,Rush Attempts,rush_att_pg,negbin,10.5,book,3 books,9.18,10.0,0.4147,under,med,2026-09-21T06:43:45Z,,,0,,,0.3317,0.5227,0.4749,1
-401872947,2026-09-21,4429096,Blake Corum,home,rush_yds,Rushing Yards,rush_yds_pg,normal,49.5,book,6 books,48.03,54.0,0.4329,under,low,2026-09-21T06:43:45Z,,,0,,,0.4847,0.4969,0.4938,1
-401872947,2026-09-21,4429148,Theo Johnson,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.18,0.0,0.0993,under,high,2026-09-21T06:43:45Z,,,0,,,0.1673,0.1048,0.1204,1
-401872947,2026-09-21,4429148,Theo Johnson,away,rec,Receptions,rec_pg,negbin,0.5,book,FanDuel,2.71,1.0,0.6315,over,med,2026-09-21T06:43:45Z,,,0,,,0.859,0.6324,0.6891,1
-401872947,2026-09-21,4430737,Kyren Williams,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.58,1.0,0.5032,over,low,2026-09-21T06:43:45Z,,,0,,,0.4413,0.6065,0.5652,1
-401872947,2026-09-21,4430737,Kyren Williams,home,rec,Receptions,rec_pg,negbin,2.5,book,6 books,2.45,3.0,0.3708,under,med,2026-09-21T06:43:45Z,,,0,,,0.4044,0.4367,0.4286,1
-401872947,2026-09-21,4430737,Kyren Williams,home,rush_att,Rush Attempts,rush_att_pg,negbin,13.5,book,3 books,15.2,11.0,0.4812,over,low,2026-09-21T06:43:45Z,,,0,,,0.6169,0.5185,0.5431,1
-401872947,2026-09-21,4430737,Kyren Williams,home,rush_yds,Rushing Yards,rush_yds_pg,normal,63.5,book,7 books,71.89,41.0,0.4556,over,low,2026-09-21T06:43:45Z,,,0,,,0.5654,0.501,0.5171,1
-401872947,2026-09-21,4430737,Kyren Williams,home,scrim,Rush + Rec Yards,scrim_yds_pg,normal,83.5,book,3 books,92.06,65.0,0.452,over,low,2026-09-21T06:43:45Z,,,0,,,0.5567,0.499,0.5134,1
-401872947,2026-09-21,4570037,Terrance Ferguson,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.13,0.0,0.1994,under,high,2026-09-21T06:43:45Z,,,0,,,0.1213,0.2775,0.2384,1
-401872947,2026-09-21,4570037,Terrance Ferguson,home,rec,Receptions,rec_pg,negbin,2.5,book,4 books,0.71,0.0,0.3069,under,high,2026-09-21T06:43:45Z,,,0,,,0.0752,0.4542,0.3595,1
-401872947,2026-09-21,4570037,Terrance Ferguson,home,rec_yds,Receiving Yards,rec_yds_pg,normal,32.5,book,4 books,14.91,0.0,0.3796,under,med,2026-09-21T06:43:45Z,,,0,,,0.246,0.502,0.438,1
-401872947,2026-09-21,4595348,Malik Nabers,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.2,0.0,0.2435,under,high,2026-09-21T06:43:45Z,,,0,,,0.1794,0.3253,0.2888,1
-401872947,2026-09-21,4595348,Malik Nabers,away,rec,Receptions,rec_pg,negbin,5.5,book,6 books,4.47,6.0,0.3868,under,med,2026-09-21T06:43:45Z,,,0,,,0.3098,0.4908,0.4456,1
-401872947,2026-09-21,4595348,Malik Nabers,away,rec_yds,Receiving Yards,rec_yds_pg,normal,65.5,book,6 books,53.66,69.0,0.4187,under,med,2026-09-21T06:43:45Z,,,0,,,0.4162,0.5,0.4791,1
-401872947,2026-09-21,4682648,Malachi Fields,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.2,0.0,0.149,under,high,2026-09-21T06:43:45Z,,,0,,,0.1794,0.1797,0.1796,1
-401872947,2026-09-21,4682648,Malachi Fields,away,rec,Receptions,rec_pg,negbin,2.5,book,6 books,3.45,2.0,0.4138,over,low,2026-09-21T06:43:45Z,,,0,,,0.586,0.4367,0.474,1
-401872947,2026-09-21,4682648,Malachi Fields,away,rec_yds,Receiving Yards,rec_yds_pg,normal,26.5,book,6 books,42.8,25.0,0.4725,over,low,2026-09-21T06:43:45Z,,,0,,,0.6344,0.501,0.5344,1
-401872947,2026-09-21,4689114,Jaxson Dart,away,pass_att,Pass Attempts,pass_att_pg,normal,31.5,book,5 books,24.65,29.0,0.3408,under,med,2026-09-21T06:43:45Z,,,0,,,0.1385,0.4824,0.3964,1
-401872947,2026-09-21,4689114,Jaxson Dart,away,pass_cmp,Completions,pass_cmp_pg,normal,19.5,book,5 books,16.45,23.0,0.3994,under,med,2026-09-21T06:43:45Z,,,0,,,0.264,0.5239,0.4589,1
-401872947,2026-09-21,4689114,Jaxson Dart,away,pass_int,Interceptions,pass_int_pg,poisson,0.5,book,5 books,0.7,0.0,0.4101,over,low,2026-09-21T06:43:45Z,,,0,,,0.5029,0.4592,0.4701,1
-401872947,2026-09-21,4689114,Jaxson Dart,away,pass_td,Passing TDs,pass_td_pg,poisson,1.5,book,7 books,1.37,3.0,0.3048,under,high,2026-09-21T06:43:45Z,,,0,,,0.3978,0.3437,0.3572,1
-401872947,2026-09-21,4689114,Jaxson Dart,away,pass_yds,Passing Yards,pass_yds_pg,normal,213.5,book,7 books,170.73,230.0,0.3769,under,med,2026-09-21T06:43:45Z,,,0,,,0.2436,0.499,0.4351,1
-401872947,2026-09-21,4689114,Jaxson Dart,away,qb_rush,Rushing Yards,rush_yds_pg,normal,31.5,book,5 books,37.37,54.0,0.4596,over,low,2026-09-21T06:43:45Z,,,0,,,0.5787,0.502,0.5212,1
-401872947,2026-09-21,4696981,Cam Skattebo,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.59,1.0,0.382,over,low,2026-09-21T06:43:45Z,,,0,,,0.4459,0.4388,0.4406,1
-401872947,2026-09-21,4696981,Cam Skattebo,away,rec,Receptions,rec_pg,negbin,1.5,book,7 books,2.54,0.0,0.5189,over,low,2026-09-21T06:43:45Z,,,0,,,0.6221,0.567,0.5808,1
-401872947,2026-09-21,4696981,Cam Skattebo,away,rush_att,Rush Attempts,rush_att_pg,negbin,13.5,book,3 books,13.29,18.0,0.4034,under,med,2026-09-21T06:43:45Z,,,0,,,0.4518,0.4669,0.4631,1
-401872947,2026-09-21,4696981,Cam Skattebo,away,rush_yds,Rushing Yards,rush_yds_pg,normal,51.5,book,6 books,53.91,81.0,0.4453,over,low,2026-09-21T06:43:45Z,,,0,,,0.5232,0.501,0.5066,1
-401872947,2026-09-21,4696981,Cam Skattebo,away,scrim,Rush + Rec Yards,scrim_yds_pg,normal,66.5,book,4 books,75.78,81.0,0.4562,over,low,2026-09-21T06:43:45Z,,,0,,,0.5708,0.5,0.5177,1
-401872947,2026-09-21,4710855,Konata Mumpfield,home,anytd,Anytime TD,td_pg,poisson,0.5,book,7 books,0.04,0.0,0.1006,under,high,2026-09-21T06:43:45Z,,,0,,,0.0349,0.1509,0.1219,1
+401872947,2026-09-21,12483,Matthew Stafford,home,pass_att,Pass Attempts,pass_att_pg,normal,32.5,book,4 books,35.07,25.0,0.4612,over,low,2026-09-21T11:09:46Z,,,0,,,0.6283,0.4877,0.5228,1
+401872947,2026-09-21,12483,Matthew Stafford,home,pass_cmp,Completions,pass_cmp_pg,normal,21.5,book,6 books,22.58,15.0,0.453,over,low,2026-09-21T11:09:46Z,,,0,,,0.5735,0.4948,0.5144,1
+401872947,2026-09-21,12483,Matthew Stafford,home,pass_int,Interceptions,pass_int_pg,poisson,0.5,book,5 books,0.91,1.0,0.4398,over,low,2026-09-21T11:09:46Z,,,0,,,0.5957,0.4694,0.501,1
+401872947,2026-09-21,12483,Matthew Stafford,home,pass_td,Passing TDs,pass_td_pg,poisson,1.5,book,6 books,2.44,0.0,0.5762,over,med,2026-09-21T11:09:46Z,,,0,,,0.6996,0.6157,0.6367,1
+401872947,2026-09-21,12483,Matthew Stafford,home,pass_yds,Passing Yards,pass_yds_pg,normal,238.5,book,6 books,277.33,155.0,0.4829,over,low,2026-09-21T11:09:46Z,,,0,,,0.6761,0.501,0.5448,1
+401872947,2026-09-21,12483,Matthew Stafford,home,qb_rush,Rushing Yards,rush_yds_pg,normal,0.5,book,FanDuel,0.05,0.0,0.3258,under,high,2026-09-21T11:09:46Z,,,0,,,0.4803,0.3469,0.3802,1
+401872947,2026-09-21,16733,Odell Beckham Jr.,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.18,0.0,0.0711,under,high,2026-09-21T11:09:46Z,,,0,,,0.1685,0.059,0.0864,1
+401872947,2026-09-21,16733,Odell Beckham Jr.,away,rec_yds,Receiving Yards,rec_yds_pg,normal,5.5,book,4 books,3.99,0.0,0.4334,under,low,2026-09-21T11:09:46Z,,,0,,,0.4648,0.5042,0.4944,1
+401872947,2026-09-21,16800,Davante Adams,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.6,0.0,0.4451,over,low,2026-09-21T11:09:46Z,,,0,,,0.4531,0.5241,0.5064,1
+401872947,2026-09-21,16800,Davante Adams,home,rec,Receptions,rec_pg,negbin,5.5,book,6 books,4.4,3.0,0.3393,under,high,2026-09-21T11:09:46Z,,,0,,,0.3013,0.426,0.3948,1
+401872947,2026-09-21,16800,Davante Adams,home,rec_yds,Receiving Yards,rec_yds_pg,normal,62.5,book,6 books,55.61,26.0,0.4296,under,med,2026-09-21T11:09:46Z,,,0,,,0.4524,0.5031,0.4904,1
+401872947,2026-09-21,2531358,Chris Manhertz,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.18,0.0,0.0535,under,high,2026-09-21T11:09:46Z,,,0,,,0.1685,0.0304,0.065,1
+401872947,2026-09-21,2573401,Tyler Higbee,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.18,0.0,0.1362,under,high,2026-09-21T11:09:46Z,,,0,,,0.1656,0.1641,0.1645,1
+401872947,2026-09-21,2573401,Tyler Higbee,home,rec,Receptions,rec_pg,negbin,1.5,book,5 books,2.61,2.0,0.4812,over,low,2026-09-21T11:09:46Z,,,0,,,0.6357,0.5123,0.5432,1
+401872947,2026-09-21,2573401,Tyler Higbee,home,rec_yds,Receiving Yards,rec_yds_pg,normal,14.5,book,5 books,27.56,12.0,0.4763,over,low,2026-09-21T11:09:46Z,,,0,,,0.6434,0.5031,0.5382,1
+401872947,2026-09-21,2975417,Patrick Ricard,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.26,0.0,0.0642,under,high,2026-09-21T11:09:46Z,,,0,,,0.2288,0.0277,0.078,1
+401872947,2026-09-21,4040655,Darnell Mooney,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.04,0.0,0.0759,under,high,2026-09-21T11:09:46Z,,,0,,,0.036,0.111,0.0922,1
+401872947,2026-09-21,4040655,Darnell Mooney,away,rec,Receptions,rec_pg,negbin,1.5,book,3 books,2.14,2.0,0.3578,over,low,2026-09-21T11:09:46Z,,,0,,,0.5424,0.3722,0.4148,1
+401872947,2026-09-21,4040655,Darnell Mooney,away,rec_yds,Receiving Yards,rec_yds_pg,normal,11.5,book,FanDuel,28.72,27.0,0.4835,over,low,2026-09-21T11:09:46Z,,,0,,,0.6818,0.5,0.5454,1
+401872947,2026-09-21,4040761,Devin Singletary,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.27,1.0,0.1471,under,high,2026-09-21T11:09:46Z,,,0,,,0.2377,0.1572,0.1773,1
+401872947,2026-09-21,4040761,Devin Singletary,away,rush_yds,Rushing Yards,rush_yds_pg,normal,15.5,book,3 books,23.1,16.0,0.4727,over,low,2026-09-21T11:09:46Z,,,0,,,0.6195,0.5062,0.5345,1
+401872947,2026-09-21,4242557,Colby Parkinson,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.32,0.0,0.2304,under,high,2026-09-21T11:09:46Z,,,0,,,0.2752,0.2734,0.2739,1
+401872947,2026-09-21,4242557,Colby Parkinson,home,rec,Receptions,rec_pg,negbin,3.5,book,6 books,2.76,1.0,0.3258,under,high,2026-09-21T11:09:46Z,,,0,,,0.3062,0.4048,0.3802,1
+401872947,2026-09-21,4242557,Colby Parkinson,home,rec_yds,Receiving Yards,rec_yds_pg,normal,27.5,book,6 books,25.66,6.0,0.4299,under,med,2026-09-21T11:09:46Z,,,0,,,0.4784,0.4948,0.4907,1
+401872947,2026-09-21,4243003,Ronnie Rivers,home,anytd,Anytime TD,td_pg,poisson,0.5,book,7 books,0.29,0.0,0.0765,under,high,2026-09-21T11:09:46Z,,,0,,,0.2484,0.041,0.0929,1
+401872947,2026-09-21,4360516,Tyrone Tracy Jr.,away,anytd,Anytime TD,td_pg,poisson,0.5,book,5 books,0.15,0.0,0.0967,under,high,2026-09-21T11:09:46Z,,,0,,,0.1362,0.111,0.1173,1
+401872947,2026-09-21,4361050,Isaiah Likely,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.26,2.0,0.2036,under,high,2026-09-21T11:09:46Z,,,0,,,0.2281,0.2483,0.2432,1
+401872947,2026-09-21,4361050,Isaiah Likely,away,rec,Receptions,rec_pg,negbin,4.5,book,6 books,2.99,8.0,0.3482,under,med,2026-09-21T11:09:46Z,,,0,,,0.2217,0.4653,0.4044,1
+401872947,2026-09-21,4361050,Isaiah Likely,away,rec_yds,Receiving Yards,rec_yds_pg,normal,45.5,book,6 books,30.85,78.0,0.4029,under,med,2026-09-21T11:09:46Z,,,0,,,0.3504,0.5,0.4626,1
+401872947,2026-09-21,4426553,Davis Allen,home,anytd,Anytime TD,td_pg,poisson,0.5,book,7 books,0.11,0.0,0.0656,under,high,2026-09-21T11:09:46Z,,,0,,,0.101,0.0726,0.0797,1
+401872947,2026-09-21,4429096,Blake Corum,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.21,0.0,0.2391,under,high,2026-09-21T11:09:46Z,,,0,,,0.1918,0.3145,0.2838,1
+401872947,2026-09-21,4429096,Blake Corum,home,rush_att,Rush Attempts,rush_att_pg,negbin,10.5,book,3 books,9.18,10.0,0.4147,under,med,2026-09-21T11:09:46Z,,,0,,,0.3317,0.5227,0.4749,1
+401872947,2026-09-21,4429096,Blake Corum,home,rush_yds,Rushing Yards,rush_yds_pg,normal,49.5,book,6 books,48.03,54.0,0.4322,under,low,2026-09-21T11:09:46Z,,,0,,,0.4847,0.4958,0.493,1
+401872947,2026-09-21,4429096,Blake Corum,home,scrim,Rush + Rec Yards,scrim_yds_pg,normal,54.5,book,FanDuel,50.68,54.0,0.4296,under,med,2026-09-21T11:09:46Z,,,0,,,0.4616,0.5,0.4904,1
+401872947,2026-09-21,4429148,Theo Johnson,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.18,0.0,0.0976,under,high,2026-09-21T11:09:46Z,,,0,,,0.1673,0.102,0.1183,1
+401872947,2026-09-21,4429148,Theo Johnson,away,rec,Receptions,rec_pg,negbin,0.5,book,3 books,2.71,1.0,0.646,over,med,2026-09-21T11:09:46Z,,,0,,,0.859,0.6505,0.7026,1
+401872947,2026-09-21,4429148,Theo Johnson,away,rec_yds,Receiving Yards,rec_yds_pg,normal,8.5,book,3 books,30.42,9.0,0.4928,over,low,2026-09-21T11:09:46Z,,,0,,,0.7192,0.5,0.5548,1
+401872947,2026-09-21,4430737,Kyren Williams,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.58,1.0,0.5032,over,low,2026-09-21T11:09:46Z,,,0,,,0.4413,0.6065,0.5652,1
+401872947,2026-09-21,4430737,Kyren Williams,home,rec,Receptions,rec_pg,negbin,2.5,book,6 books,2.45,3.0,0.3708,under,med,2026-09-21T11:09:46Z,,,0,,,0.4044,0.4367,0.4286,1
+401872947,2026-09-21,4430737,Kyren Williams,home,rush_att,Rush Attempts,rush_att_pg,negbin,13.5,book,3 books,15.2,11.0,0.4812,over,low,2026-09-21T11:09:46Z,,,0,,,0.6169,0.5185,0.5431,1
+401872947,2026-09-21,4430737,Kyren Williams,home,rush_yds,Rushing Yards,rush_yds_pg,normal,63.5,book,7 books,71.89,41.0,0.4564,over,low,2026-09-21T11:09:46Z,,,0,,,0.5654,0.502,0.5179,1
+401872947,2026-09-21,4430737,Kyren Williams,home,scrim,Rush + Rec Yards,scrim_yds_pg,normal,83.5,book,4 books,92.06,65.0,0.4535,over,low,2026-09-21T11:09:46Z,,,0,,,0.5567,0.501,0.5149,1
+401872947,2026-09-21,4570037,Terrance Ferguson,home,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.13,0.0,0.1968,under,high,2026-09-21T11:09:46Z,,,0,,,0.1213,0.2734,0.2354,1
+401872947,2026-09-21,4570037,Terrance Ferguson,home,rec,Receptions,rec_pg,negbin,2.5,book,5 books,0.71,0.0,0.2989,under,high,2026-09-21T11:09:46Z,,,0,,,0.0752,0.4425,0.3507,1
+401872947,2026-09-21,4570037,Terrance Ferguson,home,rec_yds,Receiving Yards,rec_yds_pg,normal,32.5,book,5 books,14.91,0.0,0.3796,under,med,2026-09-21T11:09:46Z,,,0,,,0.246,0.502,0.438,1
+401872947,2026-09-21,4595348,Malik Nabers,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.18,0.0,0.2375,under,high,2026-09-21T11:09:46Z,,,0,,,0.1685,0.3198,0.282,1
+401872947,2026-09-21,4595348,Malik Nabers,away,rec,Receptions,rec_pg,negbin,5.5,book,6 books,4.3,6.0,0.3881,under,med,2026-09-21T11:09:46Z,,,0,,,0.2878,0.5,0.447,1
+401872947,2026-09-21,4595348,Malik Nabers,away,rec_yds,Receiving Yards,rec_yds_pg,normal,65.5,book,6 books,50.99,69.0,0.4141,under,med,2026-09-21T11:09:46Z,,,0,,,0.3939,0.501,0.4742,1
+401872947,2026-09-21,4682648,Malachi Fields,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.18,0.0,0.1415,under,high,2026-09-21T11:09:46Z,,,0,,,0.1685,0.1715,0.1708,1
+401872947,2026-09-21,4682648,Malachi Fields,away,rec,Receptions,rec_pg,negbin,2.5,book,6 books,3.28,2.0,0.407,over,low,2026-09-21T11:09:46Z,,,0,,,0.5573,0.4367,0.4668,1
+401872947,2026-09-21,4682648,Malachi Fields,away,rec_yds,Receiving Yards,rec_yds_pg,normal,26.5,book,6 books,40.14,25.0,0.4685,over,low,2026-09-21T11:09:46Z,,,0,,,0.6181,0.501,0.5303,1
+401872947,2026-09-21,4689114,Jaxson Dart,away,pass_att,Pass Attempts,pass_att_pg,normal,31.5,book,5 books,24.65,29.0,0.346,under,med,2026-09-21T11:09:46Z,,,0,,,0.1385,0.4899,0.402,1
+401872947,2026-09-21,4689114,Jaxson Dart,away,pass_cmp,Completions,pass_cmp_pg,normal,19.5,book,5 books,16.45,23.0,0.3994,under,med,2026-09-21T11:09:46Z,,,0,,,0.264,0.5239,0.4589,1
+401872947,2026-09-21,4689114,Jaxson Dart,away,pass_int,Interceptions,pass_int_pg,poisson,0.5,book,5 books,0.58,0.0,0.3949,over,low,2026-09-21T11:09:46Z,,,0,,,0.4391,0.4592,0.4542,1
+401872947,2026-09-21,4689114,Jaxson Dart,away,pass_td,Passing TDs,pass_td_pg,poisson,1.5,book,7 books,1.37,3.0,0.3043,under,high,2026-09-21T11:09:46Z,,,0,,,0.3978,0.3429,0.3566,1
+401872947,2026-09-21,4689114,Jaxson Dart,away,pass_yds,Passing Yards,pass_yds_pg,normal,213.5,book,7 books,170.73,230.0,0.3769,under,med,2026-09-21T11:09:46Z,,,0,,,0.2436,0.499,0.4351,1
+401872947,2026-09-21,4689114,Jaxson Dart,away,qb_rush,Rushing Yards,rush_yds_pg,normal,32.5,book,6 books,37.37,54.0,0.4587,over,low,2026-09-21T11:09:46Z,,,0,,,0.5654,0.5052,0.5203,1
+401872947,2026-09-21,4696981,Cam Skattebo,away,anytd,Anytime TD,td_pg,poisson,0.5,book,8 books,0.59,1.0,0.382,over,low,2026-09-21T11:09:46Z,,,0,,,0.4459,0.4388,0.4406,1
+401872947,2026-09-21,4696981,Cam Skattebo,away,rec,Receptions,rec_pg,negbin,1.5,book,7 books,2.54,0.0,0.5223,over,low,2026-09-21T11:09:46Z,,,0,,,0.6221,0.5715,0.5842,1
+401872947,2026-09-21,4696981,Cam Skattebo,away,rush_att,Rush Attempts,rush_att_pg,negbin,13.5,book,3 books,13.29,18.0,0.4064,under,med,2026-09-21T11:09:46Z,,,0,,,0.4518,0.4711,0.4662,1
+401872947,2026-09-21,4696981,Cam Skattebo,away,rush_yds,Rushing Yards,rush_yds_pg,normal,51.5,book,6 books,53.91,81.0,0.4461,over,low,2026-09-21T11:09:46Z,,,0,,,0.5232,0.5021,0.5074,1
+401872947,2026-09-21,4696981,Cam Skattebo,away,scrim,Rush + Rec Yards,scrim_yds_pg,normal,66.5,book,4 books,75.78,81.0,0.4569,over,low,2026-09-21T11:09:46Z,,,0,,,0.5708,0.501,0.5185,1
+401872947,2026-09-21,4710855,Konata Mumpfield,home,anytd,Anytime TD,td_pg,poisson,0.5,book,7 books,0.04,0.0,0.1006,under,high,2026-09-21T11:09:46Z,,,0,,,0.0349,0.1509,0.1219,1
 401872963,2026-09-28,2973405,Kalif Raymond,home,rec,Receptions,rec_pg,negbin,8.5,,,8.91,8.0,0.5081,over,low,2026-09-16T00:24:47Z,,,0,,,,,,
 401872963,2026-09-28,2973405,Kalif Raymond,home,rec_yds,Receiving Yards,rec_yds_pg,normal,84.5,,,100.84,84.0,0.5879,over,low,2026-09-16T00:24:47Z,,,0,,,,,,
 401872963,2026-09-28,2973405,Kalif Raymond,home,scrim,Rush + Rec Yards,scrim_yds_pg,normal,84.5,,,100.84,84.0,0.5892,over,low,2026-09-16T00:24:47Z,,,0,,,,,,
