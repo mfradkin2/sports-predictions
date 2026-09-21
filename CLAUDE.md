@@ -49,6 +49,11 @@ through GitHub Actions.
 ## Agents
 
 - **`site-doctor`** (`.claude/agents/site-doctor.md`) — breakage only:
-  diagnoses and fixes technical problems with the site. Runs hourly.
+  diagnoses and fixes technical problems with the site. Runs every three
+  hours, and can be invoked directly whenever something looks wrong. The
+  gap between visits is deliberate: a bad build is already blocked from
+  publishing by the gate in `sportspred/verify.py`, and the refresh retries
+  itself every fifteen minutes, so the agent is there for what those two
+  cannot fix by themselves.
 - A separate daily routine owns prediction accuracy and proposes one
   evidence-backed model improvement at a time on its own branch.
