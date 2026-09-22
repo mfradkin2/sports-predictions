@@ -1826,10 +1826,21 @@
   }
   function stopLive() { clearTimeout(LIVE.timer); LIVE.timer = null; }
 
+  // One request per day: ESPN's scoreboard answers a single ?dates=YYYYMMDD
+  // and rejects a YYYYMMDD-YYYYMMDD range with a 400.
+  function fetchScoreboard(path, days) {
+    return Promise.all(days.map(function (d) {
+      return espnFetch(path + '/scoreboard?dates=' + d.replace(/-/g, '')).catch(function () { return null; });
+    })).then(function (parts) {
+      var events = [];
+      parts.forEach(function (j) { if (j && j.events) events = events.concat(j.events); });
+      return { events: events };
+    });
+  }
+
   function poll() {
     var leagues = leaguesToWatch();
     var t = today(), y = addDays(t, -1);
-    var range = y.replace(/-/g, '') + '-' + t.replace(/-/g, '');
     var left = leagues.length, liveTotal = 0;
     var finish = function () {
       var pill = el('live-pill');
@@ -1843,7 +1854,7 @@
     };
     if (!left) { finish(); return; }
     leagues.forEach(function (k) {
-      espnFetch(DATA[k].espn_path + '/scoreboard?dates=' + range)
+      fetchScoreboard(DATA[k].espn_path, [y, t])
         .then(function (json) { return ingestScoreboard(json, k); })
         .then(function (n) { liveTotal += n || 0; })
         .catch(function () {})
