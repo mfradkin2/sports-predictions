@@ -14,6 +14,13 @@ on:
     - cron: '32 * * * *'
     - cron: '47 * * * *'
     - cron: '2 * * * *'
+  # GitHub sheds far more scheduled runs than the four slots above absorb:
+  # gaps of two to four hours were routine. A push is never shed, so an
+  # hourly routine outside GitHub pushes one empty commit to this throwaway
+  # branch, and that push starts a refresh. The run itself still checks out
+  # and publishes main (SP_BRANCH below); the branch is only a doorbell.
+  push:
+    branches: [refresh-tick]
   workflow_dispatch:
     inputs:
       lookback_days:
@@ -51,6 +58,8 @@ jobs:
     permissions:
       contents: write
     env:
+      # Always build and publish main, whichever ref started the run.
+      SP_BRANCH: main
       # One place for the build's flags: the publish step re-runs the build
       # when the code moves under it, and must run it the same way.
       SP_PIPELINE_ARGS: >-
@@ -60,6 +69,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5

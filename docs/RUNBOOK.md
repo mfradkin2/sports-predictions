@@ -47,6 +47,16 @@ ESPN + The Odds API  ->  run_pipeline.py  ->  sportspred/*  ->  data/, history/,
 - **`.github/scripts/publish.sh`** commits and pushes. It rebuilds if `main`
   gained code mid-run, and merges the ledgers if another refresh pushed
   first.
+- **The `refresh-tick` branch** is a doorbell. GitHub sheds most of the
+  scheduled slots (47 of 192 ran in the two days to 2026-09-22, with gaps
+  of two to four hours), but it never sheds a push, so an hourly cloud
+  routine ("Sports Predictions refresh tick") pushes one empty commit to
+  that branch and the push starts a refresh. The run still checks out and
+  publishes `main`. The branch carries nothing and is force-pushed every
+  hour; that is the one place force-pushing is fine. To force a refresh by
+  hand from anywhere that can push: `git fetch origin main && git push -f
+  origin origin/main:refs/heads/refresh-tick` after an empty commit, or
+  simply trigger `update.yml`.
 - **`history/`** is the audit trail: the ledgers, the frozen boards. It is
   append-and-grade-only. **Never hand-edit it.**
 - **`model_state/`** is learned state. Regenerable, but do not hand-edit it

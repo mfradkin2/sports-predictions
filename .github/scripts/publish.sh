@@ -12,7 +12,9 @@
 # and model state this run produced.
 set -uo pipefail
 
-BRANCH="${GITHUB_REF_NAME:-main}"
+# The branch the site publishes from. A refresh started by a push to the
+# refresh-tick branch (see update.yml) still builds and publishes main.
+BRANCH="${SP_BRANCH:-${GITHUB_REF_NAME:-main}}"
 
 # What the pipeline writes. Everything else in the tree is code — including
 # assets/, which the pipeline only reads and hashes into each page, so it is
