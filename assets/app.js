@@ -1081,6 +1081,9 @@
     var GROUP_LABEL = { pitcher: 'Pitchers', batter: 'Hitters', qb: 'Quarterbacks', rb: 'Running backs', wr: 'Receivers & tight ends', goalie: 'Goalies', skater: 'Skaters' };
     var statusOf = function (r) {
       if (r.prop.hit != null || r.prop.push || r.prop.played === false || r.prop.void) return 'graded';
+      // The game is over and no verdict ever came (a market that could not be
+      // scored, since retired): not open, not in progress, not graded.
+      if (r.g.final) return 'unscored';
       return r.g.props_locked ? 'live' : 'upcoming';
     };
     var q = state.search.trim().toLowerCase();
@@ -1103,7 +1106,7 @@
         if (fx.game !== 'all' && r.g.id !== fx.game) return false;
         if (fx.pos !== 'all' && r.player.group !== fx.pos) return false;
         if (fx.edge !== 'all' && !(r.prop.edge_pts != null && r.prop.edge_pts >= +fx.edge)) return false;
-        if (fx.status === 'open') { if (statusOf(r) === 'graded') return false; }
+        if (fx.status === 'open') { var st = statusOf(r); if (st === 'graded' || st === 'unscored') return false; }
         else if (fx.status !== 'all' && statusOf(r) !== fx.status) return false;
         if (q && (r.player.name + ' ' + r.g.away + ' ' + r.g.home).toLowerCase().indexOf(q) < 0) return false;
         if (dedupe) {
@@ -1210,7 +1213,8 @@
         var res = p.void ? '<span class="tag low">VOID</span>'
           : (p.push ? '<span class="tag low">PUSH · had ' + p.actual + '</span>'
           : (p.hit != null ? '<span class="tag ' + (p.hit ? 'ok' : 'no') + '">' + (p.hit ? '✓ correct' : '✗ wrong') + ' · had ' + p.actual + '</span>'
-          : (p.played === false ? '<span class="tag low">DID NOT PLAY</span>' : '<span class="prop-progress-slot"></span>')));
+          : (p.played === false ? '<span class="tag low">DID NOT PLAY</span>'
+          : (r.g.final ? '<span class="tag low">NOT SCORED</span>' : '<span class="prop-progress-slot"></span>'))));
         return '<tr data-live="' + esc(r.league + '|' + r.g.id + '|' + r.player.id + '|' + p.key) + '"><td><b>' + esc(r.player.name) + '</b><br><span style="color:var(--faint)">' +
             esc(r.player.pos || '') + '</span></td>' +
           '<td>' + (isAll() ? '<span class="lg-chip">' + EMOJI[r.league] + '</span> ' : '') + esc(p.label) + '</td>' +

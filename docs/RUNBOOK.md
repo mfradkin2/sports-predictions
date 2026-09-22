@@ -168,6 +168,47 @@ the locking path in `sportspred/learn.py` and the frozen boards — and fix
 that. The bad rows stay as published; the record is an audit trail, not a
 scoreboard to be tidied.
 
+### Every run logs `team statistics for 0/N teams`
+**Signature:** the ingest step of every league, every run, reports statistics
+for no team at all. The build still succeeds, so nothing goes red.
+**Why it matters:** silent. MLB's standings prior goes without ERA, NFL
+without yardage and turnovers, NHL without save percentage, and the daily
+`history/<league>_team_stats.csv` snapshot records blanks for those columns.
+**History:** ESPN serves a team's season line under
+`results.stats.categories`; the parser looked under `splits.categories`, the
+shape it was first written against, and found nothing from the day of the
+Python port. Fixed in `_pick_stat` in `sportspred/ingest.py`, which now reads
+either shape; the fixtures in `tests/espn_fixtures.py` carry the real one.
+**Fix:** fetch one team's `/statistics` payload and look at where the
+categories actually live before touching the parser. Add the new shape to
+the fixtures.
+
+### The page never shows a live score, and finished games wait for the next rebuild
+**Signature:** the browser console shows ESPN scoreboard requests failing
+with a 400 (or reported as a CORS error, which is what a browser says about a
+failed cross-origin response). The board itself is fine, because the live
+layer falls back to the static build.
+**History:** the page asked for yesterday and today in one request as
+`?dates=YYYYMMDD-YYYYMMDD`. ESPN stopped accepting the range and answers 400
+on both hosts, for every league. `fetchScoreboard` in `assets/app.js` now
+asks for each day on its own and merges the events.
+**Fix:** `scripts/check_pages.py` runs without a network, so it cannot see
+this. Load a page in a real browser and watch the console; every request the
+live layer makes should come back 200.
+
+### Props on a finished game sit under "In progress" for days
+**Signature:** the props board's In progress rail holds hundreds of rows
+while nothing is being played.
+**History:** the stolen-base market was retired (see section 4) after
+roughly nine hundred picks reached the ledger without a verdict. The rows
+stayed on the boards frozen for those games, as intended, but the page's
+status rule knew only open, in progress and graded, so a locked pick without
+a verdict read as in progress for ever. A prop on a finished game with no
+verdict is now `unscored`: it appears under All and on its game's board,
+marked NOT SCORED, and counts nowhere else.
+**Fix:** if it recurs with a market that is still published, that is the
+"published but never scored" case above, not this one.
+
 ### The build gate is rejecting a good build
 Possible, and the reason `skip_verify` exists as a workflow input. Be very
 sure: the gate has been right every time so far. If it really is wrong, fix
