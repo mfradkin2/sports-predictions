@@ -47,12 +47,22 @@ def mlb_standings():
                                         'standings': {'entries': entries}}]}]}
 
 
-def mlb_team_statistics(era):
-    return {'splits': {'categories': [
+def team_statistics(categories):
+    """The shape ESPN serves for ``/teams/<id>/statistics``."""
+    return {'status': 'success', 'results': {'stats': {'categories': categories}}}
+
+
+def legacy_team_statistics(categories):
+    """The older ``splits`` shape the parser was first written against."""
+    return {'splits': {'categories': categories}}
+
+
+def mlb_team_statistics(era, shape=team_statistics):
+    return shape([
         {'name': 'batting', 'stats': [_stat('avg', .261)]},
         {'name': 'pitching', 'stats': [_stat('strikeouts', 1200),
-                                       _stat('earnedRunAverage', era, 'ERA')]},
-    ]}}
+                                       _stat('ERA', era, 'ERA')]},
+    ])
 
 
 def nfl_standings():
@@ -68,12 +78,12 @@ def nfl_standings():
 
 
 def nfl_team_statistics(ypg, give, take):
-    return {'splits': {'categories': [
+    return team_statistics([
         {'name': 'passing', 'stats': [_stat('netPassingYardsPerGame', 240)]},
         {'name': 'general', 'stats': [_stat('totalYardsPerGame', ypg),
                                       _stat('totalGiveaways', give),
                                       _stat('totalTakeaways', take)]},
-    ]}}
+    ])
 
 
 def nhl_standings():

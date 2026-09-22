@@ -101,6 +101,21 @@ class TestTeamStatistics(unittest.TestCase):
         self.assertEqual(teams['1']['era'], 3.4)
         self.assertIsNone(teams['2']['era'])
 
+    def test_the_older_splits_shape_is_still_read(self):
+        http = fx.FakeHttp([('baseball/mlb/standings', fx.mlb_standings()),
+                            ('/teams/1/statistics',
+                             fx.mlb_team_statistics(3.40, fx.legacy_team_statistics))])
+        teams = ingest.fetch_standings(http, 'mlb')
+        self.assertEqual(ingest.enrich_team_statistics(http, 'mlb', teams), 1)
+        self.assertEqual(teams['1']['era'], 3.4)
+
+    def test_a_payload_with_no_categories_is_a_miss_not_a_crash(self):
+        http = fx.FakeHttp([('baseball/mlb/standings', fx.mlb_standings()),
+                            ('/teams/1/statistics', {'status': 'success', 'results': {}})])
+        teams = ingest.fetch_standings(http, 'mlb')
+        self.assertEqual(ingest.enrich_team_statistics(http, 'mlb', teams), 0)
+        self.assertIsNone(teams['1']['era'])
+
     def test_nfl_yards_and_turnovers_replace_the_defaults(self):
         http = fx.FakeHttp([('football/nfl/standings', fx.nfl_standings()),
                             ('/teams/10/statistics', fx.nfl_team_statistics(380.5, 3, 7))])

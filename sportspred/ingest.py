@@ -315,8 +315,15 @@ def lookup(teams, name, tid=None):
 #  Per-team statistics (ERA for MLB, yardage and turnovers for NFL)
 # ─────────────────────────────────────────────────────────────────────────────
 def _pick_stat(data, wanted, categories=None):
-    """Search ``splits.categories[].stats[]`` for the first of ``wanted``."""
-    for cat in dig(data, 'splits', 'categories') or []:
+    """Search the team's stat categories for the first of ``wanted``.
+
+    ESPN serves a team's season line under ``results.stats.categories``;
+    ``splits.categories`` is the shape this parser was first written against
+    and is kept so either payload is read.
+    """
+    cats = (dig(data, 'results', 'stats', 'categories')
+            or dig(data, 'splits', 'categories') or [])
+    for cat in cats:
         cname = (cat.get('name') or '').lower()
         if categories and cname not in categories:
             continue
