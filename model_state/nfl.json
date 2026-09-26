@@ -178,53 +178,6 @@
  "optimizer": [
   {
    "adopted": false,
-   "at": "2026-09-25T18:49:19Z",
-   "end": 0.6199,
-   "evals": 37,
-   "moves": [
-    {
-     "from": 0.6214,
-     "move": "without sos_diff",
-     "to": 0.6209
-    },
-    {
-     "from": 0.6209,
-     "move": "with exp_diff",
-     "to": 0.6205
-    },
-    {
-     "from": 0.6205,
-     "move": "form window",
-     "to": 0.6204
-    },
-    {
-     "from": 0.6204,
-     "move": "form window",
-     "to": 0.6199
-    }
-   ],
-   "probe": {
-    "features": [
-     "elo_diff",
-     "pyth_diff",
-     "margin_diff",
-     "rest_diff",
-     "h2h_diff",
-     "wpct_diff",
-     "sos_diff",
-     "exp_diff"
-    ],
-    "form": {
-     "decay": 0.8,
-     "n": 12
-    },
-    "logloss": 0.6214,
-    "won": false
-   },
-   "start": 0.6214
-  },
-  {
-   "adopted": false,
    "at": "2026-09-25T18:56:13Z",
    "end": 0.6199,
    "evals": 37,
@@ -2455,6 +2408,55 @@
     "won": false
    },
    "start": 0.6214
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-26T20:03:46Z",
+   "end": 0.6199,
+   "evals": 37,
+   "moves": [
+    {
+     "from": 0.6214,
+     "move": "without sos_diff",
+     "to": 0.6209
+    },
+    {
+     "from": 0.6209,
+     "move": "with exp_diff",
+     "to": 0.6205
+    },
+    {
+     "from": 0.6205,
+     "move": "form window",
+     "to": 0.6204
+    },
+    {
+     "from": 0.6204,
+     "move": "form window",
+     "to": 0.6199
+    }
+   ],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "form_diff",
+     "rest_diff",
+     "b2b_diff",
+     "h2h_diff",
+     "off_diff",
+     "def_diff",
+     "sos_diff",
+     "exp_diff"
+    ],
+    "form": {
+     "decay": 0.97,
+     "n": 16
+    },
+    "logloss": 0.6214,
+    "won": false
+   },
+   "start": 0.6214
   }
  ],
  "props": {
@@ -2657,31 +2659,6 @@
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-09-25T13:29:21Z",
-   "metrics": {
-    "acc": 0.6667,
-    "brier": 0.2164,
-    "elo_only": {
-     "acc": 0.6579,
-     "brier": 0.2181,
-     "logloss": 0.6229,
-     "n": 228
-    },
-    "glm_only": {
-     "acc": 0.6404,
-     "brier": 0.2385,
-     "logloss": 0.6966,
-     "n": 228
-    },
-    "logloss": 0.6199,
-    "n": 228
-   },
-   "model_version": 3,
-   "notes": "318 completed games; changed: without sos_diff, with exp_diff, form window, form window",
-   "reason": "kept incumbent (challenger 0.6199 vs 0.5945)"
-  },
   {
    "adopted": false,
    "at": "2026-09-25T13:40:57Z",
@@ -4156,7 +4133,32 @@
    "model_version": 3,
    "notes": "318 completed games; changed: without sos_diff, with exp_diff, form window, form window",
    "reason": "kept incumbent (challenger 0.6199 vs 0.5945)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-26T20:03:46Z",
+   "metrics": {
+    "acc": 0.6667,
+    "brier": 0.2164,
+    "elo_only": {
+     "acc": 0.6579,
+     "brier": 0.2181,
+     "logloss": 0.6229,
+     "n": 228
+    },
+    "glm_only": {
+     "acc": 0.6404,
+     "brier": 0.2385,
+     "logloss": 0.6966,
+     "n": 228
+    },
+    "logloss": 0.6199,
+    "n": 228
+   },
+   "model_version": 3,
+   "notes": "318 completed games; changed: without sos_diff, with exp_diff, form window, form window",
+   "reason": "kept incumbent (challenger 0.6199 vs 0.5945)"
   }
  ],
- "updated": "2026-09-26T19:59:37Z"
+ "updated": "2026-09-26T20:03:47Z"
 }
