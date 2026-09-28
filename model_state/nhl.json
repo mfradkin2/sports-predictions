@@ -23,15 +23,6 @@
  "optimizer": [
   {
    "adopted": false,
-   "at": "2026-09-27T11:31:08Z",
-   "end": null,
-   "evals": 1,
-   "moves": [],
-   "probe": null,
-   "start": null
-  },
-  {
-   "adopted": false,
    "at": "2026-09-27T11:58:40Z",
    "end": null,
    "evals": 1,
@@ -452,14 +443,23 @@
    "moves": [],
    "probe": null,
    "start": null
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-28T14:30:13Z",
+   "end": null,
+   "evals": 1,
+   "moves": [],
+   "probe": null,
+   "start": null
   }
  ],
  "props": {
   "graded_this_run": 0,
   "lines": {
-   "games": 3,
+   "games": 5,
    "mode": "book",
-   "status": "cached"
+   "status": "live"
   },
   "record": {
    "by_conf": {},
@@ -473,14 +473,6 @@
   "tuning": {}
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-09-27T03:30:09Z",
-   "metrics": {},
-   "model_version": 3,
-   "notes": "0 completed games",
-   "reason": "challenger produced no validation score"
-  },
   {
    "adopted": false,
    "at": "2026-09-27T04:29:24Z",
@@ -952,7 +944,15 @@
    "model_version": 3,
    "notes": "0 completed games",
    "reason": "challenger produced no validation score"
+  },
+  {
+   "adopted": false,
+   "at": "2026-09-28T14:30:13Z",
+   "metrics": {},
+   "model_version": 3,
+   "notes": "0 completed games",
+   "reason": "challenger produced no validation score"
   }
  ],
- "updated": "2026-09-28T13:45:50Z"
+ "updated": "2026-09-28T14:30:15Z"
 }
