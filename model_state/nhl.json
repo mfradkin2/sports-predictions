@@ -1,7 +1,50 @@
 {
- "archive_size": 0,
+ "archive_size": 1,
+ "best": {
+  "adopted_at": "2026-09-30T00:30:20Z",
+  "metrics": {
+   "acc": 0.0,
+   "brier": 0.3012,
+   "logloss": 0.7958,
+   "n": 1
+  },
+  "params": {
+   "blend_w": 0.0,
+   "calibration": {
+    "a": 1.0,
+    "b": 0.0,
+    "n": 0
+   },
+   "elo_params": {
+    "hfa": 34.0,
+    "k": 6.0,
+    "mov": 0.7,
+    "regress": 0.3,
+    "scale": 400.0
+   },
+   "features": [
+    "elo_diff",
+    "pyth_diff",
+    "form_diff",
+    "margin_diff",
+    "venue_diff",
+    "rest_diff",
+    "b2b_diff",
+    "h2h_diff"
+   ],
+   "form": {
+    "decay": 0.9,
+    "n": 20
+   },
+   "l2": null
+  },
+  "reason": "first fit"
+ },
  "elo": {
-  "games_seen": {},
+  "games_seen": {
+   "Carolina Hurricanes": 1,
+   "Florida Panthers": 1
+  },
   "params": {
    "hfa": 34.0,
    "k": 6.0,
@@ -9,27 +52,26 @@
    "regress": 0.3,
    "scale": 400.0
   },
-  "ratings": {}
+  "ratings": {
+   "Carolina Hurricanes": 1497.39,
+   "Florida Panthers": 1502.61
+  }
  },
- "last_metrics": {},
+ "last_metrics": {
+  "acc": 0.0,
+  "brier": 0.3012,
+  "logloss": 0.7958,
+  "n": 1
+ },
  "league": "nhl",
  "ledger": {
   "components": {},
-  "graded": 0,
+  "graded": 1,
   "trust": null
  },
  "model_version": 3,
- "new_games_this_run": 0,
+ "new_games_this_run": 1,
  "optimizer": [
-  {
-   "adopted": false,
-   "at": "2026-09-28T20:53:44Z",
-   "end": null,
-   "evals": 1,
-   "moves": [],
-   "probe": null,
-   "start": null
-  },
   {
    "adopted": false,
    "at": "2026-09-28T21:30:42Z",
@@ -452,35 +494,90 @@
    "moves": [],
    "probe": null,
    "start": null
+  },
+  {
+   "adopted": true,
+   "at": "2026-09-30T00:30:20Z",
+   "end": null,
+   "evals": 1,
+   "moves": [],
+   "probe": null,
+   "start": 0.7958
   }
  ],
  "props": {
-  "graded_this_run": 0,
+  "graded_this_run": 86,
   "lines": {
-   "games": 6,
+   "games": 3,
    "mode": "book",
-   "status": "cached"
+   "status": "live"
   },
   "record": {
-   "by_conf": {},
-   "by_key": {},
-   "by_source": {},
-   "curve": [],
-   "hit": 0,
-   "pct": null,
-   "total": 0
+   "by_conf": {
+    "high": {
+     "hit": 37,
+     "n": 41,
+     "pct": 0.9024
+    },
+    "low": {
+     "hit": 2,
+     "n": 27,
+     "pct": 0.0741
+    },
+    "med": {
+     "hit": 10,
+     "n": 18,
+     "pct": 0.5556
+    }
+   },
+   "by_key": {
+    "assists": {
+     "hit": 17,
+     "label": "Assists",
+     "n": 24,
+     "pct": 0.7083
+    },
+    "goal": {
+     "hit": 23,
+     "label": "Anytime Goal",
+     "n": 24,
+     "pct": 0.9583
+    },
+    "points": {
+     "hit": 6,
+     "label": "Points",
+     "n": 24,
+     "pct": 0.25
+    },
+    "sog": {
+     "hit": 3,
+     "label": "Shots on Goal",
+     "n": 14,
+     "pct": 0.2143
+    }
+   },
+   "by_source": {
+    "book": {
+     "hit": 49,
+     "n": 86,
+     "pct": 0.5698
+    }
+   },
+   "curve": [
+    {
+     "correct": 49,
+     "cum_acc": 0.5698,
+     "date": "2026-09-29",
+     "n": 86
+    }
+   ],
+   "hit": 49,
+   "pct": 0.5698,
+   "total": 86
   },
   "tuning": {}
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-09-28T13:45:49Z",
-   "metrics": {},
-   "model_version": 3,
-   "notes": "0 completed games",
-   "reason": "challenger produced no validation score"
-  },
   {
    "adopted": false,
    "at": "2026-09-28T14:30:13Z",
@@ -952,7 +1049,20 @@
    "model_version": 3,
    "notes": "0 completed games",
    "reason": "challenger produced no validation score"
+  },
+  {
+   "adopted": true,
+   "at": "2026-09-30T00:30:20Z",
+   "metrics": {
+    "acc": 0.0,
+    "brier": 0.3012,
+    "logloss": 0.7958,
+    "n": 1
+   },
+   "model_version": 3,
+   "notes": "1 completed games",
+   "reason": "first fit"
   }
  ],
- "updated": "2026-09-29T23:41:42Z"
+ "updated": "2026-09-30T00:30:23Z"
 }
