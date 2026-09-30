@@ -1,12 +1,12 @@
 {
- "archive_size": 1,
+ "archive_size": 2,
  "best": {
-  "adopted_at": "2026-09-30T00:30:20Z",
+  "adopted_at": "2026-09-30T02:15:28Z",
   "metrics": {
    "acc": 0.0,
    "brier": 0.3012,
    "logloss": 0.7958,
-   "n": 1
+   "n": 2
   },
   "params": {
    "blend_w": 0.0,
@@ -38,12 +38,14 @@
    },
    "l2": null
   },
-  "reason": "first fit"
+  "reason": "more evidence (1 -> 2 games)"
  },
  "elo": {
   "games_seen": {
    "Carolina Hurricanes": 1,
-   "Florida Panthers": 1
+   "Florida Panthers": 1,
+   "Montreal Canadiens": 1,
+   "Toronto Maple Leafs": 1
   },
   "params": {
    "hfa": 34.0,
@@ -54,33 +56,26 @@
   },
   "ratings": {
    "Carolina Hurricanes": 1497.39,
-   "Florida Panthers": 1502.61
+   "Florida Panthers": 1502.61,
+   "Montreal Canadiens": 1502.61,
+   "Toronto Maple Leafs": 1497.39
   }
  },
  "last_metrics": {
   "acc": 0.0,
   "brier": 0.3012,
   "logloss": 0.7958,
-  "n": 1
+  "n": 2
  },
  "league": "nhl",
  "ledger": {
   "components": {},
-  "graded": 1,
+  "graded": 2,
   "trust": null
  },
  "model_version": 3,
- "new_games_this_run": 0,
+ "new_games_this_run": 1,
  "optimizer": [
-  {
-   "adopted": false,
-   "at": "2026-09-28T22:32:04Z",
-   "end": null,
-   "evals": 1,
-   "moves": [],
-   "probe": null,
-   "start": null
-  },
   {
    "adopted": false,
    "at": "2026-09-28T23:24:37Z",
@@ -503,10 +498,19 @@
    "moves": [],
    "probe": null,
    "start": 0.7958
+  },
+  {
+   "adopted": true,
+   "at": "2026-09-30T02:15:28Z",
+   "end": null,
+   "evals": 1,
+   "moves": [],
+   "probe": null,
+   "start": 0.7958
   }
  ],
  "props": {
-  "graded_this_run": 0,
+  "graded_this_run": 57,
   "lines": {
    "games": 3,
    "mode": "book",
@@ -515,77 +519,94 @@
   "record": {
    "by_conf": {
     "high": {
-     "hit": 37,
-     "n": 41,
-     "pct": 0.9024
+     "hit": 54,
+     "n": 62,
+     "pct": 0.871
     },
     "low": {
-     "hit": 2,
-     "n": 27,
-     "pct": 0.0741
+     "hit": 6,
+     "n": 46,
+     "pct": 0.1304
     },
     "med": {
-     "hit": 10,
-     "n": 18,
-     "pct": 0.5556
+     "hit": 20,
+     "n": 34,
+     "pct": 0.5882
     }
    },
    "by_key": {
     "assists": {
-     "hit": 17,
+     "hit": 23,
      "label": "Assists",
-     "n": 24,
-     "pct": 0.7083
+     "n": 36,
+     "pct": 0.6389
     },
     "goal": {
-     "hit": 23,
+     "hit": 39,
      "label": "Anytime Goal",
-     "n": 24,
-     "pct": 0.9583
+     "n": 43,
+     "pct": 0.907
     },
     "points": {
-     "hit": 6,
+     "hit": 10,
      "label": "Points",
-     "n": 24,
-     "pct": 0.25
+     "n": 36,
+     "pct": 0.2778
+    },
+    "saves": {
+     "hit": 1,
+     "label": "Saves",
+     "n": 1,
+     "pct": 1.0
     },
     "sog": {
-     "hit": 3,
+     "hit": 7,
      "label": "Shots on Goal",
-     "n": 14,
-     "pct": 0.2143
+     "n": 26,
+     "pct": 0.2692
     }
    },
    "by_source": {
     "book": {
-     "hit": 49,
-     "n": 86,
-     "pct": 0.5698
+     "hit": 80,
+     "n": 142,
+     "pct": 0.5634
     }
    },
    "curve": [
     {
-     "correct": 49,
-     "cum_acc": 0.5698,
+     "correct": 80,
+     "cum_acc": 0.5634,
      "date": "2026-09-29",
-     "n": 86
+     "n": 142
     }
    ],
-   "hit": 49,
-   "pct": 0.5698,
-   "total": 86
+   "hit": 80,
+   "pct": 0.5634,
+   "total": 142
   },
-  "tuning": {}
+  "tuning": {
+   "assists": {
+    "bias": 0.9884,
+    "n": 36,
+    "raw_bias": 0.2443,
+    "spread": 0.9991
+   },
+   "goal": {
+    "bias": 0.9748,
+    "n": 43,
+    "raw_bias": 0.3781,
+    "spread": 1.0155
+   },
+   "points": {
+    "bias": 0.9884,
+    "n": 36,
+    "raw_bias": 0.2724,
+    "spread": 1.0021
+   }
+  }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-09-28T15:32:42Z",
-   "metrics": {},
-   "model_version": 3,
-   "notes": "0 completed games",
-   "reason": "challenger produced no validation score"
-  },
   {
    "adopted": false,
    "at": "2026-09-28T15:46:56Z",
@@ -1072,7 +1093,20 @@
    "model_version": 3,
    "notes": "1 completed games",
    "reason": "kept incumbent (challenger 0.7958 vs 0.7958)"
+  },
+  {
+   "adopted": true,
+   "at": "2026-09-30T02:15:28Z",
+   "metrics": {
+    "acc": 0.0,
+    "brier": 0.3012,
+    "logloss": 0.7958,
+    "n": 2
+   },
+   "model_version": 3,
+   "notes": "2 completed games",
+   "reason": "more evidence (1 -> 2 games)"
   }
  ],
- "updated": "2026-09-30T01:31:16Z"
+ "updated": "2026-09-30T02:15:33Z"
 }
