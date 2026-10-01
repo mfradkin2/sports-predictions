@@ -345,7 +345,10 @@ class TestRefreshPolicy(unittest.TestCase):
                    'away_team': 'Boston Red Sox', 'commence_time': now}]
         games = [_game('1', 'New York Yankees', 'Boston Red Sox')]
         first = {'bookmakers': [_book('DraftKings', 'batter_hits', [('Aaron Judge', 1.5, -110, -110)])]}
-        lines, status = odds.load_lines('mlb', games, FakeHttp({'/events?': events, '/odds': first}),
+        # A realistic balance: the fake's default of 500 spread over a whole
+        # month is less than two fetches, so the test would fail early in a month.
+        lines, status = odds.load_lines('mlb', games, FakeHttp({'/events?': events, '/odds': first},
+                                                               remaining=5000),
                                         cache_dir=self.tmp.name)
         self.assertEqual(set(k[0] for k in lines['1']), {'aaronjudge'})
         # Age the cache past the refresh window.
@@ -353,7 +356,7 @@ class TestRefreshPolicy(unittest.TestCase):
         _age(path, '1')
         second = {'bookmakers': [_book('DraftKings', 'batter_hits',
                                        [('Aaron Judge', 1.5, -110, -110), ('Juan Soto', 0.5, -200, 160)])]}
-        http = FakeHttp({'/events?': events, '/odds': second})
+        http = FakeHttp({'/events?': events, '/odds': second}, remaining=5000)
         lines, status = odds.load_lines('mlb', games, http, cache_dir=self.tmp.name)
         self.assertEqual(status, 'live')
         self.assertEqual(set(k[0] for k in lines['1']), {'aaronjudge', 'juansoto'})
