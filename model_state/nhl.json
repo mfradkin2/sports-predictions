@@ -1,5 +1,5 @@
 {
- "archive_size": 11,
+ "archive_size": 12,
  "best": {
   "adopted_at": "2026-10-02T02:30:29Z",
   "metrics": {
@@ -51,7 +51,9 @@
    "Edmonton Oilers": 1,
    "Florida Panthers": 1,
    "Los Angeles Kings": 1,
+   "Minnesota Wild": 1,
    "Montreal Canadiens": 1,
+   "Nashville Predators": 1,
    "New Jersey Devils": 1,
    "New York Islanders": 1,
    "New York Rangers": 2,
@@ -79,7 +81,9 @@
    "Edmonton Oilers": 1497.39,
    "Florida Panthers": 1502.61,
    "Los Angeles Kings": 1496.18,
+   "Minnesota Wild": 1503.56,
    "Montreal Canadiens": 1502.61,
+   "Nashville Predators": 1496.44,
    "New Jersey Devils": 1502.06,
    "New York Islanders": 1497.88,
    "New York Rangers": 1500.46,
@@ -92,29 +96,20 @@
   }
  },
  "last_metrics": {
-  "acc": 0.6364,
-  "brier": 0.2391,
-  "logloss": 0.6713,
-  "n": 11
+  "acc": 0.5833,
+  "brier": 0.2443,
+  "logloss": 0.6817,
+  "n": 12
  },
  "league": "nhl",
  "ledger": {
   "components": {},
-  "graded": 11,
+  "graded": 12,
   "trust": null
  },
  "model_version": 3,
- "new_games_this_run": 2,
+ "new_games_this_run": 1,
  "optimizer": [
-  {
-   "adopted": false,
-   "at": "2026-09-30T11:31:22Z",
-   "end": null,
-   "evals": 1,
-   "moves": [],
-   "probe": null,
-   "start": 0.7175
-  },
   {
    "adopted": false,
    "at": "2026-09-30T12:29:39Z",
@@ -537,10 +532,19 @@
    "moves": [],
    "probe": null,
    "start": 0.6713
+  },
+  {
+   "adopted": false,
+   "at": "2026-10-02T03:29:58Z",
+   "end": null,
+   "evals": 1,
+   "moves": [],
+   "probe": null,
+   "start": 0.6817
   }
  ],
  "props": {
-  "graded_this_run": 40,
+  "graded_this_run": 3,
   "lines": {
    "games": 5,
    "mode": "book",
@@ -669,19 +673,6 @@
   }
  },
  "runs": [
-  {
-   "adopted": true,
-   "at": "2026-09-30T03:29:16Z",
-   "metrics": {
-    "acc": 0.3333,
-    "brier": 0.2686,
-    "logloss": 0.7305,
-    "n": 3
-   },
-   "model_version": 3,
-   "notes": "3 completed games",
-   "reason": "log loss 0.7958 -> 0.7305"
-  },
   {
    "adopted": false,
    "at": "2026-09-30T04:31:48Z",
@@ -1448,7 +1439,20 @@
    "model_version": 3,
    "notes": "11 completed games",
    "reason": "log loss 0.6861 -> 0.6713"
+  },
+  {
+   "adopted": false,
+   "at": "2026-10-02T03:29:58Z",
+   "metrics": {
+    "acc": 0.5833,
+    "brier": 0.2443,
+    "logloss": 0.6817,
+    "n": 12
+   },
+   "model_version": 3,
+   "notes": "12 completed games",
+   "reason": "kept incumbent (challenger 0.6817 vs 0.6713)"
   }
  ],
- "updated": "2026-10-02T02:30:32Z"
+ "updated": "2026-10-02T03:30:00Z"
 }
