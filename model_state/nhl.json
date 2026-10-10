@@ -1,5 +1,5 @@
 {
- "archive_size": 71,
+ "archive_size": 72,
  "best": {
   "adopted_at": "2026-10-10T22:29:45Z",
   "metrics": {
@@ -52,7 +52,7 @@
    "Columbus Blue Jackets": 3,
    "Dallas Stars": 4,
    "Detroit Red Wings": 4,
-   "Edmonton Oilers": 4,
+   "Edmonton Oilers": 5,
    "Florida Panthers": 4,
    "Los Angeles Kings": 3,
    "Minnesota Wild": 4,
@@ -64,7 +64,7 @@
    "Ottawa Senators": 4,
    "Philadelphia Flyers": 6,
    "Pittsburgh Penguins": 5,
-   "San Jose Sharks": 4,
+   "San Jose Sharks": 5,
    "Seattle Kraken": 5,
    "St. Louis Blues": 4,
    "Tampa Bay Lightning": 4,
@@ -93,7 +93,7 @@
    "Columbus Blue Jackets": 1500.64,
    "Dallas Stars": 1506.39,
    "Detroit Red Wings": 1483.78,
-   "Edmonton Oilers": 1518.58,
+   "Edmonton Oilers": 1526.02,
    "Florida Panthers": 1502.85,
    "Los Angeles Kings": 1483.96,
    "Minnesota Wild": 1507.58,
@@ -105,7 +105,7 @@
    "Ottawa Senators": 1511.7,
    "Philadelphia Flyers": 1460.92,
    "Pittsburgh Penguins": 1503.72,
-   "San Jose Sharks": 1502.1,
+   "San Jose Sharks": 1494.66,
    "Seattle Kraken": 1512.95,
    "St. Louis Blues": 1491.65,
    "Tampa Bay Lightning": 1507.49,
@@ -118,48 +118,39 @@
   }
  },
  "last_metrics": {
-  "acc": 0.5775,
-  "brier": 0.2438,
-  "logloss": 0.6805,
-  "n": 71
+  "acc": 0.5694,
+  "brier": 0.2446,
+  "logloss": 0.6823,
+  "n": 72
  },
  "league": "nhl",
  "ledger": {
   "components": {
    "elo": {
-    "acc": 0.5775,
-    "brier": 0.2445,
-    "logloss": 0.682,
-    "n": 71
+    "acc": 0.5694,
+    "brier": 0.2456,
+    "logloss": 0.6843,
+    "n": 72
    },
    "final": {
-    "acc": 0.493,
-    "brier": 0.2658,
-    "logloss": 0.7267,
-    "n": 71
+    "acc": 0.5,
+    "brier": 0.2652,
+    "logloss": 0.7256,
+    "n": 72
    },
    "prior": {
-    "acc": 0.507,
-    "brier": 0.2815,
-    "logloss": 0.7634,
-    "n": 71
+    "acc": 0.5139,
+    "brier": 0.28,
+    "logloss": 0.7604,
+    "n": 72
    }
   },
-  "graded": 71,
+  "graded": 72,
   "trust": null
  },
  "model_version": 3,
  "new_games_this_run": 1,
  "optimizer": [
-  {
-   "adopted": false,
-   "at": "2026-10-09T19:29:53Z",
-   "end": null,
-   "evals": 1,
-   "moves": [],
-   "probe": null,
-   "start": 0.6833
-  },
   {
    "adopted": false,
    "at": "2026-10-09T20:29:55Z",
@@ -582,10 +573,19 @@
    "moves": [],
    "probe": null,
    "start": 0.6805
+  },
+  {
+   "adopted": false,
+   "at": "2026-10-10T22:49:39Z",
+   "end": null,
+   "evals": 1,
+   "moves": [],
+   "probe": null,
+   "start": 0.6823
   }
  ],
  "props": {
-  "graded_this_run": 87,
+  "graded_this_run": 77,
   "lines": {
    "games": 10,
    "mode": "book",
@@ -594,39 +594,39 @@
   "record": {
    "by_conf": {
     "high": {
-     "hit": 1763,
-     "n": 2221,
-     "pct": 0.7938
+     "hit": 1791,
+     "n": 2253,
+     "pct": 0.7949
     },
     "low": {
-     "hit": 641,
-     "n": 1377,
-     "pct": 0.4655
+     "hit": 644,
+     "n": 1400,
+     "pct": 0.46
     },
     "med": {
-     "hit": 467,
-     "n": 801,
-     "pct": 0.583
+     "hit": 472,
+     "n": 809,
+     "pct": 0.5834
     }
    },
    "by_key": {
     "assists": {
-     "hit": 694,
+     "hit": 705,
      "label": "Assists",
-     "n": 1025,
-     "pct": 0.6771
+     "n": 1038,
+     "pct": 0.6792
     },
     "goal": {
-     "hit": 1116,
+     "hit": 1133,
      "label": "Anytime Goal",
-     "n": 1392,
-     "pct": 0.8017
+     "n": 1416,
+     "pct": 0.8001
     },
     "points": {
-     "hit": 584,
+     "hit": 587,
      "label": "Points",
-     "n": 1048,
-     "pct": 0.5573
+     "n": 1061,
+     "pct": 0.5533
     },
     "saves": {
      "hit": 16,
@@ -635,17 +635,17 @@
      "pct": 0.64
     },
     "sog": {
-     "hit": 461,
+     "hit": 466,
      "label": "Shots on Goal",
-     "n": 909,
-     "pct": 0.5072
+     "n": 922,
+     "pct": 0.5054
     }
    },
    "by_source": {
     "book": {
-     "hit": 2871,
-     "n": 4399,
-     "pct": 0.6526
+     "hit": 2907,
+     "n": 4462,
+     "pct": 0.6515
     }
    },
    "curve": [
@@ -716,57 +716,51 @@
      "n": 334
     },
     {
-     "correct": 92,
-     "cum_acc": 0.6526,
+     "correct": 128,
+     "cum_acc": 0.6515,
      "date": "2026-10-10",
-     "n": 146
+     "n": 209
     }
    ],
-   "hit": 2871,
-   "pct": 0.6526,
-   "total": 4399
+   "hit": 2907,
+   "pct": 0.6515,
+   "total": 4462
   },
   "tuning": {
+   "_calibration": {
+    "a": 1.0284,
+    "b": -0.1184,
+    "holdout_after": 0.5762,
+    "holdout_before": 0.5789,
+    "n": 4462
+   },
    "assists": {
-    "bias": 0.9669,
-    "n": 988,
-    "raw_bias": 0.9669,
-    "spread": 1.0296
+    "bias": 0.9574,
+    "n": 1001,
+    "raw_bias": 0.9574,
+    "spread": 1.0292
    },
    "goal": {
-    "bias": 0.9507,
-    "n": 1329,
-    "raw_bias": 0.9507,
-    "spread": 1.0534
+    "bias": 0.9389,
+    "n": 1351,
+    "raw_bias": 0.9389,
+    "spread": 1.0545
    },
    "points": {
-    "bias": 0.9618,
-    "n": 1017,
-    "raw_bias": 0.9618,
-    "spread": 1.0492
+    "bias": 0.9512,
+    "n": 1030,
+    "raw_bias": 0.9512,
+    "spread": 1.0513
    },
    "sog": {
-    "bias": 0.9847,
-    "n": 907,
-    "raw_bias": 0.9847,
-    "spread": 1.0795
+    "bias": 0.9815,
+    "n": 920,
+    "raw_bias": 0.9815,
+    "spread": 1.0796
    }
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-10-09T11:30:24Z",
-   "metrics": {
-    "acc": 0.5692,
-    "brier": 0.2451,
-    "logloss": 0.6833,
-    "n": 65
-   },
-   "model_version": 3,
-   "notes": "65 completed games",
-   "reason": "kept incumbent (challenger 0.6833 vs 0.6807)"
-  },
   {
    "adopted": false,
    "at": "2026-10-09T12:31:23Z",
@@ -1533,7 +1527,20 @@
    "model_version": 3,
    "notes": "71 completed games",
    "reason": "log loss 0.6807 -> 0.6805"
+  },
+  {
+   "adopted": false,
+   "at": "2026-10-10T22:49:39Z",
+   "metrics": {
+    "acc": 0.5694,
+    "brier": 0.2446,
+    "logloss": 0.6823,
+    "n": 72
+   },
+   "model_version": 3,
+   "notes": "72 completed games",
+   "reason": "kept incumbent (challenger 0.6823 vs 0.6805)"
   }
  ],
- "updated": "2026-10-10T22:29:49Z"
+ "updated": "2026-10-10T22:49:41Z"
 }
