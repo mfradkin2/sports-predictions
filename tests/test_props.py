@@ -253,6 +253,8 @@ class TestBookPricedPlayersMakeTheBoard(unittest.TestCase):
 
     def test_a_booked_market_is_priced_however_small_the_projection(self):
         for player in (self._reserve(), self._blank()):
+            # project_player prices what the books price; dropping the picks
+            # not worth making happens afterwards, on the assembled board.
             priced, gp = props.project_player(player, 'football', 'wr', 1.0,
                                               booked={'rec', 'anytd'})
             keys = {p['key'] for p in priced}
@@ -286,11 +288,17 @@ class TestBookPricedPlayersMakeTheBoard(unittest.TestCase):
                                          lines=lines, book_mode=True)
         names = [p['name'] for p in board['home']]
         self.assertIn('Deep Reserve', names)
-        self.assertIn('Blank Slate', names)
         self.assertEqual(names[0], 'Star Passer')      # the stars still lead the board
+        # Blank Slate is priced by the books too, but only for an anytime
+        # touchdown, and with an empty stat sheet that pick is a near-certain
+        # under the board no longer makes. With nothing left to say about him
+        # he gives his slot back rather than appearing with no picks.
+        self.assertNotIn('Blank Slate', names)
         reserve = next(p for p in board['home'] if p['name'] == 'Deep Reserve')
         priced = [p for p in reserve['props'] if not p.get('pending')]
-        self.assertEqual({p['key'] for p in priced}, {'rec', 'anytd'})
+        # His receptions line survives; his anytime touchdown, a near-certain
+        # under on a man with none all season, does not.
+        self.assertEqual({p['key'] for p in priced}, {'rec'})
         for p in priced:
             self.assertEqual(p['line_source'], 'book')
             self.assertLess(abs(p.get('edge_pts', 0)), 40)   # no manufactured edge
@@ -638,3 +646,36 @@ class TestRetiredMarkets(unittest.TestCase):
         # category instead of being reachable only under "All".
         groups = {g['key']: g['markets'] for g in config.prop_groups_for('baseball')}
         self.assertIn('sb', groups['bat'])
+
+
+class TestOneSidedPicks(unittest.TestCase):
+    """Picks so one-sided that making them is not a prediction.
+
+    Anytime touchdown is priced at 0.5 for everyone on the field, so a
+    third-string tight end projected at 0.05 scores a game drew an "under" at
+    96% that duly landed. Those were a quarter of every graded prop and lifted
+    the headline hit rate from 50.5% to 58.1%, while the markets with a real
+    question in them sat at 50.4%.
+    """
+
+    def test_a_near_certain_anytime_td_under_is_dropped(self):
+        self.assertTrue(props.too_one_sided('anytd', 'under', 0.96))
+
+    def test_the_threshold_is_inclusive(self):
+        self.assertTrue(props.too_one_sided('anytd', 'under', 0.65))
+        self.assertFalse(props.too_one_sided('anytd', 'under', 0.6499))
+
+    def test_the_other_side_of_the_same_market_still_counts(self):
+        # A player the model likes to score is exactly the pick worth making.
+        self.assertFalse(props.too_one_sided('anytd', 'over', 0.96))
+
+    def test_an_ordinary_anytime_td_under_still_counts(self):
+        self.assertFalse(props.too_one_sided('anytd', 'under', 0.58))
+
+    def test_no_other_market_is_touched(self):
+        for key in ('rec', 'rec_yds', 'rush_yds', 'pass_yds', 'hits', 'sog'):
+            self.assertFalse(props.too_one_sided(key, 'under', 0.99), key)
+
+    def test_a_prop_with_no_probability_yet_is_kept(self):
+        # A pending prop is waiting on a line and has no pick to judge.
+        self.assertFalse(props.too_one_sided('anytd', None, None))

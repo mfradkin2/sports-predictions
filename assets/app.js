@@ -543,13 +543,30 @@
     return '';
   }
 
+  // A pick that was published and settled, but is left out of the record.
+  // Shown rather than hidden: it happened, and the reader should be able to
+  // see both that it happened and why it is not being counted.
+  var UNCOUNTED = {
+    one_sided: ['NOT COUNTED',
+      'One side of this market was near certain — an anytime touchdown ' +
+      'under on a player who was never likely to score. The board no longer ' +
+      'makes these picks, and the ones already published are left out of the ' +
+      'record, because free wins hide how the real questions are going.']
+  };
+
+  function uncountedTag(p) {
+    var it = UNCOUNTED[p.uncounted] || ['NOT COUNTED', 'This pick is left out of the record.'];
+    return '<span class="tag low" title="' + esc(it[1]) + '">' + it[0] + '</span>';
+  }
+
   function propOutcome(p) {
     var unit = p.unit ? ' ' + esc(p.unit.toLowerCase()) : '';
     var vs = p.line != null ? ' (line ' + p.line + ')' : '';
     if (p.void) return '<span class="prop-live low" title="The statistics feed sent an impossible line for this player that day, so this prop is void and not counted, like a book voiding a bet on a bad line">VOID · bad feed data</span>';
     if (p.push) return '<span class="prop-live low">PUSH · had ' + p.actual + unit + vs + '</span>';
-    if (p.hit != null) return '<span class="prop-live ' + (p.hit ? 'ok' : 'no') + '">' +
-      (p.hit ? '✓ CORRECT' : '✗ INCORRECT') + ' · had ' + p.actual + unit + vs + '</span>';
+    if (p.hit != null) return '<span class="prop-live ' + (p.uncounted ? 'low' : (p.hit ? 'ok' : 'no')) + '">' +
+      (p.hit ? '✓ CORRECT' : '✗ INCORRECT') + ' · had ' + p.actual + unit + vs +
+      (p.uncounted ? '</span> ' + uncountedTag(p) : '</span>');
     if (p.played === false) return '<span class="prop-live low">DID NOT PLAY</span>';
     return '';
   }
@@ -1212,7 +1229,7 @@
         var p = r.prop;
         var res = p.void ? '<span class="tag low">VOID</span>'
           : (p.push ? '<span class="tag low">PUSH · had ' + p.actual + '</span>'
-          : (p.hit != null ? '<span class="tag ' + (p.hit ? 'ok' : 'no') + '">' + (p.hit ? '✓ correct' : '✗ wrong') + ' · had ' + p.actual + '</span>'
+          : (p.hit != null ? '<span class="tag ' + (p.uncounted ? 'low' : (p.hit ? 'ok' : 'no')) + '">' + (p.hit ? '✓ correct' : '✗ wrong') + ' · had ' + p.actual + '</span>' + (p.uncounted ? ' ' + uncountedTag(p) : '')
           : (p.played === false ? '<span class="tag low">DID NOT PLAY</span>'
           : (r.g.final ? '<span class="tag low">NOT SCORED</span>' : '<span class="prop-progress-slot"></span>'))));
         return '<tr data-live="' + esc(r.league + '|' + r.g.id + '|' + r.player.id + '|' + p.key) + '"><td><b>' + esc(r.player.name) + '</b><br><span style="color:var(--faint)">' +
@@ -2084,7 +2101,7 @@
     document.querySelectorAll('[data-live]').forEach(function (node) {
       var hit = propByLive(node.dataset.live); if (!hit) return;
       var p = hit.prop;
-      if (p.hit != null || p.push || p.played === false || p.void) return;   // graded: the row already says so
+      if (p.hit != null || p.push || p.played === false || p.void || p.uncounted) return;   // graded: the row already says so
       var k = liveKey(hit.league, hit.g.id), live = LIVE.games[k], box = LIVE.box[k];
       if (!live || live.state === 'pre' || !box) return;
       var entry = box[String(hit.player.id)];

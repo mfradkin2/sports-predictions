@@ -1,11 +1,13 @@
 """The optimiser: wider search, same evidence bar."""
 from __future__ import annotations
 
+import io
+import os
 import random
 import tempfile
 import unittest
 
-from sportspred import config, features as feat, model, optimize
+from sportspred import config, features as feat, learn, model, optimize
 from sportspred.learn import PropsLedger
 from sportspred.props import _price
 from sportspred.config import props_for
@@ -202,7 +204,7 @@ class TestVoidRows(unittest.TestCase):
         board = {'away': [], 'home': [{'id': 'p0', 'name': 'x', 'props': [{'key': 'hits', 'line': 0.5}]},
                                       {'id': 'p1', 'name': 'y', 'props': [{'key': 'hits', 'line': 0.5}]}]}
         boards.store({'game_id': 'g1', 'date': '2026-09-15'}, board, True)
-        boards.annotate('g1', ledger.rows.values(), is_void=ledger.is_void)
+        boards.annotate('g1', ledger.rows.values(), exclusion=ledger.exclusion)
         got = boards.get('g1')['home']
         self.assertTrue(got[0]['props'][0].get('void'))
         self.assertIsNone(got[0]['props'][0]['hit'])
@@ -288,3 +290,50 @@ class TestAuditFixes(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestOneSidedRowsAreNotCounted(unittest.TestCase):
+    """An anytime-touchdown under on a player who was never going to score
+    was published and did land. It stays in the ledger, and it stays off the
+    record: counting it flattered the headline by nearly eight points."""
+
+    def rows(self, tmp, *specs):
+        head = ('game_id,game_date,athlete_id,player,side,key,label,stat,dist,line,'
+                'line_source,book,proj,season,over,pick,conf,recorded_at,actual,played,'
+                'graded,hit,push,model_p,book_p,raw_p,gp\n')
+        body = ''
+        for i, (key, pick, over, hit) in enumerate(specs):
+            body += (f'g1,2026-10-05,{i},P{i},home,{key},L,{key}_pg,poisson,0.5,book,,'
+                     f'0.1,0.1,{over},{pick},high,2026-10-05T00:00:00Z,0,1,1,{hit},0,,,{over},4\n')
+        path = os.path.join(tmp, 'nfl_props.csv')
+        with io.open(path, 'w', encoding='utf-8') as fh:
+            fh.write(head + body)
+        return learn.PropsLedger('nfl', history_dir=tmp)
+
+    def test_a_near_certain_under_is_excluded(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            led = self.rows(tmp, ('anytd', 'under', 0.04, 1))
+            row = list(led.rows.values())[0]
+            self.assertEqual(led.exclusion(row), 'one_sided')
+
+    def test_it_is_left_out_of_the_scorecard(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            led = self.rows(tmp, ('anytd', 'under', 0.04, 1), ('rec', 'over', 0.55, 0))
+            card = led.scorecard()
+            # The free win is gone and the real miss remains, so the headline
+            # reads 0 from 1 rather than a flattering 1 from 2.
+            self.assertNotIn('anytd', card['by_key'])
+            self.assertIn('rec', card['by_key'])
+            self.assertEqual((card['hit'], card['total']), (0, 1))
+
+    def test_an_ordinary_pick_in_the_same_market_still_counts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            led = self.rows(tmp, ('anytd', 'over', 0.42, 1))
+            row = list(led.rows.values())[0]
+            self.assertIsNone(led.exclusion(row))
+
+    def test_a_clean_row_in_another_market_still_counts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            led = self.rows(tmp, ('rec', 'under', 0.02, 1))
+            row = list(led.rows.values())[0]
+            self.assertIsNone(led.exclusion(row))

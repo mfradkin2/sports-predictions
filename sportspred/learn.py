@@ -516,8 +516,11 @@ class PropsLedger:
                 prop['book'] = r['book']
             if prop['proj'] is not None and prop['season'] is not None:
                 prop['delta'] = round(prop['proj'] - prop['season'], 2)
-            if self.is_void(r):
+            why = self.exclusion(r)
+            if why == 'void':
                 prop['void'] = True
+            elif why:
+                prop['uncounted'] = why
             players[pk]['props'].append(prop)
         return board
 
@@ -544,11 +547,33 @@ class PropsLedger:
     def is_void(self, r):
         return (r.get('game_date'), r.get('athlete_id')) in self.suspect_keys()
 
+    def exclusion(self, r):
+        """Why this row does not count, or ``None`` if it does.
+
+        Two reasons, both of which leave the row in the ledger exactly as it
+        was published. ``'void'`` is a corrupt feed day. ``'one_sided'`` is a
+        pick the board would no longer make because one side was near
+        certain — anytime touchdown unders on players who were never going to
+        score. Those were published and they did land, but counting them
+        flatters the record by nearly eight points and hides how the markets
+        with a real question in them are doing.
+        """
+        from .props import too_one_sided    # local: props does not import learn
+        if self.is_void(r):
+            return 'void'
+        p = num(r.get('over'))
+        if p is not None:
+            pick = r.get('pick')
+            pick_prob = p if pick == 'over' else 1 - p
+            if too_one_sided(r.get('key'), pick, pick_prob):
+                return 'one_sided'
+        return None
+
     def tallies(self):
         """{game_id: {'n', 'hit', 'push'}} over graded props, for the Results view."""
         out = {}
         for r in self.rows.values():
-            if r.get('graded') != '1' or r.get('played') != '1' or self.is_void(r):
+            if r.get('graded') != '1' or r.get('played') != '1' or self.exclusion(r):
                 continue
             t = out.setdefault(r.get('game_id'), {'n': 0, 'hit': 0, 'push': 0})
             if r.get('push') == '1':
@@ -621,7 +646,7 @@ class PropsLedger:
 
     def scorecard(self):
         """Hit rate by market and by confidence tier — for the Model tab."""
-        rows = [r for r in self.graded() if not self.is_void(r)]
+        rows = [r for r in self.graded() if not self.exclusion(r)]
         by_key, by_conf = {}, {}
         for r in rows:
             hit = r.get('hit')
@@ -678,7 +703,7 @@ class PropsLedger:
             proj, actual = num(r.get('proj')), num(r.get('actual'))
             if proj is None or actual is None or proj <= 0:
                 continue
-            if self.is_void(r):                  # a corrupt feed row teaches nothing
+            if self.exclusion(r):                # a row that does not count teaches nothing
                 continue
             buckets.setdefault(r['key'], []).append((proj, actual, r.get('dist', '')))
         tuned = {}
@@ -716,7 +741,7 @@ class PropsLedger:
         for r in self.graded():
             if r.get('played') == '0' or r.get('push') == '1' or r.get('hit') not in ('0', '1'):
                 continue
-            if self.is_void(r):
+            if self.exclusion(r):
                 continue
             p = num(r.get('raw_p'))
             if p is None:
@@ -843,9 +868,15 @@ class FrozenBoards:
         if entry:
             entry['frozen'] = True
 
-    def annotate(self, game_id, ledger_rows, is_void=None):
-        """Write graded outcomes back onto the frozen board's props. A row
-        ``is_void`` flags (a corrupt feed day) shows as void, not as a verdict."""
+    def annotate(self, game_id, ledger_rows, exclusion=None):
+        """Write graded outcomes back onto the frozen board's props.
+
+        ``exclusion`` says why a row does not count, if it does not. The two
+        reasons show differently and should: a void row (a corrupt feed day)
+        gets no verdict at all, because what the player actually did that day
+        is unknown, while a one-sided pick keeps the outcome it really had and
+        is simply marked as not counted.
+        """
         entry = self.boards.get(str(game_id))
         if not entry:
             return
@@ -857,7 +888,8 @@ class FrozenBoards:
                     row = graded.get((player.get('id'), prop.get('key')))
                     if not row:
                         continue
-                    if is_void and is_void(row):
+                    why = exclusion(row) if exclusion else None
+                    if why == 'void':
                         prop['void'] = True
                         prop['actual'] = num(row.get('actual'))
                         prop['hit'] = None
@@ -868,6 +900,8 @@ class FrozenBoards:
                     prop['hit'] = (None if row.get('hit') not in ('0', '1')
                                    else row.get('hit') == '1')
                     prop['push'] = row.get('push') == '1'
+                    if why:
+                        prop['uncounted'] = why
 
     def prune(self, today):
         keep = {}

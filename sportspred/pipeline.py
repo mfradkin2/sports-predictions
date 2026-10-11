@@ -586,7 +586,7 @@ def frozen_boards_for(records, boards, ledger, live_boards):
                 continue
             boards.store(game, board, frozen=True)
         boards.freeze(gid)
-        boards.annotate(gid, ledger.rows.values(), is_void=ledger.is_void)
+        boards.annotate(gid, ledger.rows.values(), exclusion=ledger.exclusion)
         board = dict(boards.get(gid))
         board['locked'] = True
         out[gid] = board
@@ -928,7 +928,7 @@ def records_block(trained, props_ledger, memory):
     for r in props_ledger.rows.values():
         if r.get('graded') != '1' or r.get('played') != '1' or r.get('hit') not in ('0', '1'):
             continue
-        if props_ledger.is_void(r):
+        if props_ledger.exclusion(r):
             continue
         hit = int(r['hit'])
         away, home = game_teams.get(str(r.get('game_id')), ('', ''))

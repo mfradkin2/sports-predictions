@@ -38,6 +38,31 @@ PER_GAME_MAX = {
     'saves': 55, 'ga': 9, 'toi': 30,
 }
 
+# Picks so one-sided that making them is not a prediction.
+#
+# Anytime touchdown is the case that forced this. The line is 0.5 for
+# everyone on the field, so a third-string tight end projects 0.05 scores a
+# game and the board called "under" at 96%. Those landed 549 times out of
+# 667 and made up a quarter of every graded prop, lifting the headline hit
+# rate from 50.5% to 58.1% — while the markets the model actually has an
+# opinion about sat at 50.4%. Free wins on players nobody would bet are not
+# skill, and counting them hides whether the rest is any good.
+#
+# ``{market key: (side, probability at or above which to skip)}``. A market
+# listed here is still published on its other side, and at ordinary
+# probabilities; only the near-certain side is dropped.
+ONE_SIDED_PICKS = {'anytd': ('under', 0.65)}
+
+
+def too_one_sided(key, pick, pick_prob):
+    """Is this pick one the board should not bother making?"""
+    rule = ONE_SIDED_PICKS.get(key)
+    if rule is None or pick_prob is None:
+        return False
+    side, floor = rule
+    return pick == side and float(pick_prob) >= floor
+
+
 # Pitching counting stats are per appearance, batting ones per game played.
 PITCHING_KEYS = {'ip', 'p_so', 'p_er', 'p_h', 'p_bb', 'p_hr', 'wins', 'starts'}
 RATE_STATS = {'avg', 'obp', 'slg', 'ops', 'era', 'whip', 'sv_pct', 'gaa', 'gp',
@@ -925,6 +950,11 @@ def build_for_game(game_row, pool, env, cfg, sport, home_win_prob,
                                          tuning=tuning))
                 if p.get('season_prev'):
                     priced[-1]['season_prev'] = True
+            # Drop the picks that are not worth making before the board
+            # chooses which five to show, so a one-sided anytime touchdown
+            # gives up its slot to a market with something to say.
+            priced = [p for p in priced
+                      if not too_one_sided(p.get('key'), p.get('pick'), p.get('pick_prob'))]
             priced = select_props(priced, book_mode, 5)
             if not priced:
                 continue
