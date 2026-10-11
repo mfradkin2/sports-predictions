@@ -797,7 +797,7 @@ def _pool_cache(league_key):
 # probability) is the bulk of the payload and only matters before kickoff.
 SETTLED_PROP_FIELDS = ('key', 'label', 'unit', 'line', 'proj', 'season', 'delta', 'range', 'pick',
                        'pick_prob', 'conf', 'line_source', 'book', 'books', 'edge_pts', 'stat',
-                       'actual', 'hit', 'push', 'played', 'void', 'season_prev')
+                       'actual', 'hit', 'push', 'played', 'void', 'uncounted', 'season_prev')
 SETTLED_PLAYER_FIELDS = ('id', 'name', 'short', 'pos', 'group', 'gp', 'headshot', 'role', 'status')
 
 

@@ -10,7 +10,7 @@ import os
 import tempfile
 import unittest
 
-from sportspred import config, verify
+from sportspred import config, pipeline, verify
 from sportspred.render import asset_version
 
 
@@ -256,3 +256,40 @@ class TestTheLineHoldsTogether(VerifyCase):
     def test_a_game_with_no_line_is_fine(self):
         self.build(a_payload(games=[a_game()]))
         self.assertEqual(self.problems(), [])
+
+
+class TestSettledBoardsKeepTheirVerdicts(unittest.TestCase):
+    """A finished game's board is slimmed to what the Results view shows.
+
+    The field list is a whitelist, so anything new is dropped from finished
+    games unless it is added — which is exactly what happened to the mark
+    that says a pick is not counted: it survived on live boards and vanished
+    on the 137 settled ones, where it is the only place a reader would look.
+    """
+
+    def board(self, **prop):
+        base = {'key': 'anytd', 'label': 'Anytime TD', 'line': 0.5, 'proj': 0.05,
+                'pick': 'under', 'pick_prob': 0.96, 'actual': 0, 'hit': True}
+        base.update(prop)
+        return {'away': [], 'home': [{'id': 'p1', 'name': 'A Player', 'props': [base]}]}
+
+    def slimmed(self, **prop):
+        out = pipeline.slim_board(self.board(**prop))
+        return out['home'][0]['props'][0]
+
+    def test_a_pick_that_does_not_count_says_so_after_the_game(self):
+        self.assertEqual(self.slimmed(uncounted='one_sided').get('uncounted'), 'one_sided')
+
+    def test_a_void_pick_still_says_so(self):
+        self.assertTrue(self.slimmed(void=True).get('void'))
+
+    def test_the_verdict_itself_survives(self):
+        kept = self.slimmed()
+        for field in ('key', 'line', 'proj', 'pick', 'pick_prob', 'actual', 'hit'):
+            self.assertIn(field, kept, field)
+
+    def test_every_field_the_outcome_depends_on_is_whitelisted(self):
+        # The page decides a settled row's appearance from these; a new one
+        # that is not on the list is invisible the moment a game ends.
+        for field in ('hit', 'push', 'played', 'void', 'uncounted', 'actual'):
+            self.assertIn(field, pipeline.SETTLED_PROP_FIELDS, field)
