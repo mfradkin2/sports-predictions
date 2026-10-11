@@ -104,6 +104,16 @@ Do not "fix" these. They are understood, and chasing them wastes a call-out.
   published, so none of this shows up as a fault.
 - **A prop row with `played=0` has no verdict.** The player did not take the
   field. Ordinary.
+- **Anytime-touchdown unders at 65% or more are not published,** and the ones
+  published before that rule are marked NOT COUNTED. The line is 0.5 for
+  everyone on the field, so a third-string tight end drew a 96% "under" that
+  duly landed; those were a quarter of every graded prop and lifted the
+  headline hit rate by nearly eight points. `ONE_SIDED_PICKS` in
+  `sportspred/props.py` holds the rule.
+- **A league with no total or spread on its cards is warming up,** not
+  broken. `sportspred/scores.py` publishes neither until the fit has beaten
+  the league average on that league's own archive; before then every card
+  would carry the same league-average number.
 - **A prop row marked void** came from a corrupt feed day (a hitter at
   sixteen hits). It stays in the ledger as published but counts nowhere.
 - **NBA and NHL have few or no graded games** out of season.
@@ -168,6 +178,16 @@ lights up within about one slate of a market breaking and goes out as soon
 as a fix actually grades something. Picks that went unscored before the fix
 stay unscored — a graded row is never rewritten — so the record keeps that
 gap permanently, and the alarm correctly stops nagging about it.
+
+### The spread and the moneyline disagree on a card
+
+**Signature:** the build gate refuses the build with `is picked to be won by
+X but the spread favours Y`, so this should never reach the page.
+**Why it cannot normally happen:** the spread is derived from the win
+probability rather than modelled separately, precisely so the two cannot
+part company. If it does happen, something has broken that derivation —
+look at `scores.spread_from` and the `line` block in `pipeline.game_json`,
+not at the scoring model.
 
 ### A pick appears to have changed after kickoff
 **Treat this as the most serious thing in this document.**

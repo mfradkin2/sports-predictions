@@ -193,3 +193,66 @@ class TestReport(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestTheLineHoldsTogether(VerifyCase):
+    """A card that argues with itself is worse than one with no spread.
+
+    The spread is derived from the win probability so it cannot name a
+    different favourite; these are the checks that say so out loud, and that
+    catch the scoreline drifting away from the two numbers it is built from.
+    """
+
+    def line(self, **over):
+        line = {'total': 9.0, 'margin': 1.0, 'favored': 'New York Yankees',
+                'spread': -1.0, 'exp_home': 5.0, 'exp_away': 4.0, 'stage': 'fitted'}
+        line.update(over)
+        return line
+
+    def with_line(self, **over):
+        g = a_game(home='New York Yankees', away='Boston Red Sox',
+                   favored='New York Yankees', line=self.line(**over))
+        self.build(a_payload(games=[g]))
+
+    def test_a_sound_line_passes(self):
+        self.with_line()
+        self.assertEqual(self.problems(), [])
+
+    def test_a_spread_against_the_pick_is_caught(self):
+        self.with_line(favored='Boston Red Sox', margin=-1.0, spread=-1.0,
+                       exp_home=4.0, exp_away=5.0)
+        self.assertComplains('but the spread favours Boston Red Sox')
+
+    def test_a_spread_on_a_team_that_is_not_playing_is_caught(self):
+        self.with_line(favored='Chicago Cubs')
+        self.assertComplains('who is not playing')
+
+    def test_a_spread_favouring_nobody_must_be_a_pick_em(self):
+        self.with_line(favored='', exp_home=5.0, exp_away=4.0)
+        self.assertComplains('favours nobody')
+
+    def test_a_pick_em_at_zero_is_fine(self):
+        self.with_line(favored='', margin=0.0, spread=0.0, exp_home=4.5, exp_away=4.5)
+        self.assertEqual(self.problems(), [])
+
+    def test_a_spread_written_the_wrong_way_round_is_caught(self):
+        # The number beside the favourite is the points they give up, so it
+        # is never positive.
+        self.with_line(spread=1.0)
+        self.assertComplains('which should be the points the favourite gives up')
+
+    def test_a_nonsense_total_is_caught(self):
+        self.with_line(total=0.0, exp_home=0.0, exp_away=0.0, margin=0.0, favored='', spread=0.0)
+        self.assertComplains('has a total of 0.0')
+
+    def test_a_scoreline_that_does_not_make_the_total_is_caught(self):
+        self.with_line(exp_home=9.0, exp_away=4.0)
+        self.assertComplains('which is not a total of')
+
+    def test_a_scoreline_that_does_not_make_the_margin_is_caught(self):
+        self.with_line(exp_home=4.5, exp_away=4.5)
+        self.assertComplains('which is not a margin of')
+
+    def test_a_game_with_no_line_is_fine(self):
+        self.build(a_payload(games=[a_game()]))
+        self.assertEqual(self.problems(), [])

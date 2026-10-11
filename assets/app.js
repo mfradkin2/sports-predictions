@@ -299,6 +299,27 @@
     return t.n || t.push ? t : null;
   }
 
+  // The spread and the total, written the way a book writes them. Short
+  // names and one decimal: this sits in a crowded row.
+  function lineChip(g) {
+    var L = g.line;
+    if (!L) return '';
+    var bits = [];
+    if (L.margin != null) {
+      var side = L.favored
+        ? ((L.favored === g.home ? (g.home_s || g.home) : (g.away_s || g.away)) + ' ' + L.spread)
+        : 'PICK\u2019EM';
+      bits.push(side);
+    }
+    if (L.total != null) bits.push('O/U ' + L.total);
+    if (!bits.length) return '';
+    var how = L.stage === 'fitted'
+      ? 'Our spread and total. The spread comes straight from the win chance, so it can never name a different favourite'
+        + (L.mae_total != null ? '. Totals have been off by ' + L.mae_total + ' on average, spreads by ' + L.mae_margin : '')
+      : 'Our spread and total. Not enough games on record yet to say how accurate they are';
+    return '<span class="tag line" title="' + esc(how) + '">' + esc(bits.join(' \u00b7 ')) + '</span>';
+  }
+
   function gameRow(g, league) {
     var homePick = g.favored === g.home;
     var awayCls = g.final ? (g.winner === g.away ? 'won' : 'lost') : (homePick ? '' : 'pick');
@@ -337,7 +358,7 @@
             '<span class="pick">' + (homePick ? '→' : '←') + ' <b>' +
               nameSpans(g.favored, homePick ? (g.home_s || g.home) : (g.away_s || g.away)) + '</b> ' + pct(g.pick_prob) + '</span>' +
             '<span class="tag ' + g.conf + '" title="' + confWord(g.conf) + ' confidence">' + g.conf.toUpperCase() + '</span>' + flag +
-            propTag + result + confirming +
+            lineChip(g) + propTag + result + confirming +
           '</span></span>' +
         '<span class="chev" aria-hidden="true">▾</span>' +
       '</button><div class="detail" hidden></div></article>';
@@ -380,6 +401,32 @@
       card('Team strength', pct(c.elo, 1), 'home win chance by ratings') +
       (c.model != null ? card('Recent form', pct(c.model, 1), 'home win chance by form and rest') : '') +
       (c.standings != null ? card('Standings', pct(c.standings, 1), 'home win chance by season record') : '') + '</div>';
+
+    var L = g.line;
+    if (L && (L.total != null || L.margin != null)) {
+      var fitted = L.stage === 'fitted';
+      var spreadFoot = L.margin == null ? 'not enough on record yet'
+        : (fitted && L.mae_margin != null
+            ? 'off by ' + L.mae_margin + ' on average' +
+              (L.naive_margin != null ? ', against ' + L.naive_margin + ' for guessing home field' : '')
+            : 'building up a record');
+      var totalFoot = L.total == null ? 'not enough on record yet'
+        : (fitted && L.mae_total != null
+            ? 'off by ' + L.mae_total + ' on average' +
+              (L.naive_total != null ? ', against ' + L.naive_total + ' for guessing the league average' : '')
+            : 'building up a record');
+      out += '<div class="cards">' +
+        (L.margin != null ? card('Spread',
+           L.favored ? esc((L.favored === g.home ? (g.home_s || g.home) : (g.away_s || g.away)) + ' ' + L.spread) : 'Pick\u2019em',
+           spreadFoot) : '') +
+        (L.total != null ? card('Total', String(L.total), totalFoot) : '') +
+        (L.exp_home != null ? card('Expected score', esc((g.away_s || g.away) + ' ' + L.exp_away + ' \u2013 ' + L.exp_home + ' ' + (g.home_s || g.home)),
+           'what the total and spread work out to') : '') + '</div>';
+      out += '<div class="note">The spread is the win chance written as points, so it always names the same favourite as the pick above. ' +
+        'The total comes from how much both sides have been scoring and conceding, pulled toward the league average by as much as ' +
+        'that estimate has actually earned on this league\'s record' +
+        (L.locked ? '. Both were locked when the game started.' : '.') + '</div>';
+    }
 
     if (g.replay) {
       out += '<div class="note">↺ <b>Replayed pick.</b> This game finished before the site was watching, so the pick was generated afterwards ' +

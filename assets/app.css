@@ -310,6 +310,9 @@ table.grid th[aria-sort="descending"]::after { content: ' ▼'; font-size: 9px; 
 .tag.no   { background: color-mix(in srgb, var(--bad) 22%, transparent); color: var(--bad); }
 .tag.live { background: color-mix(in srgb, var(--good) 22%, transparent); color: var(--good); }
 .tag.props { background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent); }
+/* The spread and total, the way a book writes them: quieter than the pick
+   itself, which is still the headline on the row. */
+.tag.line { background: var(--bg3); color: var(--text); font-variant-numeric: tabular-nums; }
 .chev { color: var(--faint); font-size: 11px; transition: transform .15s; justify-self: end; }
 .game[data-open="1"] .chev { transform: rotate(180deg); }
 

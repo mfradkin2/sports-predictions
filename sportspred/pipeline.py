@@ -4,7 +4,7 @@ from __future__ import annotations
 import os
 from datetime import date, datetime, timedelta, timezone
 
-from . import espn, model, odds, optimize, props as props_mod
+from . import espn, model, odds, optimize, props as props_mod, scores
 from . import config
 from .config import LEAGUES
 from .glm import score
@@ -79,6 +79,23 @@ def started(game, now=None):
 
 def is_preseason(game):
     return bool(game.get('preseason'))
+
+
+def _locked_line(stored, fitted):
+    """The total and spread a game was published with, read back out.
+
+    Both are frozen with the moneyline, so a finished game keeps the numbers
+    it actually went in with rather than ones recomputed from rates that now
+    include its own result. The accuracy figures travel with it so the page
+    can still say how much to trust what it is showing.
+    """
+    total, margin = num(stored.get('pred_total')), num(stored.get('pred_margin'))
+    if total is None and margin is None:
+        return None
+    out = {'total': total, 'margin': margin, 'locked': True}
+    for key in ('mae_total', 'mae_margin', 'naive_total', 'naive_margin', 'stage'):
+        out[key] = (fitted or {}).get(key)
+    return out
 
 
 def merge_sources(csv_rows, archive_rows):
@@ -165,6 +182,16 @@ def run(league_key, fetch_props=True, http=None, tune=True, replay=None):
         injuries = load_injuries(league_key, cfg, http)
     starter_edges = starter_edge_by_game(trained['records'], pool) if league_key == 'mlb' else {}
 
+    # ── the total and the spread ────────────────────────────────────────────
+    # Fitted on the same games the win model trained on, walk-forward, and
+    # blended toward the league average by however much the estimate has
+    # actually earned on this league's own record (see sportspred.scores).
+    score_games = [r['game'] for r in trained['records']]
+    # Elo's replayed probability is the leak-free one — it never sees its own
+    # result — so that is what the spread is fitted against.
+    score_fit = scores.fit(score_games, [r.get('elo_prob') for r in trained['records']])
+    score_avg, score_tally = scores.current(score_games)
+
     # ── predict every game, then freeze the answer ──────────────────────────
     #
     # The model is refit on every run, and the standings model behind it is
@@ -203,6 +230,7 @@ def run(league_key, fetch_props=True, http=None, tune=True, replay=None):
             rec['pregame'] = stored.get('pregame') == '1'
             rec['replay'] = stored.get('replay') == '1'
             rec['locked_at'] = stored.get('predicted_at', '')
+            rec['line'] = _locked_line(stored, score_fit)
         else:
             favored = game['home'] if live['prob'] >= 0.5 else game['away']
             rec['prediction'] = live
@@ -213,9 +241,16 @@ def run(league_key, fetch_props=True, http=None, tune=True, replay=None):
             rec['locked'] = False
             rec['pregame'] = pregame
             rec['locked_at'] = ''
+            line = None
+            if score_avg:
+                line = scores.predict(score_fit, score_avg,
+                                      score_tally.of(game['home']),
+                                      score_tally.of(game['away']),
+                                      win_prob=live['prob'])
+            rec['line'] = line
             if game['game_id']:
                 memory.record(game, live, favored, pregame=pregame,
-                              preseason=is_preseason(game))
+                              preseason=is_preseason(game), line=line)
 
     memory.grade()
     components, n_graded = memory.component_scores()
@@ -246,7 +281,8 @@ def run(league_key, fetch_props=True, http=None, tune=True, replay=None):
                             n_graded, ledger_trust, prop_board, prop_status,
                             injuries=injuries, props_record=props_record,
                             props_tuning=props_tuning, lines_status=lines_status,
-                            props_tallies=props_ledger.tallies())
+                            props_tallies=props_ledger.tallies(),
+                            score_fit=score_fit, score_record=memory.score_record())
     payload['records'] = records_block(trained, props_ledger, memory)
 
     memory.save_archive()
@@ -665,7 +701,7 @@ def injuries_for_game(game, injuries, pool, limit=6):
 def build_payload(league_key, cfg, trained, memory, components, n_graded,
                   ledger_trust, prop_board, prop_status, injuries=None,
                   props_record=None, props_tuning=None, lines_status=None,
-                  props_tallies=None):
+                  props_tallies=None, score_fit=None, score_record=None):
     today = today_utc()
     recent_cut = today - timedelta(days=RECENT_DAYS)
     horizon = today + timedelta(days=UPCOMING_DAYS)
@@ -721,6 +757,7 @@ def build_payload(league_key, cfg, trained, memory, components, n_graded,
                 for i in (trained.get('importance') or [])
             ],
             'ledger': {'graded': n_graded, 'components': components},
+            'scores': dict(score_fit or {}, record=score_record or {}),
             'runs': (memory.state.get('runs') or [])[-12:],
             'settings': optimize.describe({'elo_params': trained['elo_params'],
                                            'form': trained.get('form'),
@@ -854,6 +891,25 @@ def game_json(rec, cfg, league_key, props, trained, injuries=None, props_tally=N
         'stats': team_stats,
         'drivers': drivers,
     }
+    line = rec.get('line')
+    if line and (line.get('total') is not None or line.get('margin') is not None):
+        margin = line.get('margin')
+        out['line'] = {
+            'total': line.get('total'),
+            'margin': margin,
+            # The spread the way a book writes it: who is giving points, and
+            # how many. A margin of zero is a pick'em and names nobody.
+            'favored': ('' if not margin else (g['home'] if margin > 0 else g['away'])),
+            'spread': (None if margin is None else -abs(round(margin, 1))),
+            'exp_home': line.get('exp_home'),
+            'exp_away': line.get('exp_away'),
+            'mae_total': line.get('mae_total'),
+            'mae_margin': line.get('mae_margin'),
+            'naive_total': line.get('naive_total'),
+            'naive_margin': line.get('naive_margin'),
+            'stage': line.get('stage') or 'warming up',
+            'locked': bool(line.get('locked')),
+        }
     if props:
         out['props'] = props
         out['props_locked'] = bool(props.get('locked'))

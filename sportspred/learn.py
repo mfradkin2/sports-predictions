@@ -38,7 +38,11 @@ LEDGER_FIELDS = ['game_id', 'game_date', 'away_team', 'home_team', 'predicted_at
                  'model_version', 'pregame', 'preseason', 'replay',
                  'p_final', 'p_elo', 'p_glm', 'p_prior', 'starter_edge',
                  'favored_team', 'away_score', 'home_score', 'winner',
-                 'graded', 'correct']
+                 'graded', 'correct',
+                 # The total and the spread, locked at the same moment as the
+                 # moneyline. ``pred_margin`` is the home side's margin, so a
+                 # positive number means the home team is favoured by it.
+                 'pred_total', 'pred_margin']
 
 
 def _key(row):
@@ -135,7 +139,7 @@ class LeagueMemory:
                      'away_team': game.get('away'),
                      'home_team': game.get('home')})
 
-    def record(self, game, parts, favored, pregame=True, preseason=False):
+    def record(self, game, parts, favored, pregame=True, preseason=False, line=None):
         """Log a forecast.
 
         Until kickoff the forecast may be refreshed — a late lineup change or
@@ -150,6 +154,11 @@ class LeagueMemory:
         pre-game rows are used to score the model; back-filled rows, and
         exhibition games, exist so that every game still displays a stable
         number.
+
+        ``line`` is the predicted total and margin, frozen alongside the
+        moneyline for the same reason: both are built from season scoring
+        rates, and once a result lands in those rates the number would drift
+        and the site would be showing a figure it never actually published.
         """
         k = self._key_for(game)
         existing = self.ledger.get(k)
@@ -175,8 +184,62 @@ class LeagueMemory:
             'favored_team': favored,
             'away_score': '', 'home_score': '', 'winner': '',
             'graded': '0', 'correct': '',
+            'pred_total': round(line['total'], 1) if line and line.get('total') is not None else '',
+            'pred_margin': round(line['margin'], 1) if line and line.get('margin') is not None else '',
         }
         return True
+
+    def score_record(self):
+        """How the published totals and spreads have actually done.
+
+        These cannot have a hit rate, and saying they do would be a lie. Our
+        own number *is* the line, so the game landing over it is not us being
+        right or wrong — over enough games an honest number is cleared about
+        half the time. What can be measured is how far off it was and which
+        way it leans, so that is what this reports: the average miss, the
+        average signed miss (bias), and the over/under and cover balance,
+        which should sit near 50% and says the number is centred when it
+        does.
+
+        The spread does carry one real verdict, because naming a favourite by
+        some margin names a winner, and that is scored the same way the
+        moneyline is.
+        """
+        rows = [r for r in self.ledger.values()
+                if r.get('graded') == '1' and r.get('pregame') == '1'
+                and r.get('preseason') != '1' and r.get('replay') != '1']
+        totals, margins, overs, covers, right = [], [], 0, 0, 0
+        decided = 0
+        for r in rows:
+            hs, as_ = num(r.get('home_score')), num(r.get('away_score'))
+            if hs is None or as_ is None:
+                continue
+            pt, pm = num(r.get('pred_total')), num(r.get('pred_margin'))
+            if pt is not None:
+                actual = hs + as_
+                totals.append(actual - pt)
+                overs += int(actual > pt)
+            if pm is not None:
+                actual = hs - as_
+                margins.append(actual - pm)
+                covers += int(actual > pm)
+                if actual != 0:
+                    decided += 1
+                    right += int((pm > 0) == (actual > 0))
+
+        def summary(errs, side, n_side):
+            if not errs:
+                return {'n': 0}
+            return {'n': len(errs),
+                    'mae': round(sum(abs(e) for e in errs) / len(errs), 2),
+                    'bias': round(sum(errs) / len(errs), 2),
+                    'over_pct': round(n_side / len(errs), 4)}
+
+        out = {'total': summary(totals, 'over', overs),
+               'spread': summary(margins, 'cover', covers)}
+        out['spread']['winner_pct'] = round(right / decided, 4) if decided else None
+        out['spread']['winner_n'] = decided
+        return out
 
     def grade(self):
         """Attach results to ledger entries whose games have since finished."""

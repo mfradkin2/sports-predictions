@@ -100,6 +100,49 @@ Everything is standard-library Python; there is nothing to install and no R.
 8. **Render** (`sportspred/render.py`) writes a data file per league plus a
    few kilobytes of HTML shell.
 
+### The total and the spread
+
+Every game line carries three numbers, the way a sportsbook writes them: who
+wins, by how much, and how high-scoring it will be.
+
+The **total** comes from scoring rates (`sportspred/scores.py`). Each team
+carries what it has scored and conceded per game, pulled toward the league
+average by ten games of prior so a hot fortnight does not run away with it,
+and an expected score is the league average scaled by how good this attack is
+and how leaky that defence is. Scoring is far noisier than winning, though,
+and in some sports there is almost nothing to know: against simply guessing
+the league average, the estimate is worth about 3% on NFL totals and 0.3% on
+baseball ones, where run scoring at the team-game level is close to
+irreducible. So the published number is a blend of the estimate and the
+league average, and each league's blend is fitted walk-forward on its own
+archive. A league where the estimate earns its keep gets it in full; a league
+where it does not falls back toward the average, which is the honest answer;
+a league with no record yet publishes no total at all rather than putting the
+same league-average number on every card.
+
+The **spread** is not a second model. Subtracting the two expected scores
+gives a margin, and it is a reasonable one, but it is another opinion about
+who wins — and on the archive it disagreed with the win-probability model
+about the favourite in 15% of NFL games and 30% of baseball ones. A card
+whose spread says Seattle and whose moneyline says San Francisco is the site
+arguing with itself. So the spread is derived from the win probability, which
+cannot contradict it: if margins in a league scatter by fourteen points, a
+62% favourite is favoured by about four and a quarter. That is also how a
+book moves between a moneyline and a spread, and on the archive it was
+slightly the more accurate of the two (10.07 against 10.22 points of average
+error in the NFL, 3.33 against 3.34 in baseball). The expected scores shown
+on the card are rebuilt from the published total and spread, so all three
+numbers always add up — and the build gate refuses a card where they do not.
+
+Neither number can have a hit rate, and the site does not pretend otherwise.
+Our own number *is* the line, so a game landing over it is not us being right
+or wrong; over enough games an honest total is cleared about half the time.
+What gets reported instead is how far off it has been, which way it leans,
+and the error of the league average it is measured against. Both are frozen
+at kickoff alongside the moneyline, for the same reason: they are built from
+season scoring rates, and once a result lands in those rates the number would
+drift.
+
 ### Why predictions are frozen
 
 The model is refit on every run and the standings model behind it is recomputed
@@ -362,6 +405,7 @@ SP_LOOKBACK_DAYS=120 python3 run_pipeline.py mlb
 | --- | --- |
 | `run_pipeline.py` | Entry point: model, props, site |
 | `sportspred/` | The engine (see the pipeline steps above) |
+| `sportspred/scores.py` | Expected scores, and the total and spread that follow |
 | `assets/app.css`, `assets/app.js` | Shared front end, cached across all four sports |
 | `data/<league>.js` | Per-league payload the page renders from — one JSON object behind a `window.SP_DATA[...] =` assignment |
 | `data/<league>-history.js` | Older graded games, loaded only when Results is opened |

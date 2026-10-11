@@ -19,6 +19,7 @@ Every check answers a question a reader would ask:
 * Is every projection one a player could actually post?
 * Does a blank prop really have no line, and a priced one a real line?
 * Is every market on the board in exactly one category chip?
+* Does the spread name the same favourite as the moneyline pick?
 """
 from __future__ import annotations
 
@@ -102,7 +103,43 @@ def check_payload(league, data, problems):
             problems.append(f'{where}: game {gid} has date {game.get("date")!r}')
         if not game.get('favored'):
             problems.append(f'{where}: game {gid} has no pick')
+        check_line(where, gid, game, problems)
         check_board(where, gid, game.get('props') or {}, sport, problems)
+
+
+def check_line(where, gid, game, problems):
+    """The spread, the total and the pick have to tell one story.
+
+    The spread is derived from the win probability precisely so it cannot
+    name a different favourite; this is the check that says so out loud. The
+    two independent models it replaced disagreed on 15% of NFL games, and a
+    card arguing with itself is worse than one with no spread at all.
+    """
+    line = game.get('line')
+    if not line:
+        return
+    total, margin, fav = line.get('total'), line.get('margin'), line.get('favored')
+    if total is not None and total <= 0:
+        problems.append(f'{where}: game {gid} has a total of {total}')
+    if margin is not None:
+        if fav and game.get('favored') and fav != game['favored']:
+            problems.append(f'{where}: game {gid} is picked to be won by '
+                            f'{game["favored"]} but the spread favours {fav}')
+        if fav and fav not in (game.get('home'), game.get('away')):
+            problems.append(f'{where}: game {gid} spread favours {fav}, who is not playing')
+        if not fav and round(margin, 1) != 0:
+            problems.append(f'{where}: game {gid} has a spread of {margin} but favours nobody')
+        spread = line.get('spread')
+        if spread is not None and spread > 0:
+            problems.append(f'{where}: game {gid} shows a spread of {spread}, '
+                            'which should be the points the favourite gives up')
+    # The scoreline on the card is rebuilt from the two published numbers, so
+    # it has to add back up to them.
+    eh, ea = line.get('exp_home'), line.get('exp_away')
+    if None not in (eh, ea, total) and abs((eh + ea) - total) > 0.3:
+        problems.append(f'{where}: game {gid} expects {ea}-{eh}, which is not a total of {total}')
+    if None not in (eh, ea, margin) and abs((eh - ea) - margin) > 0.3:
+        problems.append(f'{where}: game {gid} expects {ea}-{eh}, which is not a margin of {margin}')
 
 
 def check_board(where, gid, board, sport, problems):
