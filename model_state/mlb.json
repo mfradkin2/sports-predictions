@@ -181,33 +181,6 @@
  "optimizer": [
   {
    "adopted": false,
-   "at": "2026-10-13T18:27:14Z",
-   "end": 0.6827,
-   "evals": 18,
-   "moves": [],
-   "probe": {
-    "features": [
-     "elo_diff",
-     "pyth_diff",
-     "venue_diff",
-     "b2b_diff",
-     "h2h_diff",
-     "wpct_diff",
-     "def_diff",
-     "sos_diff",
-     "exp_diff"
-    ],
-    "form": {
-     "decay": 0.85,
-     "n": 30
-    },
-    "logloss": 0.684,
-    "won": false
-   },
-   "start": 0.6827
-  },
-  {
-   "adopted": false,
    "at": "2026-10-13T19:26:56Z",
    "end": 0.6827,
    "evals": 18,
@@ -1448,6 +1421,32 @@
     "won": false
    },
    "start": 0.6825
+  },
+  {
+   "adopted": false,
+   "at": "2026-10-14T20:28:05Z",
+   "end": 0.6825,
+   "evals": 18,
+   "moves": [],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "form_diff",
+     "margin_diff",
+     "venue_diff",
+     "rest_diff",
+     "b2b_diff",
+     "wpct_diff"
+    ],
+    "form": {
+     "decay": 0.8,
+     "n": 16
+    },
+    "logloss": 0.6841,
+    "won": false
+   },
+   "start": 0.6825
   }
  ],
  "props": {
@@ -1460,9 +1459,9 @@
   "record": {
    "by_conf": {
     "high": {
-     "hit": 5789,
-     "n": 7335,
-     "pct": 0.7892
+     "hit": 2986,
+     "n": 4189,
+     "pct": 0.7128
     },
     "low": {
      "hit": 2769,
@@ -1495,10 +1494,10 @@
      "pct": 0.7474
     },
     "hr": {
-     "hit": 2804,
+     "hit": 1,
      "label": "Home Run",
-     "n": 3148,
-     "pct": 0.8907
+     "n": 2,
+     "pct": 0.5
     },
     "k": {
      "hit": 149,
@@ -1539,185 +1538,185 @@
    },
    "by_source": {
     "book": {
-     "hit": 10692,
-     "n": 16858,
-     "pct": 0.6342
+     "hit": 7964,
+     "n": 13808,
+     "pct": 0.5768
     },
     "model": {
-     "hit": 388,
-     "n": 599,
-     "pct": 0.6477
+     "hit": 313,
+     "n": 503,
+     "pct": 0.6223
     }
    },
    "curve": [
     {
-     "correct": 388,
-     "cum_acc": 0.6477,
+     "correct": 313,
+     "cum_acc": 0.6223,
      "date": "2026-09-15",
-     "n": 599
+     "n": 503
     },
     {
-     "correct": 923,
-     "cum_acc": 0.6662,
+     "correct": 711,
+     "cum_acc": 0.6233,
      "date": "2026-09-16",
-     "n": 1369
+     "n": 1140
     },
     {
-     "correct": 499,
-     "cum_acc": 0.6591,
+     "correct": 396,
+     "cum_acc": 0.6158,
      "date": "2026-09-17",
-     "n": 778
+     "n": 663
     },
     {
-     "correct": 932,
-     "cum_acc": 0.6582,
+     "correct": 707,
+     "cum_acc": 0.6135,
      "date": "2026-09-18",
-     "n": 1420
+     "n": 1161
     },
     {
-     "correct": 904,
-     "cum_acc": 0.6534,
+     "correct": 683,
+     "cum_acc": 0.6065,
      "date": "2026-09-19",
-     "n": 1414
+     "n": 1166
     },
     {
-     "correct": 862,
-     "cum_acc": 0.6467,
+     "correct": 634,
+     "cum_acc": 0.5968,
      "date": "2026-09-20",
-     "n": 1391
+     "n": 1138
     },
     {
-     "correct": 159,
-     "cum_acc": 0.6461,
+     "correct": 120,
+     "cum_acc": 0.5964,
      "date": "2026-09-21",
-     "n": 252
+     "n": 205
     },
     {
-     "correct": 803,
-     "cum_acc": 0.6414,
+     "correct": 583,
+     "cum_acc": 0.5892,
      "date": "2026-09-22",
-     "n": 1305
+     "n": 1062
     },
     {
-     "correct": 927,
-     "cum_acc": 0.6426,
+     "correct": 691,
+     "cum_acc": 0.5896,
      "date": "2026-09-23",
-     "n": 1427
+     "n": 1167
     },
     {
-     "correct": 715,
-     "cum_acc": 0.6407,
+     "correct": 529,
+     "cum_acc": 0.5871,
      "date": "2026-09-24",
-     "n": 1146
+     "n": 936
     },
     {
-     "correct": 864,
-     "cum_acc": 0.6383,
+     "correct": 639,
+     "cum_acc": 0.5842,
      "date": "2026-09-25",
-     "n": 1394
+     "n": 1139
     },
     {
-     "correct": 756,
-     "cum_acc": 0.6373,
+     "correct": 563,
+     "cum_acc": 0.5832,
      "date": "2026-09-26",
-     "n": 1207
+     "n": 984
     },
     {
-     "correct": 838,
-     "cum_acc": 0.6376,
+     "correct": 625,
+     "cum_acc": 0.5835,
      "date": "2026-09-27",
-     "n": 1307
+     "n": 1065
     },
     {
-     "correct": 249,
-     "cum_acc": 0.6376,
+     "correct": 183,
+     "cum_acc": 0.5832,
      "date": "2026-09-29",
-     "n": 392
+     "n": 320
     },
     {
-     "correct": 197,
-     "cum_acc": 0.6368,
+     "correct": 143,
+     "cum_acc": 0.5824,
      "date": "2026-09-30",
-     "n": 327
+     "n": 262
     },
     {
-     "correct": 58,
-     "cum_acc": 0.6368,
+     "correct": 43,
+     "cum_acc": 0.5825,
      "date": "2026-10-01",
-     "n": 91
+     "n": 73
     },
     {
-     "correct": 103,
-     "cum_acc": 0.6358,
+     "correct": 70,
+     "cum_acc": 0.5811,
      "date": "2026-10-03",
-     "n": 188
+     "n": 152
     },
     {
-     "correct": 100,
-     "cum_acc": 0.6356,
+     "correct": 68,
+     "cum_acc": 0.5806,
      "date": "2026-10-04",
-     "n": 162
+     "n": 128
     },
     {
-     "correct": 110,
-     "cum_acc": 0.6351,
+     "correct": 75,
+     "cum_acc": 0.5797,
      "date": "2026-10-05",
-     "n": 186
+     "n": 150
     },
     {
-     "correct": 115,
-     "cum_acc": 0.6352,
+     "correct": 84,
+     "cum_acc": 0.5797,
      "date": "2026-10-06",
-     "n": 179
+     "n": 145
     },
     {
-     "correct": 217,
-     "cum_acc": 0.6349,
+     "correct": 152,
+     "cum_acc": 0.5789,
      "date": "2026-10-07",
-     "n": 350
+     "n": 282
     },
     {
-     "correct": 69,
-     "cum_acc": 0.6352,
+     "correct": 53,
+     "cum_acc": 0.5793,
      "date": "2026-10-08",
-     "n": 100
+     "n": 82
     },
     {
-     "correct": 55,
-     "cum_acc": 0.6351,
+     "correct": 40,
+     "cum_acc": 0.5791,
      "date": "2026-10-10",
-     "n": 88
+     "n": 72
     },
     {
-     "correct": 63,
-     "cum_acc": 0.6354,
+     "correct": 47,
+     "cum_acc": 0.5793,
      "date": "2026-10-11",
-     "n": 93
+     "n": 76
     },
     {
-     "correct": 114,
-     "cum_acc": 0.6349,
+     "correct": 84,
+     "cum_acc": 0.5788,
      "date": "2026-10-12",
-     "n": 192
+     "n": 159
     },
     {
-     "correct": 60,
-     "cum_acc": 0.6347,
+     "correct": 41,
+     "cum_acc": 0.5784,
      "date": "2026-10-13",
-     "n": 100
+     "n": 81
     }
    ],
-   "hit": 11080,
-   "pct": 0.6347,
-   "total": 17457
+   "hit": 8277,
+   "pct": 0.5784,
+   "total": 14311
   },
   "tuning": {
    "_market": {
     "default": 12,
     "k": 40,
-    "logloss": 0.5898,
-    "logloss_default": 0.5922,
-    "n": 15176
+    "logloss": 0.6474,
+    "logloss_default": 0.6502,
+    "n": 12400
    },
    "er": {
     "bias": 0.9806,
@@ -1736,12 +1735,6 @@
     "n": 95,
     "raw_bias": 0.962,
     "spread": 0.9759
-   },
-   "hr": {
-    "bias": 0.9802,
-    "n": 3076,
-    "raw_bias": 0.9802,
-    "spread": 1.0063
    },
    "k": {
     "bias": 0.9523,
@@ -1782,31 +1775,6 @@
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-10-13T10:27:29Z",
-   "metrics": {
-    "acc": 0.5546,
-    "brier": 0.2448,
-    "elo_only": {
-     "acc": 0.5546,
-     "brier": 0.2457,
-     "logloss": 0.6845,
-     "n": 907
-    },
-    "glm_only": {
-     "acc": 0.5645,
-     "brier": 0.2483,
-     "logloss": 0.6906,
-     "n": 907
-    },
-    "logloss": 0.6827,
-    "n": 907
-   },
-   "model_version": 3,
-   "notes": "997 completed games",
-   "reason": "kept incumbent (challenger 0.6827 vs 0.6824)"
-  },
   {
    "adopted": false,
    "at": "2026-10-13T11:27:17Z",
@@ -3281,7 +3249,32 @@
    "model_version": 3,
    "notes": "998 completed games",
    "reason": "kept incumbent (challenger 0.6825 vs 0.6824)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-10-14T20:28:04Z",
+   "metrics": {
+    "acc": 0.5551,
+    "brier": 0.2447,
+    "elo_only": {
+     "acc": 0.5551,
+     "brier": 0.2456,
+     "logloss": 0.6843,
+     "n": 908
+    },
+    "glm_only": {
+     "acc": 0.565,
+     "brier": 0.2482,
+     "logloss": 0.6903,
+     "n": 908
+    },
+    "logloss": 0.6825,
+    "n": 908
+   },
+   "model_version": 3,
+   "notes": "998 completed games",
+   "reason": "kept incumbent (challenger 0.6825 vs 0.6824)"
   }
  ],
- "updated": "2026-10-14T19:28:19Z"
+ "updated": "2026-10-14T20:28:08Z"
 }
