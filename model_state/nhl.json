@@ -1,12 +1,12 @@
 {
- "archive_size": 94,
+ "archive_size": 95,
  "best": {
-  "adopted_at": "2026-10-14T02:01:34Z",
+  "adopted_at": "2026-10-14T02:07:03Z",
   "metrics": {
-   "acc": 0.5638,
-   "brier": 0.2441,
-   "logloss": 0.6811,
-   "n": 94
+   "acc": 0.5684,
+   "brier": 0.2439,
+   "logloss": 0.6808,
+   "n": 95
   },
   "params": {
    "blend_w": 0.0,
@@ -38,7 +38,7 @@
    },
    "l2": null
   },
-  "reason": "log loss 0.6821 -> 0.6811"
+  "reason": "log loss 0.6811 -> 0.6808"
  },
  "elo": {
   "games_seen": {
@@ -62,10 +62,10 @@
    "New York Islanders": 5,
    "New York Rangers": 8,
    "Ottawa Senators": 6,
-   "Philadelphia Flyers": 7,
+   "Philadelphia Flyers": 8,
    "Pittsburgh Penguins": 6,
    "San Jose Sharks": 5,
-   "Seattle Kraken": 6,
+   "Seattle Kraken": 7,
    "St. Louis Blues": 5,
    "Tampa Bay Lightning": 6,
    "Toronto Maple Leafs": 6,
@@ -103,10 +103,10 @@
    "New York Islanders": 1498.47,
    "New York Rangers": 1529.36,
    "Ottawa Senators": 1524.23,
-   "Philadelphia Flyers": 1452.63,
+   "Philadelphia Flyers": 1448.66,
    "Pittsburgh Penguins": 1507.18,
    "San Jose Sharks": 1494.66,
-   "Seattle Kraken": 1520.81,
+   "Seattle Kraken": 1524.78,
    "St. Louis Blues": 1497.27,
    "Tampa Bay Lightning": 1508.61,
    "Toronto Maple Leafs": 1504.65,
@@ -118,48 +118,39 @@
   }
  },
  "last_metrics": {
-  "acc": 0.5638,
-  "brier": 0.2441,
-  "logloss": 0.6811,
-  "n": 94
+  "acc": 0.5684,
+  "brier": 0.2439,
+  "logloss": 0.6808,
+  "n": 95
  },
  "league": "nhl",
  "ledger": {
   "components": {
    "elo": {
-    "acc": 0.5638,
-    "brier": 0.2449,
-    "logloss": 0.6828,
-    "n": 94
+    "acc": 0.5684,
+    "brier": 0.2447,
+    "logloss": 0.6825,
+    "n": 95
    },
    "final": {
-    "acc": 0.5319,
-    "brier": 0.2545,
-    "logloss": 0.7033,
-    "n": 94
+    "acc": 0.5368,
+    "brier": 0.2529,
+    "logloss": 0.6999,
+    "n": 95
    },
    "prior": {
-    "acc": 0.5532,
-    "brier": 0.2653,
-    "logloss": 0.7287,
-    "n": 94
+    "acc": 0.5579,
+    "brier": 0.2631,
+    "logloss": 0.7238,
+    "n": 95
    }
   },
-  "graded": 94,
+  "graded": 95,
   "trust": null
  },
  "model_version": 3,
  "new_games_this_run": 1,
  "optimizer": [
-  {
-   "adopted": false,
-   "at": "2026-10-12T22:29:44Z",
-   "end": null,
-   "evals": 1,
-   "moves": [],
-   "probe": null,
-   "start": 0.6821
-  },
   {
    "adopted": false,
    "at": "2026-10-12T23:10:22Z",
@@ -582,10 +573,19 @@
    "moves": [],
    "probe": null,
    "start": 0.6811
+  },
+  {
+   "adopted": true,
+   "at": "2026-10-14T02:07:03Z",
+   "end": null,
+   "evals": 1,
+   "moves": [],
+   "probe": null,
+   "start": 0.6808
   }
  ],
  "props": {
-  "graded_this_run": 97,
+  "graded_this_run": 92,
   "lines": {
    "games": 2,
    "mode": "book",
@@ -594,39 +594,39 @@
   "record": {
    "by_conf": {
     "high": {
-     "hit": 2404,
-     "n": 3026,
-     "pct": 0.7944
+     "hit": 2447,
+     "n": 3077,
+     "pct": 0.7953
     },
     "low": {
-     "hit": 879,
-     "n": 1889,
-     "pct": 0.4653
+     "hit": 893,
+     "n": 1914,
+     "pct": 0.4666
     },
     "med": {
-     "hit": 655,
-     "n": 1115,
-     "pct": 0.5874
+     "hit": 663,
+     "n": 1128,
+     "pct": 0.5878
     }
    },
    "by_key": {
     "assists": {
-     "hit": 943,
+     "hit": 959,
      "label": "Assists",
-     "n": 1393,
-     "pct": 0.677
+     "n": 1417,
+     "pct": 0.6768
     },
     "goal": {
-     "hit": 1550,
+     "hit": 1571,
      "label": "Anytime Goal",
-     "n": 1932,
-     "pct": 0.8023
+     "n": 1956,
+     "pct": 0.8032
     },
     "points": {
-     "hit": 787,
+     "hit": 802,
      "label": "Points",
-     "n": 1418,
-     "pct": 0.555
+     "n": 1442,
+     "pct": 0.5562
     },
     "saves": {
      "hit": 18,
@@ -635,17 +635,17 @@
      "pct": 0.6
     },
     "sog": {
-     "hit": 640,
+     "hit": 653,
      "label": "Shots on Goal",
-     "n": 1257,
-     "pct": 0.5091
+     "n": 1274,
+     "pct": 0.5126
     }
    },
    "by_source": {
     "book": {
-     "hit": 3938,
-     "n": 6030,
-     "pct": 0.6531
+     "hit": 4003,
+     "n": 6119,
+     "pct": 0.6542
     }
    },
    "curve": [
@@ -734,34 +734,34 @@
      "n": 230
     },
     {
-     "correct": 277,
-     "cum_acc": 0.6531,
+     "correct": 342,
+     "cum_acc": 0.6542,
      "date": "2026-10-13",
-     "n": 422
+     "n": 511
     }
    ],
-   "hit": 3938,
-   "pct": 0.6531,
-   "total": 6030
+   "hit": 4003,
+   "pct": 0.6542,
+   "total": 6119
   },
   "tuning": {
    "assists": {
-    "bias": 0.971,
-    "n": 1352,
-    "raw_bias": 0.971,
-    "spread": 1.0359
+    "bias": 0.9674,
+    "n": 1375,
+    "raw_bias": 0.9674,
+    "spread": 1.035
    },
    "goal": {
-    "bias": 0.966,
-    "n": 1854,
-    "raw_bias": 0.966,
-    "spread": 1.0564
+    "bias": 0.962,
+    "n": 1877,
+    "raw_bias": 0.962,
+    "spread": 1.0556
    },
    "points": {
-    "bias": 0.9737,
-    "n": 1385,
-    "raw_bias": 0.9737,
-    "spread": 1.0581
+    "bias": 0.9695,
+    "n": 1409,
+    "raw_bias": 0.9695,
+    "spread": 1.0566
    },
    "saves": {
     "bias": 1.0,
@@ -770,27 +770,14 @@
     "spread": 1.0
    },
    "sog": {
-    "bias": 0.9884,
-    "n": 1255,
-    "raw_bias": 0.9884,
-    "spread": 1.0791
+    "bias": 0.9906,
+    "n": 1272,
+    "raw_bias": 0.9906,
+    "spread": 1.0763
    }
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-10-12T14:30:57Z",
-   "metrics": {
-    "acc": 0.5581,
-    "brier": 0.2452,
-    "logloss": 0.6833,
-    "n": 86
-   },
-   "model_version": 3,
-   "notes": "86 completed games",
-   "reason": "kept incumbent (challenger 0.6833 vs 0.6832)"
-  },
   {
    "adopted": false,
    "at": "2026-10-12T15:29:58Z",
@@ -1557,7 +1544,20 @@
    "model_version": 3,
    "notes": "94 completed games",
    "reason": "log loss 0.6821 -> 0.6811"
+  },
+  {
+   "adopted": true,
+   "at": "2026-10-14T02:07:03Z",
+   "metrics": {
+    "acc": 0.5684,
+    "brier": 0.2439,
+    "logloss": 0.6808,
+    "n": 95
+   },
+   "model_version": 3,
+   "notes": "95 completed games",
+   "reason": "log loss 0.6811 -> 0.6808"
   }
  ],
- "updated": "2026-10-14T02:01:36Z"
+ "updated": "2026-10-14T02:07:05Z"
 }
