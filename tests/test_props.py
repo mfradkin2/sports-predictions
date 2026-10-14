@@ -672,6 +672,15 @@ class TestOneSidedPicks(unittest.TestCase):
     def test_an_ordinary_anytime_td_under_still_counts(self):
         self.assertFalse(props.too_one_sided('anytd', 'under', 0.58))
 
+    def test_near_certain_home_run_and_goal_unders_are_dropped(self):
+        self.assertTrue(props.too_one_sided('hr', 'under', 0.89))
+        self.assertTrue(props.too_one_sided('goal', 'under', 0.82))
+
+    def test_home_run_and_goal_overs_still_count(self):
+        for key in ('hr', 'goal', 'anytd'):
+            self.assertFalse(props.too_one_sided(key, 'over', 0.7), key)
+            self.assertFalse(props.too_one_sided(key, 'over', 0.3), key)
+
     def test_no_other_market_is_touched(self):
         for key in ('rec', 'rec_yds', 'rush_yds', 'pass_yds', 'hits', 'sog'):
             self.assertFalse(props.too_one_sided(key, 'under', 0.99), key)

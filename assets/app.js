@@ -595,8 +595,9 @@
   // see both that it happened and why it is not being counted.
   var UNCOUNTED = {
     one_sided: ['NOT COUNTED',
-      'One side of this market was near certain — an anytime touchdown ' +
-      'under on a player who was never likely to score. The board no longer ' +
+      'One side of this market was near certain — an under on an anytime ' +
+      'touchdown, a home run or a goal, by a player who was never likely to ' +
+      'score one. The board no longer ' +
       'makes these picks, and the ones already published are left out of the ' +
       'record, because free wins hide how the real questions are going.']
   };

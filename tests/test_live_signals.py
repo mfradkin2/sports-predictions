@@ -283,13 +283,23 @@ class TestPropsLedger(unittest.TestCase):
     def test_scorecard_by_market_and_confidence(self):
         self.ledger.record(self.game, 'home', self.player, self._prop())
         self.ledger.record(self.game, 'home', self.player, self._prop(key='hr', stat='hr_pg',
-                                                                       pick='under'))  # had 1 HR
+                                                                       line=1.5))  # had 1 HR
         box = espn.boxscore_player_stats(summary_payload(), 'baseball')
         self.ledger.grade_game('g1', box)
         card = self.ledger.scorecard()
         self.assertEqual(card['total'], 2)
         self.assertEqual(card['by_key']['hits']['hit'], 1)
         self.assertEqual(card['by_key']['hr']['hit'], 0)
+
+    def test_a_near_certain_home_run_under_is_left_off_the_scorecard(self):
+        self.ledger.record(self.game, 'home', self.player, self._prop())
+        self.ledger.record(self.game, 'home', self.player, self._prop(key='hr', stat='hr_pg',
+                                                                       pick='under'))  # 66% under
+        box = espn.boxscore_player_stats(summary_payload(), 'baseball')
+        self.ledger.grade_game('g1', box)
+        card = self.ledger.scorecard()
+        self.assertEqual(card['total'], 1)
+        self.assertNotIn('hr', card['by_key'])
 
     def test_tuning_needs_thirty_graded(self):
         for i in range(29):

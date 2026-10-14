@@ -48,10 +48,16 @@ PER_GAME_MAX = {
 # opinion about sat at 50.4%. Free wins on players nobody would bet are not
 # skill, and counting them hides whether the rest is any good.
 #
+# Home runs and anytime goals are the same yes-or-no market at 0.5 and had
+# the same problem: hitters' HR unders landed 2808 times out of 3151 and
+# were 18% of every graded MLB prop, and goal unders landed 1732 of 2109,
+# 31% of the NHL's. Their overs are kept and still count.
+#
 # ``{market key: (side, probability at or above which to skip)}``. A market
 # listed here is still published on its other side, and at ordinary
 # probabilities; only the near-certain side is dropped.
-ONE_SIDED_PICKS = {'anytd': ('under', 0.65)}
+ONE_SIDED_PICKS = {'anytd': ('under', 0.65), 'hr': ('under', 0.65),
+                   'goal': ('under', 0.65)}
 
 
 def too_one_sided(key, pick, pick_prob):

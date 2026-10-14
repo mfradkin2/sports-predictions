@@ -104,7 +104,8 @@ Do not "fix" these. They are understood, and chasing them wastes a call-out.
   published, so none of this shows up as a fault.
 - **A prop row with `played=0` has no verdict.** The player did not take the
   field. Ordinary.
-- **Anytime-touchdown unders at 65% or more are not published,** and the ones
+- **Anytime-touchdown, home-run and goal unders at 65% or more are not
+  published** (overs are, and count), and the ones
   published before that rule are marked NOT COUNTED. The line is 0.5 for
   everyone on the field, so a third-string tight end drew a 96% "under" that
   duly landed; those were a quarter of every graded prop and lifted the
