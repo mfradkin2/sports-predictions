@@ -1,17 +1,145 @@
 {
- "archive_size": 0,
- "elo": {
-  "games_seen": {},
+ "archive_size": 1322,
+ "best": {
+  "adopted_at": "2026-10-14T22:16:42Z",
+  "metrics": {
+   "acc": 0.6818,
+   "brier": 0.2043,
+   "elo_only": {
+    "acc": 0.6761,
+    "brier": 0.2066,
+    "logloss": 0.6002,
+    "n": 1232
+   },
+   "glm_only": {
+    "acc": 0.6859,
+    "brier": 0.2089,
+    "logloss": 0.6071,
+    "n": 1232
+   },
+   "logloss": 0.5954,
+   "n": 1232
+  },
   "params": {
-   "hfa": 62.0,
-   "k": 18.0,
-   "mov": 1.0,
+   "blend_w": 0.25,
+   "calibration": {
+    "a": 1.289534174500102,
+    "b": -0.051796511442652786,
+    "n": 1232
+   },
+   "elo_params": {
+    "hfa": 37.199999999999996,
+    "k": 13.5,
+    "mov": 0.7,
+    "regress": 0.25,
+    "scale": 400.0
+   },
+   "features": [
+    "pyth_diff",
+    "form_diff",
+    "margin_diff",
+    "venue_diff",
+    "b2b_diff"
+   ],
+   "form": {
+    "decay": 0.9,
+    "n": 20
+   },
+   "l2": 0.5
+  },
+  "reason": "first fit"
+ },
+ "elo": {
+  "games_seen": {
+   "Atlanta Hawks": 22,
+   "Boston Celtics": 22,
+   "Brooklyn Nets": 20,
+   "Charlotte Hornets": 21,
+   "Chicago Bulls": 20,
+   "Cleveland Cavaliers": 25,
+   "Dallas Mavericks": 20,
+   "Denver Nuggets": 22,
+   "Detroit Pistons": 24,
+   "Golden State Warriors": 21,
+   "Houston Rockets": 22,
+   "Indiana Pacers": 20,
+   "LA Clippers": 20,
+   "Los Angeles Lakers": 23,
+   "Memphis Grizzlies": 20,
+   "Miami Heat": 20,
+   "Milwaukee Bucks": 20,
+   "Minnesota Timberwolves": 23,
+   "New Orleans Pelicans": 20,
+   "New York Knicks": 25,
+   "Oklahoma City Thunder": 24,
+   "Orlando Magic": 22,
+   "Philadelphia 76ers": 23,
+   "Phoenix Suns": 22,
+   "Portland Trail Blazers": 22,
+   "Sacramento Kings": 20,
+   "San Antonio Spurs": 26,
+   "Toronto Raptors": 22,
+   "Utah Jazz": 20,
+   "Washington Wizards": 20
+  },
+  "params": {
+   "hfa": 37.199999999999996,
+   "k": 13.5,
+   "mov": 0.7,
    "regress": 0.25,
    "scale": 400.0
   },
-  "ratings": {}
+  "ratings": {
+   "Atlanta Hawks": 1535.31,
+   "Boston Celtics": 1602.58,
+   "Brooklyn Nets": 1329.67,
+   "Charlotte Hornets": 1587.78,
+   "Chicago Bulls": 1376.52,
+   "Cleveland Cavaliers": 1571.0,
+   "Dallas Mavericks": 1389.23,
+   "Denver Nuggets": 1590.16,
+   "Detroit Pistons": 1609.5,
+   "Golden State Warriors": 1434.82,
+   "Houston Rockets": 1565.43,
+   "Indiana Pacers": 1357.96,
+   "LA Clippers": 1515.64,
+   "Los Angeles Lakers": 1570.24,
+   "Memphis Grizzlies": 1323.73,
+   "Miami Heat": 1509.99,
+   "Milwaukee Bucks": 1395.42,
+   "Minnesota Timberwolves": 1564.79,
+   "New Orleans Pelicans": 1428.95,
+   "New York Knicks": 1711.99,
+   "Oklahoma City Thunder": 1686.95,
+   "Orlando Magic": 1546.68,
+   "Philadelphia 76ers": 1540.65,
+   "Phoenix Suns": 1505.04,
+   "Portland Trail Blazers": 1525.45,
+   "Sacramento Kings": 1378.63,
+   "San Antonio Spurs": 1693.64,
+   "Toronto Raptors": 1529.46,
+   "Utah Jazz": 1334.34,
+   "Washington Wizards": 1288.46
+  }
  },
- "last_metrics": {},
+ "last_metrics": {
+  "acc": 0.6818,
+  "brier": 0.2043,
+  "elo_only": {
+   "acc": 0.6761,
+   "brier": 0.2066,
+   "logloss": 0.6002,
+   "n": 1232
+  },
+  "glm_only": {
+   "acc": 0.6859,
+   "brier": 0.2089,
+   "logloss": 0.6071,
+   "n": 1232
+  },
+  "logloss": 0.5954,
+  "n": 1232
+ },
  "league": "nba",
  "ledger": {
   "components": {},
@@ -21,15 +149,6 @@
  "model_version": 3,
  "new_games_this_run": 0,
  "optimizer": [
-  {
-   "adopted": false,
-   "at": "2026-10-13T19:33:30Z",
-   "end": null,
-   "evals": 1,
-   "moves": [],
-   "probe": null,
-   "start": null
-  },
   {
    "adopted": false,
    "at": "2026-10-13T19:37:49Z",
@@ -452,6 +571,57 @@
    "moves": [],
    "probe": null,
    "start": null
+  },
+  {
+   "adopted": true,
+   "at": "2026-10-14T22:16:42Z",
+   "end": 0.5954,
+   "evals": 37,
+   "moves": [
+    {
+     "from": 0.5977,
+     "move": "without elo_diff",
+     "to": 0.5973
+    },
+    {
+     "from": 0.5973,
+     "move": "without rest_diff",
+     "to": 0.5972
+    },
+    {
+     "from": 0.5972,
+     "move": "form window",
+     "to": 0.5969
+    },
+    {
+     "from": 0.5969,
+     "move": "without h2h_diff",
+     "to": 0.5956
+    },
+    {
+     "from": 0.5956,
+     "move": "form window",
+     "to": 0.5954
+    }
+   ],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "venue_diff",
+     "h2h_diff",
+     "wpct_diff",
+     "sos_diff",
+     "exp_diff"
+    ],
+    "form": {
+     "decay": 0.94,
+     "n": 16
+    },
+    "logloss": 0.5978,
+    "won": false
+   },
+   "start": 0.5977
   }
  ],
  "props": {
@@ -473,14 +643,6 @@
   "tuning": {}
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-10-13T12:03:18Z",
-   "metrics": {},
-   "model_version": 3,
-   "notes": "0 completed games",
-   "reason": "challenger produced no validation score"
-  },
   {
    "adopted": false,
    "at": "2026-10-13T12:13:27Z",
@@ -952,7 +1114,32 @@
    "model_version": 3,
    "notes": "0 completed games",
    "reason": "challenger produced no validation score"
+  },
+  {
+   "adopted": true,
+   "at": "2026-10-14T22:16:42Z",
+   "metrics": {
+    "acc": 0.6818,
+    "brier": 0.2043,
+    "elo_only": {
+     "acc": 0.6761,
+     "brier": 0.2066,
+     "logloss": 0.6002,
+     "n": 1232
+    },
+    "glm_only": {
+     "acc": 0.6859,
+     "brier": 0.2089,
+     "logloss": 0.6071,
+     "n": 1232
+    },
+    "logloss": 0.5954,
+    "n": 1232
+   },
+   "model_version": 3,
+   "notes": "1322 completed games; changed: without elo_diff, without rest_diff, form window, without h2h_diff, form window",
+   "reason": "first fit"
   }
  ],
- "updated": "2026-10-14T21:29:28Z"
+ "updated": "2026-10-14T22:16:45Z"
 }

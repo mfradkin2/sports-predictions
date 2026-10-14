@@ -1,29 +1,40 @@
 {
- "archive_size": 105,
+ "archive_size": 1499,
  "best": {
-  "adopted_at": "2026-10-14T02:30:07Z",
+  "adopted_at": "2026-10-14T22:17:50Z",
   "metrics": {
-   "acc": 0.5773,
-   "brier": 0.2437,
-   "logloss": 0.6803,
-   "n": 97
+   "acc": 0.5507,
+   "brier": 0.2442,
+   "elo_only": {
+    "acc": 0.5564,
+    "brier": 0.245,
+    "logloss": 0.683,
+    "n": 1409
+   },
+   "glm_only": {
+    "acc": 0.5436,
+    "brier": 0.2499,
+    "logloss": 0.697,
+    "n": 1409
+   },
+   "logloss": 0.6814,
+   "n": 1409
   },
   "params": {
-   "blend_w": 0.0,
+   "blend_w": 0.2,
    "calibration": {
-    "a": 1.0,
-    "b": 0.0,
-    "n": 0
+    "a": 1.259019160222326,
+    "b": -0.05775617603238477,
+    "n": 1409
    },
    "elo_params": {
-    "hfa": 42.5,
-    "k": 12.0,
+    "hfa": 20.4,
+    "k": 8.399999999999999,
     "mov": 1.0,
     "regress": 0.3,
     "scale": 400.0
    },
    "features": [
-    "elo_diff",
     "pyth_diff",
     "form_diff",
     "margin_diff",
@@ -33,95 +44,107 @@
     "h2h_diff"
    ],
    "form": {
-    "decay": 0.9,
+    "decay": 0.94,
     "n": 20
    },
-   "l2": null
+   "l2": 1.5
   },
-  "reason": "log loss 0.6808 -> 0.6803"
+  "reason": "more evidence (97 -> 1409 games)"
  },
  "elo": {
   "games_seen": {
-   "Anaheim Ducks": 6,
-   "Boston Bruins": 7,
-   "Buffalo Sabres": 7,
-   "Calgary Flames": 6,
-   "Carolina Hurricanes": 8,
-   "Chicago Blackhawks": 7,
-   "Colorado Avalanche": 6,
-   "Columbus Blue Jackets": 5,
-   "Dallas Stars": 6,
-   "Detroit Red Wings": 6,
-   "Edmonton Oilers": 6,
-   "Florida Panthers": 7,
-   "Los Angeles Kings": 5,
-   "Minnesota Wild": 7,
-   "Montreal Canadiens": 6,
-   "Nashville Predators": 6,
-   "New Jersey Devils": 6,
-   "New York Islanders": 6,
-   "New York Rangers": 8,
-   "Ottawa Senators": 7,
-   "Philadelphia Flyers": 8,
-   "Pittsburgh Penguins": 7,
-   "San Jose Sharks": 6,
-   "Seattle Kraken": 7,
-   "St. Louis Blues": 6,
-   "Tampa Bay Lightning": 6,
-   "Toronto Maple Leafs": 7,
-   "Utah Mammoth": 7,
-   "Vancouver Canucks": 8,
-   "Vegas Golden Knights": 8,
-   "Washington Capitals": 6,
-   "Winnipeg Jets": 6
+   "Anaheim Ducks": 29,
+   "Boston Bruins": 29,
+   "Buffalo Sabres": 30,
+   "Calgary Flames": 26,
+   "Carolina Hurricanes": 33,
+   "Chicago Blackhawks": 27,
+   "Colorado Avalanche": 29,
+   "Columbus Blue Jackets": 25,
+   "Dallas Stars": 28,
+   "Detroit Red Wings": 26,
+   "Edmonton Oilers": 28,
+   "Florida Panthers": 27,
+   "Los Angeles Kings": 26,
+   "Minnesota Wild": 30,
+   "Montreal Canadiens": 31,
+   "Nashville Predators": 26,
+   "New Jersey Devils": 26,
+   "New York Islanders": 26,
+   "New York Rangers": 28,
+   "Ottawa Senators": 28,
+   "Philadelphia Flyers": 31,
+   "Pittsburgh Penguins": 29,
+   "San Jose Sharks": 26,
+   "Seattle Kraken": 27,
+   "St. Louis Blues": 26,
+   "Tampa Bay Lightning": 28,
+   "Toronto Maple Leafs": 27,
+   "Utah Mammoth": 29,
+   "Vancouver Canucks": 28,
+   "Vegas Golden Knights": 34,
+   "Washington Capitals": 26,
+   "Winnipeg Jets": 26
   },
   "params": {
-   "hfa": 42.5,
-   "k": 12.0,
+   "hfa": 20.4,
+   "k": 8.399999999999999,
    "mov": 1.0,
    "regress": 0.3,
    "scale": 400.0
   },
   "ratings": {
-   "Anaheim Ducks": 1507.84,
-   "Boston Bruins": 1521.4,
-   "Buffalo Sabres": 1482.4,
-   "Calgary Flames": 1465.11,
-   "Carolina Hurricanes": 1529.63,
-   "Chicago Blackhawks": 1476.69,
-   "Colorado Avalanche": 1517.88,
-   "Columbus Blue Jackets": 1484.2,
-   "Dallas Stars": 1498.39,
-   "Detroit Red Wings": 1476.47,
-   "Edmonton Oilers": 1533.79,
-   "Florida Panthers": 1498.21,
-   "Los Angeles Kings": 1472.28,
-   "Minnesota Wild": 1514.69,
-   "Montreal Canadiens": 1491.13,
-   "Nashville Predators": 1489.54,
-   "New Jersey Devils": 1489.06,
-   "New York Islanders": 1502.29,
-   "New York Rangers": 1530.09,
-   "Ottawa Senators": 1510.21,
-   "Philadelphia Flyers": 1448.88,
-   "Pittsburgh Penguins": 1500.31,
-   "San Jose Sharks": 1485.62,
-   "Seattle Kraken": 1524.18,
-   "St. Louis Blues": 1509.99,
-   "Tampa Bay Lightning": 1508.39,
-   "Toronto Maple Leafs": 1501.39,
-   "Utah Mammoth": 1522.59,
-   "Vancouver Canucks": 1471.98,
-   "Vegas Golden Knights": 1527.89,
-   "Washington Capitals": 1502.21,
-   "Winnipeg Jets": 1505.29
+   "Anaheim Ducks": 1491.89,
+   "Boston Bruins": 1527.78,
+   "Buffalo Sabres": 1533.67,
+   "Calgary Flames": 1443.68,
+   "Carolina Hurricanes": 1591.07,
+   "Chicago Blackhawks": 1434.17,
+   "Colorado Avalanche": 1563.4,
+   "Columbus Blue Jackets": 1495.57,
+   "Dallas Stars": 1525.17,
+   "Detroit Red Wings": 1472.02,
+   "Edmonton Oilers": 1518.96,
+   "Florida Panthers": 1485.55,
+   "Los Angeles Kings": 1451.53,
+   "Minnesota Wild": 1535.72,
+   "Montreal Canadiens": 1528.9,
+   "Nashville Predators": 1484.49,
+   "New Jersey Devils": 1482.63,
+   "New York Islanders": 1491.24,
+   "New York Rangers": 1510.19,
+   "Ottawa Senators": 1527.73,
+   "Philadelphia Flyers": 1476.47,
+   "Pittsburgh Penguins": 1507.76,
+   "San Jose Sharks": 1466.37,
+   "Seattle Kraken": 1481.25,
+   "St. Louis Blues": 1505.82,
+   "Tampa Bay Lightning": 1541.29,
+   "Toronto Maple Leafs": 1458.17,
+   "Utah Mammoth": 1520.44,
+   "Vancouver Canucks": 1407.53,
+   "Vegas Golden Knights": 1541.88,
+   "Washington Capitals": 1518.59,
+   "Winnipeg Jets": 1479.07
   }
  },
  "last_metrics": {
-  "acc": 0.5714,
-  "brier": 0.2458,
-  "logloss": 0.6847,
-  "n": 105
+  "acc": 0.5507,
+  "brier": 0.2442,
+  "elo_only": {
+   "acc": 0.5564,
+   "brier": 0.245,
+   "logloss": 0.683,
+   "n": 1409
+  },
+  "glm_only": {
+   "acc": 0.5436,
+   "brier": 0.2499,
+   "logloss": 0.697,
+   "n": 1409
+  },
+  "logloss": 0.6814,
+  "n": 1409
  },
  "league": "nhl",
  "ledger": {
@@ -151,15 +174,6 @@
  "model_version": 3,
  "new_games_this_run": 0,
  "optimizer": [
-  {
-   "adopted": false,
-   "at": "2026-10-13T19:34:10Z",
-   "end": null,
-   "evals": 1,
-   "moves": [],
-   "probe": null,
-   "start": 0.6821
-  },
   {
    "adopted": false,
    "at": "2026-10-13T19:38:16Z",
@@ -582,6 +596,45 @@
    "moves": [],
    "probe": null,
    "start": 0.6835
+  },
+  {
+   "adopted": true,
+   "at": "2026-10-14T22:17:50Z",
+   "end": 0.6814,
+   "evals": 28,
+   "moves": [
+    {
+     "from": 0.6821,
+     "move": "without elo_diff",
+     "to": 0.6816
+    },
+    {
+     "from": 0.6816,
+     "move": "form decay",
+     "to": 0.6814
+    }
+   ],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "form_diff",
+     "margin_diff",
+     "venue_diff",
+     "rest_diff",
+     "b2b_diff",
+     "wpct_diff",
+     "def_diff",
+     "exp_diff"
+    ],
+    "form": {
+     "decay": 0.9,
+     "n": 8
+    },
+    "logloss": 0.6828,
+    "won": false
+   },
+   "start": 0.6821
   }
  ],
  "props": {
@@ -589,7 +642,7 @@
   "lines": {
    "games": 13,
    "mode": "book",
-   "status": "live"
+   "status": "cached"
   },
   "record": {
    "by_conf": {
@@ -778,19 +831,6 @@
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-10-13T12:03:42Z",
-   "metrics": {
-    "acc": 0.5618,
-    "brier": 0.2445,
-    "logloss": 0.6821,
-    "n": 89
-   },
-   "model_version": 3,
-   "notes": "89 completed games",
-   "reason": "kept incumbent (challenger 0.6821 vs 0.6821)"
-  },
   {
    "adopted": false,
    "at": "2026-10-13T12:14:00Z",
@@ -1557,7 +1597,32 @@
    "model_version": 3,
    "notes": "105 completed games",
    "reason": "kept incumbent (challenger 0.6835 vs 0.6803)"
+  },
+  {
+   "adopted": true,
+   "at": "2026-10-14T22:17:50Z",
+   "metrics": {
+    "acc": 0.5507,
+    "brier": 0.2442,
+    "elo_only": {
+     "acc": 0.5564,
+     "brier": 0.245,
+     "logloss": 0.683,
+     "n": 1409
+    },
+    "glm_only": {
+     "acc": 0.5436,
+     "brier": 0.2499,
+     "logloss": 0.697,
+     "n": 1409
+    },
+    "logloss": 0.6814,
+    "n": 1409
+   },
+   "model_version": 3,
+   "notes": "1499 completed games; changed: without elo_diff, form decay",
+   "reason": "more evidence (97 -> 1409 games)"
   }
  ],
- "updated": "2026-10-14T21:30:06Z"
+ "updated": "2026-10-14T22:17:53Z"
 }
