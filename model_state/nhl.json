@@ -176,15 +176,6 @@
  "optimizer": [
   {
    "adopted": false,
-   "at": "2026-10-14T18:45:11Z",
-   "end": null,
-   "evals": 1,
-   "moves": [],
-   "probe": null,
-   "start": 0.6835
-  },
-  {
-   "adopted": false,
    "at": "2026-10-14T18:50:04Z",
    "end": null,
    "evals": 1,
@@ -1358,6 +1349,33 @@
     "won": false
    },
    "start": 0.6808
+  },
+  {
+   "adopted": false,
+   "at": "2026-10-15T20:30:35Z",
+   "end": 0.6808,
+   "evals": 19,
+   "moves": [],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "margin_diff",
+     "venue_diff",
+     "b2b_diff",
+     "wpct_diff",
+     "off_diff",
+     "def_diff",
+     "sos_diff"
+    ],
+    "form": {
+     "decay": 0.9,
+     "n": 40
+    },
+    "logloss": 0.6828,
+    "won": false
+   },
+   "start": 0.6808
   }
  ],
  "props": {
@@ -1365,7 +1383,7 @@
   "lines": {
    "games": 11,
    "mode": "book",
-   "status": "cached"
+   "status": "live"
   },
   "record": {
    "by_conf": {
@@ -1560,19 +1578,6 @@
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-10-14T12:30:39Z",
-   "metrics": {
-    "acc": 0.5524,
-    "brier": 0.2452,
-    "logloss": 0.6835,
-    "n": 105
-   },
-   "model_version": 3,
-   "notes": "105 completed games",
-   "reason": "kept incumbent (challenger 0.6835 vs 0.6803)"
-  },
   {
    "adopted": false,
    "at": "2026-10-14T13:30:40Z",
@@ -2843,7 +2848,32 @@
    "model_version": 3,
    "notes": "1501 completed games",
    "reason": "kept incumbent (challenger 0.6808 vs 0.6806)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-10-15T20:30:34Z",
+   "metrics": {
+    "acc": 0.5549,
+    "brier": 0.2439,
+    "elo_only": {
+     "acc": 0.5556,
+     "brier": 0.245,
+     "logloss": 0.6831,
+     "n": 1411
+    },
+    "glm_only": {
+     "acc": 0.5485,
+     "brier": 0.2496,
+     "logloss": 0.6927,
+     "n": 1411
+    },
+    "logloss": 0.6808,
+    "n": 1411
+   },
+   "model_version": 3,
+   "notes": "1501 completed games",
+   "reason": "kept incumbent (challenger 0.6808 vs 0.6806)"
   }
  ],
- "updated": "2026-10-15T19:30:09Z"
+ "updated": "2026-10-15T20:30:40Z"
 }
