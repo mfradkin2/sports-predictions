@@ -21624,39 +21624,79 @@ game_id,game_date,athlete_id,player,side,key,label,stat,dist,line,line_source,bo
 401908044,2026-10-26,5149101,Cooper Pratt,away,rbi,RBIs,rbi_pg,poisson,0.5,book,4 books,0.09,0.1,0.224,under,high,2026-10-26T23:59:24Z,2.0,1,1,0,0,0.089,0.2577,0.224,10
 401908044,2026-10-26,5149101,Cooper Pratt,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.37,0.4,0.3141,under,high,2026-10-26T23:59:24Z,1.0,1,1,0,0,0.312,0.3147,0.3141,10
 401908044,2026-10-26,5149101,Cooper Pratt,away,tb,Total Bases,tb_pg,negbin,0.5,book,5 books,0.98,1.1,0.5819,over,med,2026-10-26T23:59:24Z,1.0,1,1,1,0,0.6749,0.5587,0.5819,10
-401908045,2026-10-27,31283,Christian Yelich,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.98,1.0,0.6295,over,med,2026-10-27T06:24:20Z,,,0,,,0.6798,0.6182,0.6295,9
-401908045,2026-10-27,31283,Christian Yelich,away,rbi,RBIs,rbi_pg,poisson,0.5,book,DraftKings,0.6,0.44,0.3173,over,low,2026-10-27T06:24:20Z,,,0,,,0.4525,0.2869,0.3173,9
-401908045,2026-10-27,31283,Christian Yelich,away,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.53,0.44,0.3908,over,low,2026-10-27T06:24:20Z,,,0,,,0.4112,0.3862,0.3908,9
-401908045,2026-10-27,31283,Christian Yelich,away,tb,Total Bases,tb_pg,negbin,1.5,book,DraftKings,1.49,1.33,0.3734,under,med,2026-10-27T06:24:20Z,,,0,,,0.3482,0.379,0.3734,9
-401908045,2026-10-27,33481,Yandy Diaz,home,tb,Total Bases,tb_pg,negbin,1.5,book,Caesars,1.61,2.0,0.4207,over,low,2026-10-27T06:24:20Z,,,0,,,0.4671,0.408,0.4207,11
-401908045,2026-10-27,35013,Jake Bauers,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.59,0.9,0.5631,over,low,2026-10-27T06:24:20Z,,,0,,,0.4769,0.5846,0.5631,10
-401908045,2026-10-27,35013,Jake Bauers,away,rbi,RBIs,rbi_pg,poisson,0.5,book,DraftKings,0.38,0.6,0.2963,under,high,2026-10-27T06:24:20Z,,,0,,,0.3156,0.2915,0.2963,10
-401908045,2026-10-27,35013,Jake Bauers,away,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.31,0.3,0.3888,under,med,2026-10-27T06:24:20Z,,,0,,,0.2651,0.4198,0.3888,10
-401908045,2026-10-27,39895,William Contreras,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.09,1.5,0.6367,over,med,2026-10-27T06:24:20Z,,,0,,,0.7192,0.616,0.6367,10
-401908045,2026-10-27,39895,William Contreras,away,rbi,RBIs,rbi_pg,poisson,0.5,book,DraftKings,0.53,0.7,0.333,over,low,2026-10-27T06:24:20Z,,,0,,,0.4114,0.3134,0.333,10
-401908045,2026-10-27,39895,William Contreras,away,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.55,0.5,0.4025,over,low,2026-10-27T06:24:20Z,,,0,,,0.4202,0.398,0.4025,10
-401908045,2026-10-27,41179,Brice Turang,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.96,0.7,0.6207,over,med,2026-10-27T06:24:20Z,,,0,,,0.6754,0.6071,0.6207,10
-401908045,2026-10-27,41179,Brice Turang,away,rbi,RBIs,rbi_pg,poisson,0.5,book,DraftKings,0.42,0.2,0.2988,under,high,2026-10-27T06:24:20Z,,,0,,,0.3427,0.2878,0.2988,10
-401908045,2026-10-27,41179,Brice Turang,away,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.61,0.7,0.3946,over,low,2026-10-27T06:24:20Z,,,0,,,0.4585,0.3786,0.3946,10
-401908045,2026-10-27,42604,Griffin Jax,home,er,Earned Runs,p_er_pg,negbin,1.5,book,3 books,0.53,2.0,0.4547,under,low,2026-10-27T06:24:20Z,,,0,,,0.1223,0.4713,0.4547,2
-401908045,2026-10-27,42604,Griffin Jax,home,k,Strikeouts,p_so_pg,negbin,3.5,book,4 books,1.36,3.0,0.4956,under,low,2026-10-27T06:24:20Z,,,0,,,0.0934,0.5157,0.4956,2
-401908045,2026-10-27,42604,Griffin Jax,home,outs,Outs Recorded,outs_pg,normal,11.5,book,5 books,2.92,9.0,0.4573,under,low,2026-10-27T06:24:20Z,,,0,,,0.0618,0.4771,0.4573,2
-401908045,2026-10-27,42604,Griffin Jax,home,p_hits,Hits Allowed,p_h_pg,negbin,3.5,book,3 books,1.03,3.0,0.3932,under,med,2026-10-27T06:24:20Z,,,0,,,0.0463,0.4106,0.3932,2
-401908045,2026-10-27,42987,David Hamilton,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.48,1.0,0.5281,under,low,2026-10-27T06:24:20Z,,,0,,,0.4053,0.5465,0.5281,6
-401908045,2026-10-27,42987,David Hamilton,away,rbi,RBIs,rbi_pg,poisson,0.5,book,DraftKings,0.25,0.5,0.2342,under,high,2026-10-27T06:24:20Z,,,0,,,0.2179,0.2367,0.2342,6
-401908045,2026-10-27,42987,David Hamilton,away,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.37,0.83,0.3059,under,high,2026-10-27T06:24:20Z,,,0,,,0.3088,0.3054,0.3059,6
-401908045,2026-10-27,4313442,Garrett Mitchell,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.69,0.7,0.5731,over,med,2026-10-27T06:24:20Z,,,0,,,0.5291,0.5841,0.5731,10
-401908045,2026-10-27,4313442,Garrett Mitchell,away,rbi,RBIs,rbi_pg,poisson,0.5,book,DraftKings,0.38,0.4,0.2864,under,high,2026-10-27T06:24:20Z,,,0,,,0.3175,0.2787,0.2864,10
-401908045,2026-10-27,4313442,Garrett Mitchell,away,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.57,0.6,0.3721,over,low,2026-10-27T06:24:20Z,,,0,,,0.4366,0.3559,0.3721,10
-401908045,2026-10-27,4313442,Garrett Mitchell,away,tb,Total Bases,tb_pg,negbin,0.5,book,Fanatics,1.36,1.5,0.5665,over,low,2026-10-27T06:24:20Z,,,0,,,0.5321,0.5752,0.5665,10
-401908045,2026-10-27,4417795,Sal Frelick,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,1.01,0.86,0.6078,over,med,2026-10-27T06:24:20Z,,,0,,,0.701,0.5915,0.6078,7
-401908045,2026-10-27,4417795,Sal Frelick,away,rbi,RBIs,rbi_pg,poisson,0.5,book,DraftKings,0.42,0.43,0.2631,under,high,2026-10-27T06:24:20Z,,,0,,,0.3436,0.249,0.2631,7
-401908045,2026-10-27,4417795,Sal Frelick,away,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.52,0.57,0.3204,over,low,2026-10-27T06:24:20Z,,,0,,,0.4045,0.3056,0.3204,7
-401908045,2026-10-27,4917849,Victor Mesa Jr.,home,hits,Hits,hits_pg,binomial,0.5,book,Fanatics,0.49,0.55,0.5309,under,low,2026-10-27T06:24:20Z,,,0,,,0.4128,0.5633,0.5309,11
-401908045,2026-10-27,4917869,Jackson Chourio,away,hits,Hits,hits_pg,binomial,1.5,book,DraftKings,1.07,1.0,0.3123,under,high,2026-10-27T06:24:20Z,,,0,,,0.293,0.3171,0.3123,10
-401908045,2026-10-27,4917869,Jackson Chourio,away,rbi,RBIs,rbi_pg,poisson,0.5,book,DraftKings,0.62,0.8,0.357,over,low,2026-10-27T06:24:20Z,,,0,,,0.4607,0.3311,0.357,10
-401908045,2026-10-27,4917869,Jackson Chourio,away,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.58,0.4,0.4492,over,low,2026-10-27T06:24:20Z,,,0,,,0.4387,0.4518,0.4492,10
-401908045,2026-10-27,4917869,Jackson Chourio,away,tb,Total Bases,tb_pg,negbin,1.5,book,2 books,1.68,1.6,0.4298,over,low,2026-10-27T06:24:20Z,,,0,,,0.3375,0.4529,0.4298,10
-401908045,2026-10-27,5149101,Cooper Pratt,away,hits,Hits,hits_pg,binomial,0.5,book,DraftKings,0.98,1.0,0.5907,over,med,2026-10-27T06:24:20Z,,,0,,,0.6785,0.5688,0.5907,10
-401908045,2026-10-27,5149101,Cooper Pratt,away,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.1,0.1,0.221,under,high,2026-10-27T06:24:20Z,,,0,,,0.0911,0.2535,0.221,10
-401908045,2026-10-27,5149101,Cooper Pratt,away,runs,Runs Scored,runs_pg,poisson,0.5,book,DraftKings,0.38,0.4,0.316,under,high,2026-10-27T06:24:20Z,,,0,,,0.3179,0.3155,0.316,10
+401908045,2026-10-27,31283,Christian Yelich,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,1.01,1.1,0.632,over,med,2026-10-27T10:24:22Z,,,0,,,0.6921,0.617,0.632,10
+401908045,2026-10-27,31283,Christian Yelich,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.61,0.5,0.3211,over,low,2026-10-27T10:24:22Z,,,0,,,0.4581,0.2869,0.3211,10
+401908045,2026-10-27,31283,Christian Yelich,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.54,0.5,0.395,over,low,2026-10-27T10:24:22Z,,,0,,,0.4182,0.3892,0.395,10
+401908045,2026-10-27,31283,Christian Yelich,away,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.5,1.4,0.3744,under,med,2026-10-27T10:24:22Z,,,0,,,0.3745,0.3743,0.3744,10
+401908045,2026-10-27,33481,Yandy Diaz,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,1.06,1.17,0.668,over,high,2026-10-27T10:24:22Z,,,0,,,0.6994,0.6586,0.668,12
+401908045,2026-10-27,33481,Yandy Diaz,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.45,0.42,0.308,under,high,2026-10-27T10:24:22Z,,,0,,,0.365,0.2909,0.308,12
+401908045,2026-10-27,33481,Yandy Diaz,home,runs,Runs Scored,runs_pg,poisson,0.5,book,BetMGM,0.5,0.67,0.4032,under,med,2026-10-27T10:24:22Z,,,0,,,0.3942,0.4059,0.4032,12
+401908045,2026-10-27,33481,Yandy Diaz,home,tb,Total Bases,tb_pg,negbin,1.5,book,4 books,1.62,2.08,0.4198,over,low,2026-10-27T10:24:22Z,,,0,,,0.4947,0.3974,0.4198,12
+401908045,2026-10-27,35013,Jake Bauers,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.58,0.82,0.5581,over,low,2026-10-27T10:24:22Z,,,0,,,0.4679,0.5829,0.5581,11
+401908045,2026-10-27,35013,Jake Bauers,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.37,0.55,0.3034,under,high,2026-10-27T10:24:22Z,,,0,,,0.3098,0.3016,0.3034,11
+401908045,2026-10-27,35013,Jake Bauers,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.32,0.36,0.398,under,med,2026-10-27T10:24:22Z,,,0,,,0.2772,0.4312,0.398,11
+401908045,2026-10-27,35013,Jake Bauers,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,0.86,1.18,0.3563,under,med,2026-10-27T10:24:22Z,,,0,,,0.2733,0.3792,0.3563,11
+401908045,2026-10-27,39895,William Contreras,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,1.13,1.64,0.659,over,med,2026-10-27T10:24:22Z,,,0,,,0.7367,0.6377,0.659,11
+401908045,2026-10-27,39895,William Contreras,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.54,0.73,0.3674,over,low,2026-10-27T10:24:22Z,,,0,,,0.4182,0.3535,0.3674,11
+401908045,2026-10-27,39895,William Contreras,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.56,0.55,0.408,over,low,2026-10-27T10:24:22Z,,,0,,,0.4268,0.4028,0.408,11
+401908045,2026-10-27,39895,William Contreras,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.63,2.55,0.4374,over,low,2026-10-27T10:24:22Z,,,0,,,0.6066,0.3909,0.4374,11
+401908045,2026-10-27,40576,Taylor Walls,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.48,0.33,0.4489,under,low,2026-10-27T10:24:22Z,,,0,,,0.4105,0.4604,0.4489,12
+401908045,2026-10-27,40576,Taylor Walls,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.24,0.0,0.206,under,high,2026-10-27T10:24:22Z,,,0,,,0.2113,0.2044,0.206,12
+401908045,2026-10-27,40576,Taylor Walls,home,runs,Runs Scored,runs_pg,poisson,0.5,book,BetMGM,0.27,0.17,0.2724,under,high,2026-10-27T10:24:22Z,,,0,,,0.2345,0.2838,0.2724,12
+401908045,2026-10-27,40576,Taylor Walls,home,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,0.61,0.33,0.4091,over,low,2026-10-27T10:24:22Z,,,0,,,0.2745,0.4494,0.4091,12
+401908045,2026-10-27,40810,Jonathan Aranda,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.99,1.08,0.6276,over,med,2026-10-27T10:24:22Z,,,0,,,0.6827,0.611,0.6276,12
+401908045,2026-10-27,40810,Jonathan Aranda,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.46,0.42,0.2912,under,high,2026-10-27T10:24:22Z,,,0,,,0.3663,0.2687,0.2912,12
+401908045,2026-10-27,40810,Jonathan Aranda,home,runs,Runs Scored,runs_pg,poisson,0.5,book,BetMGM,0.44,0.42,0.3741,under,med,2026-10-27T10:24:22Z,,,0,,,0.3553,0.3797,0.3741,12
+401908045,2026-10-27,40810,Jonathan Aranda,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.36,1.42,0.3404,under,med,2026-10-27T10:24:22Z,,,0,,,0.3195,0.3467,0.3404,12
+401908045,2026-10-27,41179,Brice Turang,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,1.01,0.91,0.6258,over,med,2026-10-27T10:24:22Z,,,0,,,0.6938,0.6071,0.6258,11
+401908045,2026-10-27,41179,Brice Turang,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.46,0.36,0.3226,under,high,2026-10-27T10:24:22Z,,,0,,,0.3669,0.3105,0.3226,11
+401908045,2026-10-27,41179,Brice Turang,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.62,0.73,0.4011,over,low,2026-10-27T10:24:22Z,,,0,,,0.4638,0.3839,0.4011,11
+401908045,2026-10-27,41179,Brice Turang,away,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.44,1.45,0.3716,under,med,2026-10-27T10:24:22Z,,,0,,,0.3873,0.3673,0.3716,11
+401908045,2026-10-27,41359,Richie Palacios,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.8,0.89,0.5243,over,low,2026-10-27T10:24:22Z,,,0,,,0.6091,0.5052,0.5243,9
+401908045,2026-10-27,41359,Richie Palacios,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.39,0.44,0.2471,under,high,2026-10-27T10:24:22Z,,,0,,,0.3246,0.2296,0.2471,9
+401908045,2026-10-27,41359,Richie Palacios,home,runs,Runs Scored,runs_pg,poisson,0.5,book,BetMGM,0.2,0.22,0.2645,under,high,2026-10-27T10:24:22Z,,,0,,,0.1784,0.2838,0.2645,9
+401908045,2026-10-27,41359,Richie Palacios,home,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,1.03,1.22,0.4999,over,low,2026-10-27T10:24:22Z,,,0,,,0.6142,0.4742,0.4999,9
+401908045,2026-10-27,42604,Griffin Jax,home,er,Earned Runs,p_er_pg,negbin,1.5,book,4 books,0.52,2.0,0.4454,under,low,2026-10-27T10:24:22Z,,,0,,,0.122,0.4615,0.4454,2
+401908045,2026-10-27,42604,Griffin Jax,home,k,Strikeouts,p_so_pg,negbin,3.5,book,7 books,1.36,3.0,0.4989,under,low,2026-10-27T10:24:22Z,,,0,,,0.0934,0.5192,0.4989,2
+401908045,2026-10-27,42604,Griffin Jax,home,outs,Outs Recorded,outs_pg,normal,11.5,book,6 books,2.92,9.0,0.4573,under,low,2026-10-27T10:24:22Z,,,0,,,0.0618,0.4771,0.4573,2
+401908045,2026-10-27,42604,Griffin Jax,home,p_hits,Hits Allowed,p_h_pg,negbin,3.5,book,4 books,1.03,3.0,0.4014,under,med,2026-10-27T10:24:22Z,,,0,,,0.0461,0.4191,0.4014,2
+401908045,2026-10-27,42987,David Hamilton,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.49,1.0,0.5092,under,low,2026-10-27T10:24:22Z,,,0,,,0.4156,0.5256,0.5092,7
+401908045,2026-10-27,42987,David Hamilton,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.27,0.57,0.2562,under,high,2026-10-27T10:24:22Z,,,0,,,0.2332,0.2603,0.2562,7
+401908045,2026-10-27,42987,David Hamilton,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.39,0.86,0.3137,under,high,2026-10-27T10:24:22Z,,,0,,,0.3203,0.3125,0.3137,7
+401908045,2026-10-27,42987,David Hamilton,away,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,0.75,1.57,0.5221,over,low,2026-10-27T10:24:22Z,,,0,,,0.7003,0.491,0.5221,7
+401908045,2026-10-27,4313442,Garrett Mitchell,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.71,0.73,0.5727,over,med,2026-10-27T10:24:22Z,,,0,,,0.5456,0.5801,0.5727,11
+401908045,2026-10-27,4313442,Garrett Mitchell,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.44,0.45,0.3011,under,high,2026-10-27T10:24:22Z,,,0,,,0.3528,0.2869,0.3011,11
+401908045,2026-10-27,4313442,Garrett Mitchell,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.61,0.64,0.3752,over,low,2026-10-27T10:24:22Z,,,0,,,0.4567,0.3528,0.3752,11
+401908045,2026-10-27,4313442,Garrett Mitchell,away,tb,Total Bases,tb_pg,negbin,0.5,book,4 books,1.32,1.45,0.5627,over,low,2026-10-27T10:24:22Z,,,0,,,0.5489,0.5665,0.5627,11
+401908045,2026-10-27,4417795,Sal Frelick,away,hits,Hits,hits_pg,binomial,0.5,book,3 books,1.01,0.88,0.6062,over,med,2026-10-27T10:24:22Z,,,0,,,0.698,0.5878,0.6062,8
+401908045,2026-10-27,4417795,Sal Frelick,away,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.44,0.5,0.2739,under,high,2026-10-27T10:24:22Z,,,0,,,0.3534,0.258,0.2739,8
+401908045,2026-10-27,4417795,Sal Frelick,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.53,0.62,0.3262,over,low,2026-10-27T10:24:22Z,,,0,,,0.4121,0.309,0.3262,8
+401908045,2026-10-27,4417795,Sal Frelick,away,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,1.35,1.38,0.5916,over,med,2026-10-27T10:24:22Z,,,0,,,0.6319,0.5835,0.5916,8
+401908045,2026-10-27,4679983,Chandler Simpson,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.94,0.82,0.6598,over,med,2026-10-27T10:24:22Z,,,0,,,0.6663,0.658,0.6598,11
+401908045,2026-10-27,4679983,Chandler Simpson,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.26,0.45,0.2538,under,high,2026-10-27T10:24:22Z,,,0,,,0.2304,0.2603,0.2538,11
+401908045,2026-10-27,4679983,Chandler Simpson,home,runs,Runs Scored,runs_pg,poisson,0.5,book,BetMGM,0.42,0.45,0.3194,under,high,2026-10-27T10:24:22Z,,,0,,,0.3446,0.3125,0.3194,11
+401908045,2026-10-27,4679983,Chandler Simpson,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.05,1.09,0.3279,under,high,2026-10-27T10:24:22Z,,,0,,,0.2473,0.3501,0.3279,11
+401908045,2026-10-27,4725251,Liam Hicks,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.61,0.64,0.5599,over,low,2026-10-27T10:24:22Z,,,0,,,0.495,0.5778,0.5599,11
+401908045,2026-10-27,4725251,Liam Hicks,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.42,0.73,0.2696,under,high,2026-10-27T10:24:22Z,,,0,,,0.3407,0.25,0.2696,11
+401908045,2026-10-27,4725251,Liam Hicks,home,runs,Runs Scored,runs_pg,poisson,0.5,book,BetMGM,0.24,0.18,0.2947,under,high,2026-10-27T10:24:22Z,,,0,,,0.2168,0.3161,0.2947,11
+401908045,2026-10-27,4725251,Liam Hicks,home,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,0.82,1.0,0.5367,over,low,2026-10-27T10:24:22Z,,,0,,,0.4733,0.5541,0.5367,11
+401908045,2026-10-27,4905921,Junior Caminero,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.9,0.92,0.6274,over,med,2026-10-27T10:24:22Z,,,0,,,0.6438,0.6225,0.6274,12
+401908045,2026-10-27,4905921,Junior Caminero,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.56,0.42,0.3698,over,low,2026-10-27T10:24:22Z,,,0,,,0.4263,0.3528,0.3698,12
+401908045,2026-10-27,4905921,Junior Caminero,home,runs,Runs Scored,runs_pg,poisson,0.5,book,BetMGM,0.51,0.5,0.384,over,low,2026-10-27T10:24:22Z,,,0,,,0.3982,0.3797,0.384,12
+401908045,2026-10-27,4905921,Junior Caminero,home,tb,Total Bases,tb_pg,negbin,1.5,book,3 books,1.62,1.5,0.3889,over,low,2026-10-27T10:24:22Z,,,0,,,0.3824,0.3909,0.3889,12
+401908045,2026-10-27,4917849,Victor Mesa Jr.,home,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.45,0.5,0.4969,under,low,2026-10-27T10:24:22Z,,,0,,,0.3845,0.5306,0.4969,12
+401908045,2026-10-27,4917849,Victor Mesa Jr.,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.15,0.17,0.2427,under,high,2026-10-27T10:24:22Z,,,0,,,0.1369,0.2744,0.2427,12
+401908045,2026-10-27,4917849,Victor Mesa Jr.,home,runs,Runs Scored,runs_pg,poisson,0.5,book,BetMGM,0.29,0.33,0.291,under,high,2026-10-27T10:24:22Z,,,0,,,0.2553,0.3016,0.291,12
+401908045,2026-10-27,4917849,Victor Mesa Jr.,home,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,0.63,0.75,0.4894,over,low,2026-10-27T10:24:22Z,,,0,,,0.3864,0.5203,0.4894,12
+401908045,2026-10-27,4917869,Jackson Chourio,away,hits,Hits,hits_pg,binomial,1.5,book,4 books,1.15,1.27,0.3185,under,high,2026-10-27T10:24:22Z,,,0,,,0.3234,0.3171,0.3185,11
+401908045,2026-10-27,4917869,Jackson Chourio,away,rbi,RBIs,rbi_pg,poisson,0.5,book,3 books,0.63,0.82,0.3772,over,low,2026-10-27T10:24:22Z,,,0,,,0.4659,0.3528,0.3772,11
+401908045,2026-10-27,4917869,Jackson Chourio,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.61,0.55,0.4559,over,low,2026-10-27T10:24:22Z,,,0,,,0.4575,0.4554,0.4559,11
+401908045,2026-10-27,4917869,Jackson Chourio,away,tb,Total Bases,tb_pg,negbin,1.5,book,5 books,1.76,1.91,0.4433,over,low,2026-10-27T10:24:22Z,,,0,,,0.4551,0.44,0.4433,11
+401908045,2026-10-27,5005912,Jonny DeLuca,home,hits,Hits,hits_pg,binomial,0.5,book,3 books,0.6,0.67,0.5227,over,low,2026-10-27T10:24:22Z,,,0,,,0.4829,0.5347,0.5227,12
+401908045,2026-10-27,5005912,Jonny DeLuca,home,rbi,RBIs,rbi_pg,poisson,0.5,book,2 books,0.22,0.25,0.2459,under,high,2026-10-27T10:24:22Z,,,0,,,0.1981,0.2603,0.2459,12
+401908045,2026-10-27,5005912,Jonny DeLuca,home,runs,Runs Scored,runs_pg,poisson,0.5,book,BetMGM,0.15,0.17,0.263,under,high,2026-10-27T10:24:22Z,,,0,,,0.1371,0.3008,0.263,12
+401908045,2026-10-27,5005912,Jonny DeLuca,home,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,0.7,0.83,0.5137,over,low,2026-10-27T10:24:22Z,,,0,,,0.486,0.5221,0.5137,12
+401908045,2026-10-27,5149101,Cooper Pratt,away,hits,Hits,hits_pg,binomial,0.5,book,4 books,0.98,1.0,0.5922,over,med,2026-10-27T10:24:22Z,,,0,,,0.6776,0.5688,0.5922,11
+401908045,2026-10-27,5149101,Cooper Pratt,away,rbi,RBIs,rbi_pg,poisson,0.5,book,4 books,0.26,0.27,0.2603,under,high,2026-10-27T10:24:22Z,,,0,,,0.2298,0.2687,0.2603,11
+401908045,2026-10-27,5149101,Cooper Pratt,away,runs,Runs Scored,runs_pg,poisson,0.5,book,2 books,0.44,0.45,0.3321,under,high,2026-10-27T10:24:22Z,,,0,,,0.3532,0.3263,0.3321,11
+401908045,2026-10-27,5149101,Cooper Pratt,away,tb,Total Bases,tb_pg,negbin,0.5,book,3 books,1.08,1.18,0.5818,over,med,2026-10-27T10:24:22Z,,,0,,,0.6822,0.5541,0.5818,11
