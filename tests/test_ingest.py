@@ -3,11 +3,17 @@ import os
 import shutil
 import tempfile
 import unittest
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 
-from sportspred import config, ingest
+from sportspred import config, ingest, util
 from sportspred.util import read_csv
 from tests import espn_fixtures as fx
+
+
+def eastern_is_dst(d):
+    kickoff = datetime(d.year, d.month, d.day, 23, 10, tzinfo=ZoneInfo('UTC'))
+    return bool(kickoff.astimezone(ZoneInfo('America/New_York')).dst())
 
 
 class TestStandings(unittest.TestCase):
@@ -187,9 +193,12 @@ class TestScoreboardWindow(unittest.TestCase):
 
     def test_kickoff_time_is_localised_correctly(self):
         rows, _ = ingest.fetch_window(self.http, 'mlb', self.teams, lookback=0, forward=0)
-        # 23:10Z in September is 7:10 PM Eastern.
-        self.assertEqual(rows[0]['game_time'], '7:10 PM ET')
+        # The fixture game is today at 23:10Z, so the Eastern time depends on DST.
+        self.assertEqual(rows[0]['game_time'],
+                         '7:10 PM ET' if eastern_is_dst(self.today) else '6:10 PM ET')
         self.assertTrue(rows[0]['game_start_utc'].endswith('T23:10Z'))
+        self.assertEqual(util.format_eastern('2026-09-15T23:10:00Z'), '7:10 PM ET')
+        self.assertEqual(util.format_eastern('2026-11-15T23:10:00Z'), '6:10 PM ET')
 
     def test_postponed_games_are_skipped(self):
         t = {1: fx.team(1, 'A', 'A'), 2: fx.team(2, 'B', 'B')}
