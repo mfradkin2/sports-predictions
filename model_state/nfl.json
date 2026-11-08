@@ -1,31 +1,31 @@
 {
- "archive_size": 409,
+ "archive_size": 414,
  "best": {
-  "adopted_at": "2026-11-08T18:28:53Z",
+  "adopted_at": "2026-11-08T21:19:52Z",
   "metrics": {
-   "acc": 0.6404,
-   "brier": 0.2186,
+   "acc": 0.6429,
+   "brier": 0.2159,
    "elo_only": {
-    "acc": 0.6435,
-    "brier": 0.22,
-    "logloss": 0.6275,
-    "n": 317
+    "acc": 0.6491,
+    "brier": 0.2178,
+    "logloss": 0.6228,
+    "n": 322
    },
    "glm_only": {
-    "acc": 0.6088,
-    "brier": 0.2409,
-    "logloss": 0.698,
-    "n": 317
+    "acc": 0.6242,
+    "brier": 0.2351,
+    "logloss": 0.6794,
+    "n": 322
    },
-   "logloss": 0.6251,
-   "n": 317
+   "logloss": 0.6192,
+   "n": 322
   },
   "params": {
-   "blend_w": 0.05,
+   "blend_w": 0.1,
    "calibration": {
-    "a": 1.0531083828878813,
-    "b": -0.14044412326928893,
-    "n": 317
+    "a": 1.117007963324318,
+    "b": -0.16557476287051087,
+    "n": 322
    },
    "elo_params": {
     "hfa": 28.799999999999997,
@@ -37,7 +37,9 @@
    "features": [
     "form_diff",
     "h2h_diff",
-    "sos_diff"
+    "sos_diff",
+    "venue_diff",
+    "def_diff"
    ],
    "form": {
     "decay": 0.8,
@@ -45,7 +47,7 @@
    },
    "l2": 0.5
   },
-  "reason": "log loss 0.6255 -> 0.6251"
+  "reason": "log loss 0.6251 -> 0.6192"
  },
  "elo": {
   "games_seen": {
@@ -54,35 +56,35 @@
    "Atlanta Falcons": 13,
    "Baltimore Ravens": 13,
    "Buffalo Bills": 11,
-   "Carolina Panthers": 11,
+   "Carolina Panthers": 12,
    "Chicago Bears": 12,
    "Cincinnati Bengals": 12,
    "Cleveland Browns": 12,
    "Dallas Cowboys": 12,
-   "Denver Broncos": 12,
-   "Detroit Lions": 11,
+   "Denver Broncos": 13,
+   "Detroit Lions": 12,
    "Green Bay Packers": 12,
    "Houston Texans": 11,
    "Indianapolis Colts": 12,
    "Jacksonville Jaguars": 12,
-   "Kansas City Chiefs": 11,
+   "Kansas City Chiefs": 12,
    "Las Vegas Raiders": 12,
    "Los Angeles Chargers": 11,
-   "Los Angeles Rams": 13,
-   "Miami Dolphins": 11,
+   "Los Angeles Rams": 14,
+   "Miami Dolphins": 12,
    "Minnesota Vikings": 11,
    "NFC": 0,
    "New England Patriots": 13,
    "New Orleans Saints": 11,
-   "New York Giants": 11,
-   "New York Jets": 12,
-   "Philadelphia Eagles": 12,
+   "New York Giants": 12,
+   "New York Jets": 13,
+   "Philadelphia Eagles": 13,
    "Pittsburgh Steelers": 12,
    "San Francisco 49ers": 11,
    "Seattle Seahawks": 13,
    "Tampa Bay Buccaneers": 12,
    "Tennessee Titans": 12,
-   "Washington Commanders": 11
+   "Washington Commanders": 12
   },
   "params": {
    "hfa": 28.799999999999997,
@@ -97,115 +99,89 @@
    "Atlanta Falcons": 1438.41,
    "Baltimore Ravens": 1446.65,
    "Buffalo Bills": 1671.8,
-   "Carolina Panthers": 1428.31,
+   "Carolina Panthers": 1416.56,
    "Chicago Bears": 1647.38,
    "Cincinnati Bengals": 1612.2,
    "Cleveland Browns": 1464.03,
    "Dallas Cowboys": 1422.08,
-   "Denver Broncos": 1644.16,
-   "Detroit Lions": 1568.75,
+   "Denver Broncos": 1655.91,
+   "Detroit Lions": 1584.4,
    "Green Bay Packers": 1529.63,
    "Houston Texans": 1495.76,
    "Indianapolis Colts": 1382.04,
    "Jacksonville Jaguars": 1673.1,
-   "Kansas City Chiefs": 1539.03,
+   "Kansas City Chiefs": 1556.12,
    "Las Vegas Raiders": 1431.39,
    "Los Angeles Chargers": 1352.46,
-   "Los Angeles Rams": 1578.27,
-   "Miami Dolphins": 1351.84,
+   "Los Angeles Rams": 1595.21,
+   "Miami Dolphins": 1336.19,
    "Minnesota Vikings": 1619.07,
    "NFC": 1524.96,
    "New England Patriots": 1623.36,
    "New Orleans Saints": 1419.8,
-   "New York Giants": 1479.61,
-   "New York Jets": 1339.68,
-   "Philadelphia Eagles": 1343.74,
+   "New York Giants": 1500.18,
+   "New York Jets": 1322.59,
+   "Philadelphia Eagles": 1323.17,
    "Pittsburgh Steelers": 1600.64,
    "San Francisco 49ers": 1645.53,
    "Seattle Seahawks": 1627.78,
    "Tampa Bay Buccaneers": 1510.31,
    "Tennessee Titans": 1310.88,
-   "Washington Commanders": 1410.03
+   "Washington Commanders": 1393.09
   }
  },
  "last_metrics": {
-  "acc": 0.6404,
-  "brier": 0.2186,
+  "acc": 0.6429,
+  "brier": 0.2159,
   "elo_only": {
-   "acc": 0.6435,
-   "brier": 0.22,
-   "logloss": 0.6275,
-   "n": 317
+   "acc": 0.6491,
+   "brier": 0.2178,
+   "logloss": 0.6228,
+   "n": 322
   },
   "glm_only": {
-   "acc": 0.6088,
-   "brier": 0.2409,
-   "logloss": 0.698,
-   "n": 317
+   "acc": 0.6242,
+   "brier": 0.2351,
+   "logloss": 0.6794,
+   "n": 322
   },
-  "logloss": 0.6251,
-  "n": 317
+  "logloss": 0.6192,
+  "n": 322
  },
  "league": "nfl",
  "ledger": {
   "components": {
    "elo": {
-    "acc": 0.582,
-    "brier": 0.232,
-    "logloss": 0.6541,
-    "n": 122
+    "acc": 0.5984,
+    "brier": 0.226,
+    "logloss": 0.6411,
+    "n": 127
    },
    "final": {
-    "acc": 0.5738,
-    "brier": 0.2599,
-    "logloss": 0.723,
-    "n": 122
+    "acc": 0.5906,
+    "brier": 0.2515,
+    "logloss": 0.7038,
+    "n": 127
    },
    "glm": {
-    "acc": 0.541,
-    "brier": 0.2741,
-    "logloss": 0.7849,
-    "n": 122
+    "acc": 0.5512,
+    "brier": 0.2691,
+    "logloss": 0.7728,
+    "n": 127
    },
    "prior": {
-    "acc": 0.5607,
-    "brier": 0.2629,
-    "logloss": 0.7375,
-    "n": 107
+    "acc": 0.5804,
+    "brier": 0.2528,
+    "logloss": 0.7133,
+    "n": 112
    }
   },
-  "graded": 122,
+  "graded": 127,
   "trust": null
  },
  "model_version": 3,
- "new_games_this_run": 0,
+ "new_games_this_run": 5,
  "optimizer": [
-  {
-   "adopted": false,
-   "at": "2026-11-07T18:29:00Z",
-   "end": 0.6258,
-   "evals": 14,
-   "moves": [],
-   "probe": {
-    "features": [
-     "elo_diff",
-     "pyth_diff",
-     "form_diff",
-     "b2b_diff",
-     "h2h_diff",
-     "wpct_diff",
-     "off_diff",
-     "sos_diff"
-    ],
-    "form": {
-     "decay": 0.9,
-     "n": 25
-    },
-    "logloss": 0.6263,
-    "won": false
-   },
-   "start": 0.6258
-  },
   {
    "adopted": false,
    "at": "2026-11-07T18:59:53Z",
@@ -1456,12 +1432,49 @@
     "won": false
    },
    "start": 0.6251
+  },
+  {
+   "adopted": true,
+   "at": "2026-11-08T21:19:52Z",
+   "end": 0.6192,
+   "evals": 36,
+   "moves": [
+    {
+     "from": 0.6198,
+     "move": "with venue_diff",
+     "to": 0.6194
+    },
+    {
+     "from": 0.6194,
+     "move": "with def_diff",
+     "to": 0.6192
+    }
+   ],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "margin_diff",
+     "venue_diff",
+     "rest_diff",
+     "wpct_diff",
+     "off_diff",
+     "exp_diff"
+    ],
+    "form": {
+     "decay": 1.0,
+     "n": 25
+    },
+    "logloss": 0.6205,
+    "won": false
+   },
+   "start": 0.6198
   }
  ],
  "props": {
-  "graded_this_run": 10,
+  "graded_this_run": 240,
   "lines": {
-   "games": 6,
+   "games": 5,
    "mode": "book",
    "status": "budgeted"
   },
@@ -1473,95 +1486,95 @@
      "pct": 0.5641
     },
     "low": {
-     "hit": 1877,
-     "n": 3761,
-     "pct": 0.4991
+     "hit": 1977,
+     "n": 3949,
+     "pct": 0.5006
     },
     "med": {
-     "hit": 435,
-     "n": 776,
-     "pct": 0.5606
+     "hit": 458,
+     "n": 813,
+     "pct": 0.5633
     }
    },
    "by_key": {
     "anytd": {
-     "hit": 173,
+     "hit": 188,
      "label": "Anytime TD",
-     "n": 334,
-     "pct": 0.518
+     "n": 360,
+     "pct": 0.5222
     },
     "pass_att": {
-     "hit": 85,
+     "hit": 90,
      "label": "Pass Attempts",
-     "n": 185,
-     "pct": 0.4595
+     "n": 194,
+     "pct": 0.4639
     },
     "pass_cmp": {
-     "hit": 96,
+     "hit": 102,
      "label": "Completions",
-     "n": 211,
-     "pct": 0.455
+     "n": 220,
+     "pct": 0.4636
     },
     "pass_int": {
-     "hit": 105,
+     "hit": 109,
      "label": "Interceptions",
-     "n": 209,
-     "pct": 0.5024
+     "n": 218,
+     "pct": 0.5
     },
     "pass_td": {
-     "hit": 128,
+     "hit": 133,
      "label": "Passing TDs",
-     "n": 211,
-     "pct": 0.6066
+     "n": 220,
+     "pct": 0.6045
     },
     "pass_yds": {
-     "hit": 101,
+     "hit": 105,
      "label": "Passing Yards",
-     "n": 211,
-     "pct": 0.4787
+     "n": 220,
+     "pct": 0.4773
     },
     "qb_rush": {
-     "hit": 92,
+     "hit": 94,
      "label": "Rushing Yards",
-     "n": 189,
-     "pct": 0.4868
+     "n": 196,
+     "pct": 0.4796
     },
     "rec": {
-     "hit": 628,
+     "hit": 657,
      "label": "Receptions",
-     "n": 1188,
-     "pct": 0.5286
+     "n": 1244,
+     "pct": 0.5281
     },
     "rec_yds": {
-     "hit": 469,
+     "hit": 496,
      "label": "Receiving Yards",
-     "n": 915,
-     "pct": 0.5126
+     "n": 958,
+     "pct": 0.5177
     },
     "rush_att": {
-     "hit": 145,
+     "hit": 154,
      "label": "Rush Attempts",
-     "n": 272,
-     "pct": 0.5331
+     "n": 288,
+     "pct": 0.5347
     },
     "rush_yds": {
-     "hit": 188,
+     "hit": 197,
      "label": "Rushing Yards",
-     "n": 383,
-     "pct": 0.4909
+     "n": 401,
+     "pct": 0.4913
     },
     "scrim": {
-     "hit": 146,
+     "hit": 154,
      "label": "Rush + Rec Yards",
-     "n": 307,
-     "pct": 0.4756
+     "n": 321,
+     "pct": 0.4798
     }
    },
    "by_source": {
     "book": {
-     "hit": 2356,
-     "n": 4615,
-     "pct": 0.5105
+     "hit": 2479,
+     "n": 4840,
+     "pct": 0.5122
     }
    },
    "curve": [
@@ -1698,124 +1711,99 @@
      "n": 44
     },
     {
-     "correct": 29,
-     "cum_acc": 0.5105,
+     "correct": 152,
+     "cum_acc": 0.5122,
      "date": "2026-11-08",
-     "n": 47
+     "n": 272
     }
    ],
-   "hit": 2356,
-   "pct": 0.5105,
-   "total": 4615
+   "hit": 2479,
+   "pct": 0.5122,
+   "total": 4840
   },
   "tuning": {
    "_market": {
     "default": 3,
     "k": 20,
-    "logloss": 0.6878,
-    "logloss_default": 0.6995,
-    "n": 4615
+    "logloss": 0.6877,
+    "logloss_default": 0.6993,
+    "n": 4840
    },
    "anytd": {
-    "bias": 0.9303,
-    "n": 334,
-    "raw_bias": 0.9303,
-    "spread": 1.0068
+    "bias": 0.93,
+    "n": 360,
+    "raw_bias": 0.93,
+    "spread": 1.0055
    },
    "pass_att": {
-    "bias": 1.0261,
-    "n": 185,
-    "raw_bias": 1.0286,
-    "spread": 1.4559
+    "bias": 1.0255,
+    "n": 194,
+    "raw_bias": 1.0264,
+    "spread": 1.4824
    },
    "pass_cmp": {
-    "bias": 1.0234,
-    "n": 211,
-    "raw_bias": 1.0234,
+    "bias": 1.0233,
+    "n": 220,
+    "raw_bias": 1.0233,
     "spread": 1.5
    },
    "pass_int": {
-    "bias": 1.2112,
-    "n": 209,
-    "raw_bias": 1.2112,
-    "spread": 1.013
+    "bias": 1.2358,
+    "n": 218,
+    "raw_bias": 1.2358,
+    "spread": 1.0113
    },
    "pass_td": {
-    "bias": 0.984,
-    "n": 211,
-    "raw_bias": 0.984,
-    "spread": 0.921
+    "bias": 0.9716,
+    "n": 220,
+    "raw_bias": 0.9716,
+    "spread": 0.9301
    },
    "pass_yds": {
-    "bias": 1.0166,
-    "n": 211,
-    "raw_bias": 1.0166,
+    "bias": 1.0115,
+    "n": 220,
+    "raw_bias": 1.0115,
     "spread": 1.5
    },
    "qb_rush": {
-    "bias": 0.9795,
-    "n": 189,
-    "raw_bias": 0.9781,
-    "spread": 1.4676
+    "bias": 0.965,
+    "n": 196,
+    "raw_bias": 0.9641,
+    "spread": 1.4882
    },
    "rec": {
-    "bias": 1.0317,
-    "n": 1188,
-    "raw_bias": 1.0317,
-    "spread": 1.1769
+    "bias": 1.0322,
+    "n": 1244,
+    "raw_bias": 1.0322,
+    "spread": 1.1739
    },
    "rec_yds": {
-    "bias": 1.0212,
-    "n": 915,
-    "raw_bias": 1.0212,
+    "bias": 1.0194,
+    "n": 958,
+    "raw_bias": 1.0194,
     "spread": 1.5
    },
    "rush_att": {
-    "bias": 1.0457,
-    "n": 272,
-    "raw_bias": 1.0457,
+    "bias": 1.049,
+    "n": 288,
+    "raw_bias": 1.049,
     "spread": 1.5
    },
    "rush_yds": {
-    "bias": 1.0348,
-    "n": 383,
-    "raw_bias": 1.0348,
+    "bias": 1.0271,
+    "n": 401,
+    "raw_bias": 1.0271,
     "spread": 1.5
    },
    "scrim": {
-    "bias": 1.0245,
-    "n": 307,
-    "raw_bias": 1.0245,
+    "bias": 1.0198,
+    "n": 321,
+    "raw_bias": 1.0198,
     "spread": 1.5
    }
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-11-07T10:28:48Z",
-   "metrics": {
-    "acc": 0.6392,
-    "brier": 0.2189,
-    "elo_only": {
-     "acc": 0.6424,
-     "brier": 0.2202,
-     "logloss": 0.628,
-     "n": 316
-    },
-    "glm_only": {
-     "acc": 0.6076,
-     "brier": 0.2411,
-     "logloss": 0.6985,
-     "n": 316
-    },
-    "logloss": 0.6258,
-    "n": 316
-   },
-   "model_version": 3,
-   "notes": "406 completed games",
-   "reason": "kept incumbent (challenger 0.6258 vs 0.6255)"
-  },
   {
    "adopted": false,
    "at": "2026-11-07T11:28:23Z",
@@ -3290,7 +3278,32 @@
    "model_version": 3,
    "notes": "407 completed games",
    "reason": "kept incumbent (challenger 0.6251 vs 0.6251)"
+  },
+  {
+   "adopted": true,
+   "at": "2026-11-08T21:19:52Z",
+   "metrics": {
+    "acc": 0.6429,
+    "brier": 0.2159,
+    "elo_only": {
+     "acc": 0.6491,
+     "brier": 0.2178,
+     "logloss": 0.6228,
+     "n": 322
+    },
+    "glm_only": {
+     "acc": 0.6242,
+     "brier": 0.2351,
+     "logloss": 0.6794,
+     "n": 322
+    },
+    "logloss": 0.6192,
+    "n": 322
+   },
+   "model_version": 3,
+   "notes": "412 completed games; changed: with venue_diff, with def_diff",
+   "reason": "log loss 0.6251 -> 0.6192"
   }
  ],
- "updated": "2026-11-08T20:48:15Z"
+ "updated": "2026-11-08T21:19:56Z"
 }
