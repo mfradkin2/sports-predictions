@@ -183,32 +183,6 @@
  "optimizer": [
   {
    "adopted": false,
-   "at": "2026-11-09T07:35:17Z",
-   "end": 0.6776,
-   "evals": 18,
-   "moves": [],
-   "probe": {
-    "features": [
-     "elo_diff",
-     "pyth_diff",
-     "form_diff",
-     "venue_diff",
-     "b2b_diff",
-     "wpct_diff",
-     "def_diff",
-     "sos_diff"
-    ],
-    "form": {
-     "decay": 0.97,
-     "n": 20
-    },
-    "logloss": 0.6788,
-    "won": false
-   },
-   "start": 0.6776
-  },
-  {
-   "adopted": false,
    "at": "2026-11-09T08:21:04Z",
    "end": 0.6776,
    "evals": 18,
@@ -1462,6 +1436,35 @@
     "won": false
    },
    "start": 0.6774
+  },
+  {
+   "adopted": false,
+   "at": "2026-11-10T17:21:17Z",
+   "end": 0.6774,
+   "evals": 18,
+   "moves": [],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "form_diff",
+     "margin_diff",
+     "venue_diff",
+     "b2b_diff",
+     "h2h_diff",
+     "off_diff",
+     "def_diff",
+     "sos_diff",
+     "exp_diff"
+    ],
+    "form": {
+     "decay": 0.8,
+     "n": 20
+    },
+    "logloss": 0.6791,
+    "won": false
+   },
+   "start": 0.6774
   }
  ],
  "props": {
@@ -1826,31 +1829,6 @@
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-11-09T00:09:23Z",
-   "metrics": {
-    "acc": 0.567,
-    "brier": 0.2423,
-    "elo_only": {
-     "acc": 0.5607,
-     "brier": 0.2435,
-     "logloss": 0.6798,
-     "n": 1582
-    },
-    "glm_only": {
-     "acc": 0.5411,
-     "brier": 0.2488,
-     "logloss": 0.6911,
-     "n": 1582
-    },
-    "logloss": 0.6775,
-    "n": 1582
-   },
-   "model_version": 3,
-   "notes": "1672 completed games",
-   "reason": "kept incumbent (challenger 0.6775 vs 0.6775)"
-  },
   {
    "adopted": false,
    "at": "2026-11-09T00:30:24Z",
@@ -3325,7 +3303,32 @@
    "model_version": 3,
    "notes": "1679 completed games",
    "reason": "kept incumbent (challenger 0.6774 vs 0.6773)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-11-10T17:21:16Z",
+   "metrics": {
+    "acc": 0.5677,
+    "brier": 0.2423,
+    "elo_only": {
+     "acc": 0.5607,
+     "brier": 0.2435,
+     "logloss": 0.6798,
+     "n": 1589
+    },
+    "glm_only": {
+     "acc": 0.5425,
+     "brier": 0.2488,
+     "logloss": 0.6911,
+     "n": 1589
+    },
+    "logloss": 0.6774,
+    "n": 1589
+   },
+   "model_version": 3,
+   "notes": "1679 completed games",
+   "reason": "kept incumbent (challenger 0.6774 vs 0.6773)"
   }
  ],
- "updated": "2026-11-10T17:01:46Z"
+ "updated": "2026-11-10T17:21:20Z"
 }
