@@ -1,5 +1,5 @@
 {
- "archive_size": 1741,
+ "archive_size": 1746,
  "best": {
   "adopted_at": "2026-11-13T03:30:25Z",
   "metrics": {
@@ -52,9 +52,9 @@
   "games_seen": {
    "Anaheim Ducks": 45,
    "Boston Bruins": 44,
-   "Buffalo Sabres": 44,
+   "Buffalo Sabres": 45,
    "Calgary Flames": 42,
-   "Carolina Hurricanes": 46,
+   "Carolina Hurricanes": 47,
    "Chicago Blackhawks": 41,
    "Colorado Avalanche": 45,
    "Columbus Blue Jackets": 39,
@@ -62,25 +62,25 @@
    "Detroit Red Wings": 42,
    "Edmonton Oilers": 45,
    "Florida Panthers": 43,
-   "Los Angeles Kings": 40,
+   "Los Angeles Kings": 41,
    "Minnesota Wild": 46,
-   "Montreal Canadiens": 47,
+   "Montreal Canadiens": 48,
    "Nashville Predators": 42,
    "New Jersey Devils": 42,
    "New York Islanders": 41,
    "New York Rangers": 42,
-   "Ottawa Senators": 43,
-   "Philadelphia Flyers": 47,
-   "Pittsburgh Penguins": 42,
+   "Ottawa Senators": 44,
+   "Philadelphia Flyers": 48,
+   "Pittsburgh Penguins": 43,
    "San Jose Sharks": 44,
    "Seattle Kraken": 38,
-   "St. Louis Blues": 41,
+   "St. Louis Blues": 42,
    "Tampa Bay Lightning": 43,
-   "Toronto Maple Leafs": 43,
+   "Toronto Maple Leafs": 44,
    "Utah Mammoth": 45,
    "Vancouver Canucks": 43,
    "Vegas Golden Knights": 49,
-   "Washington Capitals": 39,
+   "Washington Capitals": 40,
    "Winnipeg Jets": 43
   },
   "params": {
@@ -93,9 +93,9 @@
   "ratings": {
    "Anaheim Ducks": 1481.5,
    "Boston Bruins": 1541.34,
-   "Buffalo Sabres": 1508.4,
+   "Buffalo Sabres": 1516.64,
    "Calgary Flames": 1451.98,
-   "Carolina Hurricanes": 1635.03,
+   "Carolina Hurricanes": 1628.82,
    "Chicago Blackhawks": 1399.65,
    "Colorado Avalanche": 1559.12,
    "Columbus Blue Jackets": 1469.43,
@@ -103,111 +103,84 @@
    "Detroit Red Wings": 1457.76,
    "Edmonton Oilers": 1555.46,
    "Florida Panthers": 1495.98,
-   "Los Angeles Kings": 1440.53,
+   "Los Angeles Kings": 1445.3,
    "Minnesota Wild": 1588.24,
-   "Montreal Canadiens": 1555.47,
+   "Montreal Canadiens": 1561.68,
    "Nashville Predators": 1507.92,
    "New Jersey Devils": 1541.53,
    "New York Islanders": 1493.22,
    "New York Rangers": 1505.01,
-   "Ottawa Senators": 1541.57,
-   "Philadelphia Flyers": 1470.53,
-   "Pittsburgh Penguins": 1478.09,
+   "Ottawa Senators": 1535.48,
+   "Philadelphia Flyers": 1476.62,
+   "Pittsburgh Penguins": 1470.58,
    "San Jose Sharks": 1444.6,
    "Seattle Kraken": 1455.27,
-   "St. Louis Blues": 1503.19,
+   "St. Louis Blues": 1510.7,
    "Tampa Bay Lightning": 1569.82,
-   "Toronto Maple Leafs": 1424.12,
+   "Toronto Maple Leafs": 1419.35,
    "Utah Mammoth": 1492.67,
    "Vancouver Canucks": 1364.12,
    "Vegas Golden Knights": 1533.09,
-   "Washington Capitals": 1512.84,
+   "Washington Capitals": 1504.6,
    "Winnipeg Jets": 1478.43
   }
  },
  "last_metrics": {
-  "acc": 0.5633,
-  "brier": 0.2428,
+  "acc": 0.561,
+  "brier": 0.243,
   "elo_only": {
-   "acc": 0.5578,
-   "brier": 0.244,
-   "logloss": 0.6809,
-   "n": 1651
+   "acc": 0.5568,
+   "brier": 0.2442,
+   "logloss": 0.6813,
+   "n": 1656
   },
   "glm_only": {
-   "acc": 0.5427,
-   "brier": 0.2491,
-   "logloss": 0.6917,
-   "n": 1651
+   "acc": 0.5447,
+   "brier": 0.2493,
+   "logloss": 0.6921,
+   "n": 1656
   },
-  "logloss": 0.6786,
-  "n": 1651
+  "logloss": 0.679,
+  "n": 1656
  },
  "league": "nhl",
  "ledger": {
   "components": {
    "elo": {
-    "acc": 0.5764,
-    "brier": 0.2399,
-    "logloss": 0.6726,
-    "n": 347
+    "acc": 0.571,
+    "brier": 0.241,
+    "logloss": 0.6748,
+    "n": 352
    },
    "final": {
-    "acc": 0.5389,
-    "brier": 0.249,
-    "logloss": 0.6927,
-    "n": 347
+    "acc": 0.5341,
+    "brier": 0.2497,
+    "logloss": 0.694,
+    "n": 352
    },
    "glm": {
-    "acc": 0.5289,
-    "brier": 0.2454,
-    "logloss": 0.6838,
-    "n": 242
+    "acc": 0.5344,
+    "brier": 0.2461,
+    "logloss": 0.6853,
+    "n": 247
    },
    "prior": {
-    "acc": 0.5447,
-    "brier": 0.2605,
-    "logloss": 0.7251,
-    "n": 347
+    "acc": 0.5398,
+    "brier": 0.2626,
+    "logloss": 0.7296,
+    "n": 352
    }
   },
-  "graded": 347,
+  "graded": 352,
   "trust": {
-   "logloss": 0.6833,
-   "n": 347,
-   "trust": 0.8
+   "logloss": 0.6849,
+   "n": 352,
+   "trust": 0.85
   }
  },
  "model_version": 3,
- "new_games_this_run": 1,
+ "new_games_this_run": 5,
  "optimizer": [
-  {
-   "adopted": false,
-   "at": "2026-11-18T21:30:40Z",
-   "end": 0.6782,
-   "evals": 18,
-   "moves": [],
-   "probe": {
-    "features": [
-     "elo_diff",
-     "pyth_diff",
-     "form_diff",
-     "venue_diff",
-     "rest_diff",
-     "b2b_diff",
-     "wpct_diff",
-     "def_diff",
-     "sos_diff"
-    ],
-    "form": {
-     "decay": 0.97,
-     "n": 30
-    },
-    "logloss": 0.6802,
-    "won": false
-   },
-   "start": 0.6782
-  },
   {
    "adopted": false,
    "at": "2026-11-18T21:35:07Z",
@@ -1465,10 +1438,44 @@
     "won": false
    },
    "start": 0.6786
+  },
+  {
+   "adopted": false,
+   "at": "2026-11-20T03:02:54Z",
+   "end": 0.6789,
+   "evals": 24,
+   "moves": [
+    {
+     "from": 0.679,
+     "move": "without rest_diff",
+     "to": 0.6789
+    }
+   ],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "form_diff",
+     "rest_diff",
+     "b2b_diff",
+     "h2h_diff",
+     "off_diff",
+     "def_diff",
+     "sos_diff",
+     "exp_diff"
+    ],
+    "form": {
+     "decay": 0.94,
+     "n": 20
+    },
+    "logloss": 0.681,
+    "won": false
+   },
+   "start": 0.679
   }
  ],
  "props": {
-  "graded_this_run": 54,
+  "graded_this_run": 293,
   "lines": {
    "games": 0,
    "mode": "book",
@@ -1477,64 +1484,64 @@
   "record": {
    "by_conf": {
     "high": {
-     "hit": 3581,
-     "n": 4904,
-     "pct": 0.7302
+     "hit": 3622,
+     "n": 4975,
+     "pct": 0.728
     },
     "low": {
-     "hit": 3765,
-     "n": 7820,
-     "pct": 0.4815
+     "hit": 3837,
+     "n": 7959,
+     "pct": 0.4821
     },
     "med": {
-     "hit": 3109,
-     "n": 5174,
-     "pct": 0.6009
+     "hit": 3150,
+     "n": 5253,
+     "pct": 0.5997
     }
    },
    "by_key": {
     "assists": {
-     "hit": 3835,
+     "hit": 3890,
      "label": "Assists",
-     "n": 5820,
-     "pct": 0.6589
+     "n": 5916,
+     "pct": 0.6575
     },
     "blocks": {
      "hit": 0,
      "label": "Blocked Shots",
-     "n": 3,
+     "n": 4,
      "pct": 0.0
     },
     "goal": {
-     "hit": 278,
+     "hit": 283,
      "label": "Anytime Goal",
-     "n": 535,
-     "pct": 0.5196
+     "n": 543,
+     "pct": 0.5212
     },
     "points": {
-     "hit": 3379,
+     "hit": 3426,
      "label": "Points",
-     "n": 5983,
-     "pct": 0.5648
+     "n": 6079,
+     "pct": 0.5636
     },
     "saves": {
-     "hit": 121,
+     "hit": 124,
      "label": "Saves",
-     "n": 223,
-     "pct": 0.5426
+     "n": 229,
+     "pct": 0.5415
     },
     "sog": {
-     "hit": 2842,
+     "hit": 2886,
      "label": "Shots on Goal",
-     "n": 5334,
-     "pct": 0.5328
+     "n": 5416,
+     "pct": 0.5329
     }
    },
    "by_source": {
     "book": {
-     "hit": 10455,
-     "n": 17898,
-     "pct": 0.5841
+     "hit": 10609,
+     "n": 18187,
+     "pct": 0.5833
     }
    },
    "curve": [
@@ -1845,75 +1852,50 @@
      "n": 198
     },
     {
-     "correct": 27,
-     "cum_acc": 0.5841,
+     "correct": 181,
+     "cum_acc": 0.5833,
      "date": "2026-11-19",
-     "n": 51
+     "n": 340
     }
    ],
-   "hit": 10455,
-   "pct": 0.5841,
-   "total": 17898
+   "hit": 10609,
+   "pct": 0.5833,
+   "total": 18187
   },
   "tuning": {
    "assists": {
-    "bias": 1.0128,
-    "n": 5750,
-    "raw_bias": 1.0128,
-    "spread": 1.0063
+    "bias": 1.016,
+    "n": 5846,
+    "raw_bias": 1.016,
+    "spread": 1.0069
    },
    "goal": {
-    "bias": 0.9195,
-    "n": 535,
-    "raw_bias": 0.9195,
-    "spread": 1.0567
+    "bias": 0.9213,
+    "n": 543,
+    "raw_bias": 0.9213,
+    "spread": 1.0522
    },
    "points": {
-    "bias": 1.0078,
-    "n": 5934,
-    "raw_bias": 1.0078,
-    "spread": 1.0083
+    "bias": 1.0112,
+    "n": 6030,
+    "raw_bias": 1.0112,
+    "spread": 1.0084
    },
    "saves": {
-    "bias": 1.0118,
-    "n": 223,
-    "raw_bias": 1.0118,
+    "bias": 1.0124,
+    "n": 229,
+    "raw_bias": 1.0124,
     "spread": 1.5
    },
    "sog": {
-    "bias": 0.9926,
-    "n": 5330,
-    "raw_bias": 0.9926,
-    "spread": 1.0515
+    "bias": 0.993,
+    "n": 5412,
+    "raw_bias": 0.993,
+    "spread": 1.0502
    }
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-11-18T13:20:29Z",
-   "metrics": {
-    "acc": 0.5659,
-    "brier": 0.2427,
-    "elo_only": {
-     "acc": 0.5586,
-     "brier": 0.2439,
-     "logloss": 0.6808,
-     "n": 1647
-    },
-    "glm_only": {
-     "acc": 0.5458,
-     "brier": 0.2489,
-     "logloss": 0.6914,
-     "n": 1647
-    },
-    "logloss": 0.6782,
-    "n": 1647
-   },
-   "model_version": 3,
-   "notes": "1737 completed games",
-   "reason": "kept incumbent (challenger 0.6782 vs 0.6769)"
-  },
   {
    "adopted": false,
    "at": "2026-11-18T13:30:26Z",
@@ -3388,7 +3370,32 @@
    "model_version": 3,
    "notes": "1741 completed games",
    "reason": "kept incumbent (challenger 0.6786 vs 0.6769)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-11-20T03:02:54Z",
+   "metrics": {
+    "acc": 0.5616,
+    "brier": 0.243,
+    "elo_only": {
+     "acc": 0.5568,
+     "brier": 0.2442,
+     "logloss": 0.6813,
+     "n": 1656
+    },
+    "glm_only": {
+     "acc": 0.5386,
+     "brier": 0.2477,
+     "logloss": 0.6885,
+     "n": 1656
+    },
+    "logloss": 0.6789,
+    "n": 1656
+   },
+   "model_version": 3,
+   "notes": "1746 completed games; changed: without rest_diff",
+   "reason": "kept incumbent (challenger 0.6789 vs 0.6769)"
   }
  ],
- "updated": "2026-11-20T02:40:17Z"
+ "updated": "2026-11-20T03:02:57Z"
 }
