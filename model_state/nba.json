@@ -179,43 +179,6 @@
  "optimizer": [
   {
    "adopted": false,
-   "at": "2026-11-22T14:29:46Z",
-   "end": 0.5957,
-   "evals": 19,
-   "moves": [
-    {
-     "from": 0.5961,
-     "move": "form window",
-     "to": 0.5959
-    },
-    {
-     "from": 0.5959,
-     "move": "form window",
-     "to": 0.5957
-    }
-   ],
-   "probe": {
-    "features": [
-     "elo_diff",
-     "pyth_diff",
-     "venue_diff",
-     "b2b_diff",
-     "wpct_diff",
-     "off_diff",
-     "sos_diff",
-     "exp_diff"
-    ],
-    "form": {
-     "decay": 0.97,
-     "n": 16
-    },
-    "logloss": 0.5976,
-    "won": false
-   },
-   "start": 0.5961
-  },
-  {
-   "adopted": false,
    "at": "2026-11-22T15:15:50Z",
    "end": 0.5957,
    "evals": 19,
@@ -1774,6 +1737,36 @@
     "won": false
    },
    "start": 0.5963
+  },
+  {
+   "adopted": false,
+   "at": "2026-11-23T22:30:24Z",
+   "end": 0.5962,
+   "evals": 34,
+   "moves": [
+    {
+     "from": 0.5963,
+     "move": "with exp_diff",
+     "to": 0.5962
+    }
+   ],
+   "probe": {
+    "features": [
+     "elo_diff",
+     "pyth_diff",
+     "form_diff",
+     "margin_diff",
+     "off_diff",
+     "exp_diff"
+    ],
+    "form": {
+     "decay": 0.97,
+     "n": 30
+    },
+    "logloss": 0.5976,
+    "won": false
+   },
+   "start": 0.5963
   }
  ],
  "props": {
@@ -1781,7 +1774,7 @@
   "lines": {
    "games": 10,
    "mode": "book",
-   "status": "cached"
+   "status": "live"
   },
   "record": {
    "by_conf": {
@@ -2109,31 +2102,6 @@
   }
  },
  "runs": [
-  {
-   "adopted": false,
-   "at": "2026-11-22T06:29:27Z",
-   "metrics": {
-    "acc": 0.6843,
-    "brier": 0.2045,
-    "elo_only": {
-     "acc": 0.6775,
-     "brier": 0.2067,
-     "logloss": 0.6002,
-     "n": 1473
-    },
-    "glm_only": {
-     "acc": 0.6897,
-     "brier": 0.211,
-     "logloss": 0.6136,
-     "n": 1473
-    },
-    "logloss": 0.5957,
-    "n": 1473
-   },
-   "model_version": 3,
-   "notes": "1563 completed games; changed: form window, form window",
-   "reason": "kept incumbent (challenger 0.5957 vs 0.5911)"
-  },
   {
    "adopted": false,
    "at": "2026-11-22T06:34:08Z",
@@ -3608,7 +3576,32 @@
    "model_version": 3,
    "notes": "1570 completed games; changed: with exp_diff",
    "reason": "kept incumbent (challenger 0.5962 vs 0.5911)"
+  },
+  {
+   "adopted": false,
+   "at": "2026-11-23T22:30:23Z",
+   "metrics": {
+    "acc": 0.6878,
+    "brier": 0.2049,
+    "elo_only": {
+     "acc": 0.6764,
+     "brier": 0.2062,
+     "logloss": 0.599,
+     "n": 1480
+    },
+    "glm_only": {
+     "acc": 0.6865,
+     "brier": 0.2138,
+     "logloss": 0.6195,
+     "n": 1480
+    },
+    "logloss": 0.5962,
+    "n": 1480
+   },
+   "model_version": 3,
+   "notes": "1570 completed games; changed: with exp_diff",
+   "reason": "kept incumbent (challenger 0.5962 vs 0.5911)"
   }
  ],
- "updated": "2026-11-23T21:29:43Z"
+ "updated": "2026-11-23T22:30:30Z"
 }
