@@ -705,6 +705,13 @@ def build_payload(league_key, cfg, trained, memory, components, n_graded,
     today = today_utc()
     recent_cut = today - timedelta(days=RECENT_DAYS)
     horizon = today + timedelta(days=UPCOMING_DAYS)
+    # Out of season nothing has finished inside that reach, and Results would
+    # be empty until next year. It shows the season's last stretch instead.
+    finals = [r['game']['date'] for r in trained['records']
+              if r['game']['final'] and not r['game'].get('preseason')
+              and r['game']['date'] <= today]
+    if finals and max(finals) < recent_cut:
+        recent_cut = max(finals) - timedelta(days=RECENT_DAYS)
 
     # The live board keeps a short tail of finished games; everything older
     # goes to a history file the Results view loads on demand, so the first

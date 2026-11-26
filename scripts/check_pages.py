@@ -87,7 +87,9 @@ def check(page, base, problems):
     # A section's tab must land on its front door, whatever the reader looked
     # at last. This is the check that would have caught the Results tab
     # sticking on Track record and showing no finished games at all.
-    visit('#mlb/results')
+    # Checked on All: a single league out of season has no prop board, and so
+    # no rail to land on.
+    visit('#all/results')
     page.locator('.rail-tab[data-tab="record"]').click()
     page.wait_for_timeout(1200)
     for name, _, want in SECTIONS:

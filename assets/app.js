@@ -693,8 +693,15 @@
     if (f.result && f.result !== 'all') items = items.filter(function (x) { return (x.g.correct ? 'correct' : 'wrong') === f.result; });
     if (f.days && f.days !== 'all') {
       var n = parseInt(f.days, 10);
+      // Out of season a league's last game is older than any period counted
+      // back from today, so its period is counted back from that game.
+      var last = {};
+      if (scope === 'results') items.forEach(function (x) {
+        if (!last[x.league] || x.g.date > last[x.league]) last[x.league] = x.g.date;
+      });
       items = items.filter(function (x) {
-        var limit = scope === 'results' ? addDays(x.t, -n) : addDays(x.t, n);
+        var from = last[x.league] < addDays(x.t, -n) ? last[x.league] : x.t;
+        var limit = scope === 'results' ? addDays(from, -n) : addDays(x.t, n);
         return scope === 'results' ? x.g.date >= limit : x.g.date <= limit;
       });
     }
@@ -831,6 +838,7 @@
   function emptyReason() {
     if (isAll()) return 'No games match these filters.';
     var d = cur() || {}, games = d.games || [], t = today();
+    if (state.view === 'results') return 'No finished ' + esc(d.name || '') + ' games to show yet.';
     if (!games.length) return 'No ' + esc(d.name || '') + ' games are on the schedule yet. Picks appear as soon as the league posts games.';
     var next = games.filter(function (g) { return g.date > t && !g.final; }).sort(function (a, b) { return a.date.localeCompare(b.date); })[0];
     if (state.view === 'games' && (state.filters.games || {}).when === 'today' && next) {

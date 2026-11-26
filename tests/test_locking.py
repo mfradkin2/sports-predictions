@@ -277,6 +277,24 @@ class TestPreseasonIsExcluded(PipelineHarness):
         self.assertFalse(feat.preseason_by_date(date(2026, 9, 10), 'nfl'))
 
 
+class TestResultsOutOfSeason(PipelineHarness):
+    """Results reaches back a fixed number of days from today. Once a season
+    has been over for longer than that, every finished game used to fall out
+    of it and the league's Results page showed nothing at all."""
+
+    def test_a_finished_season_keeps_its_last_games_in_results(self):
+        rows = synthetic_rows(n_days=60, seed=5, start=date.today() - timedelta(days=130))
+        write_csv(self.csv, rows)
+        payload, _, _ = self.run_pipeline()
+        self.assertEqual(payload['games'], [])
+        last = max(r['game_date'] for r in rows)
+        dates = [str(g['date']) for g in payload['history']]
+        self.assertTrue(dates, 'a finished season shows no games in Results')
+        self.assertEqual(max(dates), last)
+        self.assertGreaterEqual(
+            min(dates), str(date.fromisoformat(last) - timedelta(days=pipeline.RECENT_DAYS)))
+
+
 if __name__ == '__main__':
     unittest.main()
 
